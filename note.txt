@@ -1,0 +1,74 @@
+1 => publish , 0 => unpublish
+1 => active , 0 => unactive
+---------------------------------------------------------------------------------------
+$multiTesting = [];
+foreach($multiImageFiles as $img){
+    $multiImageName = uniqid().'_'.$img->getClientOriginalName();
+    $multiTesting[] = $multiImageName;
+}
+dd($multiTesting);
+
+result = [
+  0 => "62adaaf6bfced_banner1.png"
+  1 => "62adaaf6bfcee_sample-1.jpeg"
+  2 => "62adaaf6bfcef_sample-2.jpeg"
+  3 => "62adaaf6bfcf0_sample-3.jpeg"
+]
+---------------------------------------------------------------------------------------
+$multiTesting = [];
+foreach($multiImageFiles as $img){
+    $multiImageName = uniqid().'_'.$img->getClientOriginalName();
+    $multiTesting = $multiImageName;
+}
+dd($multiTesting);
+
+result = "62adab2108d62_sample-3.jpeg"
+---------------------------------------------------------------------------------------
+$multiTesting = [];
+foreach($multiImageFiles as $img){
+    $multiImageName = uniqid().'_'.$img->getClientOriginalName();
+    $multiTesting = [$multiImageName];
+}
+dd($multiTesting);
+
+result = [
+    0 => "62adab5930842_sample-3.jpeg"
+]
+--------------------------------------------------------------------------------------
+let productId = 3;
+url: "{{ url('admin/product/delete') }}/"+productId,
+--------------------------------------------------------------------------------------
+jetstream url('/ dashboard') 404 not found error after login or register
+
+soln: public/dashboard/  change folder name => dashboard to other name
+--------------------------------------------------------------------------------------
+
+
+###cart qty change error
+ when qty change or update,error message with alert is not very fast if qyt is out of stock bz of using window reload;
+
+###todo or bug
+when user placed order,
+to check coupon is expired,
+to check stock .
+
+--------------------------------------------------------------------------------------
+stock out
+order confirm
+
+stock in
+product add
+variant add
+
+stock in and out check status
+variant update
+--------------------------------------------------------------------------------------
+return product (from order delivered date within 7 days )
+
+within 7 days (show order return btn on user page)
+
+return view
+ reason , status , return request data,
+
+return
+
