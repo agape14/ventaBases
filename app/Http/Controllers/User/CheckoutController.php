@@ -23,25 +23,23 @@ class CheckoutController extends Controller
 
     //checkout page
     public function checkoutPage(){
+        /*
         $carts = Session::get('cart');
-        $amount = 0; // Aquí defines el monto que vas a cobrar
+        $amount = 0;
         $subtotal=0;
         foreach($carts as $key => $cart){
             $productSubtotal = floatval($cart['price']) * intval($cart['quantity']);
             $subtotal += $productSubtotal;
         }
         $amount=$subtotal;
-        //dd($carts,$subtotal,$amount);
         $detallePago = "Detalle de pago";
-
         $token = $this->niubizService->generateToken();
         $sessionKey = $this->niubizService->generateSesion($amount, $token);
-
         $purchaseNumber = $this->niubizService->generatePurchaseNumber();
-
+        */
         $stateDivisions = StateDivision::get();
-        //return view('checkout', compact('amount', 'detallePago', 'sessionKey', 'purchaseNumber'));
-        return view('frontEnd.checkout', compact('amount', 'detallePago', 'sessionKey', 'purchaseNumber'))->with(['stateDivisions'=>$stateDivisions]);
+        return view('frontEnd.checkout')->with(['stateDivisions'=>$stateDivisions]);
+        //return view('frontEnd.checkout', compact('amount', 'detallePago', 'sessionKey', 'purchaseNumber'))->with(['stateDivisions'=>$stateDivisions]);
     }
 
     //get city ajax

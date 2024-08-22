@@ -41,10 +41,10 @@ class OrderController extends Controller
         //empty cart checking
         if(Session::has('cart')){
             if(count(Session::get('cart')) == 0){
-                return back()->with(['error'=>'Your cart is empty!']);
+                return back()->with(['error'=>'¡Tu carrito está vacío!']);
             }
         }else{
-            return back()->with(['error'=>'Your cart is empty!']);
+            return back()->with(['error'=>'¡Tu carrito está vacío!']);
         }
         //validation
         $validation = Validator::make($request->all(),[
@@ -56,7 +56,7 @@ class OrderController extends Controller
             'townshipId' => 'required',
             'address' => 'required',
             'paymentMethod' => 'required',
-        ]);
+        ]);//dd($request);
         if($validation->fails()){
             return back()->withErrors($validation)->withInput();
         }
@@ -66,7 +66,7 @@ class OrderController extends Controller
 
             $checkCos = CashOnDelivery::where('status','1')->where('township_id',$request->townshipId)->exists();
             if(!$checkCos){
-                return back()->with(['error'=>'Cash on Delivery is currently not available for your location.Please choose another one!']);
+                return back()->with(['error'=>'El pago contra reembolso no está disponible actualmente para su ubicación. ¡Elija otra!']);
             }
 
             //insert data to order table and order items table
@@ -76,15 +76,15 @@ class OrderController extends Controller
             $this->destroySessionData();
 
             //new order notify to admin
-            $this->notifyToAdmin($orderId,'placed a new order');
+            $this->notifyToAdmin($orderId,'realizó un nuevo pedido');
 
-            return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Order successfully']);
+            return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Orden exitosamente']);
 
         }
         //cash
         $checkPaymentMethod = PaymentInfo::where('status','1')->where('type',$request->paymentMethod)->exists();
         if(!$checkPaymentMethod){
-            return back()->with(['error'=>'This payment method is currently not available.Please choose another one!']);
+            return back()->with(['error'=>'Este método de pago no está disponible actualmente. ¡Elija otro!']);
         }
 
         $data = $request->all();

@@ -26,8 +26,8 @@
                         <h5 class="my-2">Informacion para Procesar el pago</h5>
                     </div>
                     <div class="card-body">
-                        {{--<form action="{{ route('user#createOrder') }}" method="POST">--}}
-                           {{-- @csrf --}}
+                        <form action="{{ route('user#createOrder') }}" method="POST">
+                           @csrf
                             <div class="row">
                                 <div class="col-4">
                                     <div class="border-0 card">
@@ -157,18 +157,18 @@
                                                         <h5 class="mb-0">S/ {{ number_format($GrandTotal,2) }}</h5>
                                                     </div>
                                                     <hr>
-                                                    <div class="mb-3 card">
+                                                    <div class="mb-3 card d-none">
                                                         <div class="bg-transparent card-header">
                                                             <h5>Seleccionar metodo de Pago</h5>
                                                         </div>
                                                         <div class="card-body">
                                                             <div class="form-check" style="">
                                                                 <div class="p-1">
-                                                                    <input class="form-check-input" name="paymentMethod" value="kpay" type="radio" onclick="showVisaForm()" id="flexRadioDefault1">
-                                                                    <label class="form-check-label d-flex" for="flexRadioDefault1">
-                                                                    <img src="{{ asset('frontEnd/resources/image/kpay.png') }}" alt="" srcset="" class="rounded" style="width: 60px">
-                                                                    <span class="ms-2">NIUBIZ</span>
-                                                                </label>
+                                                                    <input class="form-check-input" name="paymentMethod" value="cos" type="radio" id="flexRadioDefault3" checked>
+                                                                    <label class="form-check-label" for="flexRadioDefault3">
+                                                                        <img src="https://e7.pngegg.com/pngimages/510/354/png-clipart-food-indian-cuisine-bangladeshi-cuisine-devops-dubai-cash-on-delivery-text-logo.png" alt="" srcset="" class="rounded" style="width: 60px">
+                                                                        <span class="ms-2">Contra reembolso</span>
+                                                                    </label>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -189,7 +189,7 @@
                                                     <button id="btnVisaNet" onclick="showVisaForm()">Pagar con Niubiz</button>-->
 
                                                     <!-- Formulario para el script de pago (oculto por defecto) -->
-                                                    <form id="frmVisaNet" style="display:none" action="{{ route('purchase.complete') }}">
+                                                    {{--<form id="frmVisaNet" style="display:none" action="{{ route('purchase.complete') }}">
                                                         <script src="{{ config('niubiz.js_url') }}"
                                                             data-sessiontoken="{{ $sessionKey }}"
                                                             data-channel="web"
@@ -200,8 +200,8 @@
                                                             data-expirationminutes="5"
                                                             data-timeouturl="{{ route('frontend#index') }}">
                                                         </script>
-                                                    </form>
-
+                                                    </form>--}}
+                                                    <button type="submit"  class="mt-3 text-white shadow btn btn-primary float-end btn-lg">Realizar el pago</button>
                                                 </div>
                                             </div>
 
@@ -209,7 +209,7 @@
                                     </div>
                                 </div>
                             </div>
-                        {{--</form>--}}
+                        </form>
                     </div>
                 </div>
             </div>
