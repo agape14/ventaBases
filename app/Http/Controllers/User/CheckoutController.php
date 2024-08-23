@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use App\Models\City;
 use App\Models\Coupon;
 use App\Models\Township;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Services\NiubizService;
 use Illuminate\Http\Request;
 use App\Models\StateDivision;
@@ -58,7 +60,12 @@ class CheckoutController extends Controller
         ]);
     }
 
+    public function pagarconfirmar($id,Request $request){ //dd($id);
+        $order = Order::where('order_id',$id)->with(['stateDivision','city','township','user','paymentTransition'])->first();
+        $orderItems = OrderItem::where('order_id',$id)->with(['product','color','size'])->get();
 
+        return view('frontEnd.profile.payment')->with(['order'=>$order,'orderItems'=>$orderItems]);
+    }
 
 
 }

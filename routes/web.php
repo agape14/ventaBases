@@ -34,7 +34,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\StockHistoryController;
 use App\Models\CompanySetting;
-use App\Http\Controllers\NiubizController;
+use App\Http\Controllers\User\NiubizController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -281,6 +281,7 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
     //NiubizController
     Route::post('/niubiz/session', [NiubizController::class, 'createSession'])->name('niubiz.session');
     Route::post('/purchase/complete', [NiubizController::class, 'completePurchase'])->name('purchase.complete');
+    Route::get('userpayment/{id}', [CheckoutController::class, 'pagarconfirmar'])->name('user#misPagos');
 
     //coupon
     Route::post('applyCoupon',[CartController::class,'applyCoupon'])->name('user#applyCoupon');
@@ -303,6 +304,7 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
 
     Route::get('profile/review',[ProfileController::class,'myReview'])->name('user#myReview');
 
+    Route::get('orders',[ProfileController::class,'myOrder'])->name('user#myOrder');
     Route::get('orders',[ProfileController::class,'myOrder'])->name('user#myOrder');
     Route::get('orders/detail/{id}',[ProfileController::class,'orderDetail'])->name('user#orderDetail');
     Route::get('downloadInvoice/{id}',[ProfileController::class,'downloadInvoice'])->name('user#download#downloadInvoice');

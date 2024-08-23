@@ -10,10 +10,11 @@
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('uploads/logo/'.$companyInfo->logo) }}">
 
-    <link rel="stylesheet" href="{{ asset('frontEnd/node_modules/@fortawesome/fontawesome-free/css/all.min.css')}}" >
-    <!-- <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"> -->
-    <link rel="stylesheet" href="{{ asset('frontEnd/node_modules/owl.carousel/dist/assets/owl.carousel.min.css')}}" >
-    <link rel="stylesheet" href="{{ asset('frontEnd/node_modules/owl.carousel/dist/assets/owl.theme.default.min.css')}}"    >
+    <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/owl.theme.default.min.css') }}">
+
+
     <link rel="stylesheet" href="{{ asset('frontEnd/scss/custom.css')}}">
     <!-- data tables -->
      <link rel="stylesheet" href="{{ asset('admin/plugins/data_table/dataTables.bootstrap4.min.css') }}">
@@ -367,10 +368,16 @@
         </div>
     </footer>
 
-    <script src="{{ asset('frontEnd/node_modules/jquery/dist/jquery.min.js')}}"></script>
+    <!-- JS -->
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.waypoints.min.js') }}"></script>
+
+    {{--<script src="{{ asset('frontEnd/node_modules/jquery/dist/jquery.min.js')}}"></script>
     <script src="{{ asset('frontEnd/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
     <script src="{{ asset('frontEnd/node_modules/owl.carousel/dist/owl.carousel.min.js')}}"></script>
-    <script src="{{ asset('frontEnd/node_modules/waypoints/lib/jquery.waypoints.min.js')}}"></script>
+    <script src="{{ asset('frontEnd/node_modules/waypoints/lib/jquery.waypoints.min.js')}}"></script>--}}
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- datatable --}}
     <script src="{{ asset('admin/plugins/data_table/jquery.dataTables.min.js') }}"></script>

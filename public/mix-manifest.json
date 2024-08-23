@@ -1,4 +1,19 @@
 {
     "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/css/app.css": "/css/app.css",
+    "/css/fontawesome.css": "/css/fontawesome.css",
+    "/webfonts/fa-brands-400.ttf": "/webfonts/fa-brands-400.ttf",
+    "/webfonts/fa-brands-400.woff2": "/webfonts/fa-brands-400.woff2",
+    "/webfonts/fa-regular-400.ttf": "/webfonts/fa-regular-400.ttf",
+    "/webfonts/fa-regular-400.woff2": "/webfonts/fa-regular-400.woff2",
+    "/webfonts/fa-solid-900.ttf": "/webfonts/fa-solid-900.ttf",
+    "/webfonts/fa-solid-900.woff2": "/webfonts/fa-solid-900.woff2",
+    "/webfonts/fa-v4compatibility.ttf": "/webfonts/fa-v4compatibility.ttf",
+    "/webfonts/fa-v4compatibility.woff2": "/webfonts/fa-v4compatibility.woff2",
+    "/css/owl.carousel.min.css": "/css/owl.carousel.min.css",
+    "/css/owl.theme.default.min.css": "/css/owl.theme.default.min.css",
+    "/js/jquery.min.js": "/js/jquery.min.js",
+    "/js/bootstrap.bundle.min.js": "/js/bootstrap.bundle.min.js",
+    "/js/owl.carousel.min.js": "/js/owl.carousel.min.js",
+    "/js/jquery.waypoints.min.js": "/js/jquery.waypoints.min.js"
 }

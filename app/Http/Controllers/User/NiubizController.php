@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use App\Services\NiubizService;
@@ -33,4 +33,6 @@ class NiubizController extends Controller
         // Para este ejemplo, simplemente redirigimos a una página de éxito
         return redirect()->route('order.success')->with('status', 'Compra completada con éxito.');
     }
+
+
 }

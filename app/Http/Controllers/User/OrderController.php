@@ -78,7 +78,8 @@ class OrderController extends Controller
             //new order notify to admin
             $this->notifyToAdmin($orderId,'realizó un nuevo pedido');
 
-            return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Orden exitosamente']);
+            return redirect()->route('user#misPagos', ['id' => $orderId])->with(['orderSuccess'=>'Orden exitosamente']);
+            //return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Orden exitosamente']);
 
         }
         //cash

@@ -9,7 +9,7 @@
                             <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i> Back</a></li>
                           <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Home</a></li>
                           <li class="breadcrumb-item"><a href="#">Profile</a></li>
-                          <li class="breadcrumb-item active" aria-current="page">My orders</li>
+                          <li class="breadcrumb-item active" aria-current="page">My ordersre</li>
                         </ol>
                     </nav>
                 </div>
