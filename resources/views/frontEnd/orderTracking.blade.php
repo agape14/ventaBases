@@ -93,7 +93,7 @@
                                     <div class="col"> <strong>Customer:</strong> <br>{{ $order->name }} </div>
                                     <div class="col"> <strong>Address :</strong> <br> {{ $order->address }} </div>
                                     <div class="col"> <strong>Order Items :</strong> <br> {{ $order->order_item_count }} items </div>
-                                    <div class="col"> <strong>Grand Total:</strong> <br> {{$order->grand_total}} Ks</div>
+                                    <div class="col"> <strong> Total:</strong> <br> {{$order->grand_total}}</div>
                                     <div class="col"> <strong>Status:</strong> <br> {{ $order->status }} </div>
                                 </div>
                             </div>

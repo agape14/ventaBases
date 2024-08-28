@@ -102,12 +102,12 @@
                                         <h5>{{ $item->name }}</h5>
                                         <div class="d-flex align-items-baseline">
                                             @if (!empty($item->discount_price))
-                                                <h6 class="mb-0 text-danger">{{ $item->selling_price - $item->discount_price }} Ks</h6>
+                                                <h6 class="mb-0 text-danger">{{ $item->selling_price - $item->discount_price }}</h6>
                                             @else
-                                                <h6 class="mb-0 text-danger">{{ $item->selling_price }} Ks</h6>
+                                                <h6 class="mb-0 text-danger">{{ $item->selling_price }}</h6>
                                             @endif
                                             @if (!empty($item->discount_price))
-                                                <p class="h6 mb-0 ms-2 text-black-50 text-decoration-line-through">{{ $item->selling_price }} Ks</p>
+                                                <p class="h6 mb-0 ms-2 text-black-50 text-decoration-line-through">{{ $item->selling_price }}</p>
                                             @endif
                                         </div>
                                     </div>

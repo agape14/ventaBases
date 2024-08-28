@@ -58,12 +58,12 @@
                                             {{ $item->totalVariants }}
                                         @endif
                                     </td>
-                                    <td>{{ $item->selling_price }} Ks</td>
+                                    <td>{{ $item->selling_price }}</td>
                                     <td>
                                         @if (!empty($item->discount_price))
-                                            {{ $item->discount_price }} Ks
+                                            {{ $item->discount_price }}
                                         @else
-                                            0 Ks
+                                            0
                                         @endif
                                     </td>
                                     <td>

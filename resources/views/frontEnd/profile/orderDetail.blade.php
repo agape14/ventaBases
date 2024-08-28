@@ -48,12 +48,12 @@
                                             @if (!empty($order->coupon_id))
                                             <tr>
                                                 <th>Coupon Discount</th>
-                                                <td>{{ $order->coupon_discount }} Ks</td>
+                                                <td>{{ $order->coupon_discount }}</td>
                                             </tr>
                                             @endif
                                             <tr>
-                                                <th>Grand Total</th>
-                                                <td>{{ $order->grand_total }} Ks</td>
+                                                <th> Total</th>
+                                                <td>{{ $order->grand_total }}</td>
                                             </tr>
                                             <tr>
                                                 <th>Order Date</th>
@@ -103,9 +103,9 @@
                                                     <td>{{ $item->product->name }}</td>
                                                     <td>{{ empty($item->color) ? '---' : $item->color->name}}</td>
                                                     <td>{{ empty($item->size) ? '---' : $item->size->name}}</td>
-                                                    <td>{{ $item->unit_price }} Ks</td>
+                                                    <td>{{ $item->unit_price }}</td>
                                                     <td>{{ $item->quantity }}</td>
-                                                    <td>{{ $item->total_price }} Ks</td>
+                                                    <td>{{ $item->total_price }}</td>
 
                                                 </tr>
                                                 @endforeach

@@ -17,7 +17,7 @@
                     </div>
                     <div class="ml-3">
                         <h6 class="mb-0 text-secondary">Today's Sale</h6>
-                        <h4 class="mb-0 font-weight-bolder">{{ number_format($todaySales) }} Ks</h4>
+                        <h4 class="mb-0 font-weight-bolder">{{ number_format($todaySales) }}</h4>
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                     </div>
                     <div class="ml-3">
                         <h6 class="mb-0 text-secondary">Monthly's Sale</h6>
-                        <h4 class="mb-0 font-weight-bolder">{{ number_format($monthlySales) }} Ks</h4>
+                        <h4 class="mb-0 font-weight-bolder">{{ number_format($monthlySales) }}</h4>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="ml-3">
                         <h6 class="mb-0 text-secondary">Yearly Sale</h6>
-                        <h4 class="mb-0 font-weight-bolder">{{ number_format($yearlySales) }} Ks</h4>
+                        <h4 class="mb-0 font-weight-bolder">{{ number_format($yearlySales) }}</h4>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                                             <img src="{{ asset('uploads/products').'/'.$item->preview_image }}" class="rounded shadow-sm" alt="" srcset="" style="width: 50px; height: 50px;">
                                         </td>
                                         <td>{{ $item->name }}</td>
-                                        <td>{{ $item->total_sales }} Ks</td>
+                                        <td>{{ $item->total_sales }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -153,7 +153,7 @@
                                         </th>
                                         <td>{{ $item->name }}</td>
                                         <td>{{ $item->email }}</td>
-                                        <td>{{ $item->total_sales }} Ks</td>
+                                        <td>{{ $item->total_sales }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

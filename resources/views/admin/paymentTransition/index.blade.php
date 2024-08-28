@@ -41,7 +41,7 @@
                                         <td>{{ $item->order->invoice_number }}</td>
                                         <td>{{ $item->order->user->name }}</td>
                                         <td>{{ $item->paymentInfo->name }}-{{ $item->paymentInfo->account_number }}</td>
-                                        <td>{{ $item->order->grand_total}} Ks</td>
+                                        <td>{{ $item->order->grand_total}}</td>
                                         <td class="font-weight-bold text-uppercase">{{ $item->order->payment_method  }}</td>
                                         <td>{{ $item->created_at->diffForHumans() }}</td>
                                         <td>

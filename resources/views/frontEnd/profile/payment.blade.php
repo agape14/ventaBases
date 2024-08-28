@@ -5,22 +5,6 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb d-flex align-items-center ">
-                        <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i> Regresar</a></li>
-                      <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Inicio</a></li>
-                      <li class="breadcrumb-item"><a href="#">Perfile</a></li>
-                      <li class="breadcrumb-item active" aria-current="page">Confirmar y Pagar</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                @include('frontEnd.profile/profileSidebar')
-
-            </div>
-            <div class="col-9">
                 <div class="card bg-white border-0 rounded">
                     <div class="card-header bg-transparent">
                         <div class="d-flex justify-content-between my-1 align-items-center">
@@ -28,34 +12,47 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <h5 class="mb-2 text-info">Mi compra</h5>
                         <div class="table-responsive">
-                            <table class="table table-hover" id="dataTable">
-                                <thead class="bg-primary text-white text-nowrap">
+                            <table class="table table-hover">
+                                <thead class="bg-info text-white text-nowrap">
                                     <tr>
-                                        <th scope="col">Item</th>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Descripcion Item</th>
                                         <th scope="col">Cantidad</th>
                                         <th scope="col">Precio</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{--@foreach ($orders as $item)
+                                    @foreach ($orderItems as $index => $item)
                                     <tr>
-                                        <td scope="row">{{ $item->order_date }}</td>
-                                        <td>{{ $item->invoice_number }}</td>
-                                        <td>{{ $item->grand_total }} Ks</td>
-                                        <td>{{ $item->payment_method }}</td>
-                                        <td>
-                                            <div class="badge bg-success">{{ $item->status }}</div>
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('user#orderDetail',$item->order_id) }}" class="btn btn-sm btn-info text-white "><i class="fas fa-eye me-2"></i>View</a>
-                                            <a target="_blank" href="{{ route('user#download#downloadInvoice',$item->order_id) }}" class="btn btn-sm btn-dark text-white"><i class="fas fa-download me-2"></i>Invoice</a>
-                                        </td>
+                                        <td scope="row">{{ $index + 1 }}</td>
+                                        <td>{{ $item->product->name }}</td>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td>S/ {{ number_format($item->unit_price, 2) }}</td>
                                     </tr>
-                                    @endforeach--}}
+                                    @endforeach
+                                    <tr class="bg-light font-weight-bold">
+                                        <td colspan="3" class="text-right">Total:</td>
+                                        <td>S/ {{ number_format($order->grand_total, 2) }}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
+                        <form id="frmVisaNet" action="{{ route('purchase.complete', ['id' => $order->order_id]) }}">
+                            @csrf
+                            <script src="{{ config('niubiz.js_url') }}"
+                                data-sessiontoken="{{ $sessionKey }}"
+                                data-channel="web"
+                                data-merchantid="{{ config('niubiz.merchant_id') }}"
+                                data-merchantlogo="{{ asset('uploads/logo/'.$companyInfo->logo) }}"
+                                data-purchasenumber="{{ $order->invoice_number }}"
+                                data-amount="{{ $order->grand_total }}"
+                                data-expirationminutes="5"
+                                data-timeouturl="{{ route('frontend#index') }}">
+                            </script>
+                        </form>
+
                     </div>
                 </div>
             </div>

@@ -45,7 +45,7 @@ class OrderController extends Controller
     //change order status
     public function confirmOrder($id){
         //confirm order status
-        $this->changeOrderStatus($id,'confirmed','confirmed_date');
+        $this->changeOrderStatus($id,'pagado','confirmed_date');
         //decrease product stock
         $orderItems = OrderItem::where('order_id',$id)->get();
         foreach($orderItems as $orderItem){

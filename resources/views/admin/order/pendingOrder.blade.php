@@ -28,7 +28,7 @@
                             <th>Order Date</th>
                             <th>Invoice Number</th>
                             <th>User Name</th>
-                            <th>Grand Total</th>
+                            <th> Total</th>
                             <th>Payment Method</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -41,7 +41,7 @@
                                 <td>{{ $item->order_date }}</td>
                                 <td>{{ $item->invoice_number }}</td>
                                 <td>{{ $item->user->name }}</td>
-                                <td>{{ $item->grand_total }} Ks</td>
+                                <td>{{ $item->grand_total }}</td>
                                 <td>{{ $item->payment_method }}</td>
                                 <td>
                                     <div class="badge bg-success">{{ $item->status }}</div>

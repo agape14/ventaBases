@@ -75,10 +75,10 @@
             <p><strong>Invoice Number:</strong>{{ $order->invoice_number }}</p>
             <p><strong>Order Date:</strong>{{ $order->order_date }}</p>
             <p><strong>Payment Method:</strong>{{ $order->payment_method }}</p>
-            @if ($order->payment_method == 'cos')
-                <p><strong>Payment Status:</strong>{{ $order->confirmed_date == null ? 'pending' : 'No Paid' }}</p>
+            @if ($order->payment_method == 'tarjeta')
+                <p><strong>Estado Pago:</strong>{{ $order->confirmed_date == null ? 'pendiente' : 'No pago' }}</p>
             @else
-                <p><strong>Payment Status:</strong>{{ $order->confirmed_date == null ? 'pending' : 'Paid' }}</p>
+                <p><strong>Estado Pago:</strong>{{ $order->confirmed_date == null ? 'pendiente' : 'Pagado' }}</p>
             @endif
          </div>
         </td>
@@ -115,8 +115,8 @@
             <td align="center">{{ empty($item->size) ? '---' : $item->size->name}}</td>
             {{-- <td align="center">product_code</td> --}}
             <td align="center">{{ $item->quantity }}</td>
-            <td align="center">{{ $item->unit_price }} Ks</td>
-            <td align="center">{{ $item->total_price }} Ks</td>
+            <td align="center">{{ $item->unit_price }}</td>
+            <td align="center">{{ $item->total_price }}</td>
         </tr>
     @endforeach
 
@@ -126,12 +126,12 @@
   <table width="100%" style=" padding:0 10px 0 10px;">
     <tr>
         <td align="right" >
-            <h2><span style="color: #02aab0;">Subtotal:</span> {{ $order->sub_total }} Ks</h2>
+            <h2><span style="color: #02aab0;">Subtotal:</span> {{ $order->sub_total }}</h2>
             @if (!empty($order->coupon_id))
-                <h2><span style="color: #02aab0;">Coupon Discount:</span> {{ $order->coupon_discount }} Ks</h2>
+                <h2><span style="color: #02aab0;">Coupon Discount:</span> {{ $order->coupon_discount }}</h2>
             @endif
             <hr>
-            <h2><span style="color: #02aab0;">Grand Total:</span> {{ $order->grand_total }} Ks</h2>
+            <h2><span style="color: #02aab0;"> Total:</span> {{ $order->grand_total }}</h2>
             {{-- <h2><span style="color: green;">Full Payment PAID</h2> --}}
         </td>
     </tr>

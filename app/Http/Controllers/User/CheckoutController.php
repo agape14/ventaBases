@@ -11,9 +11,9 @@ use App\Models\OrderItem;
 use App\Services\NiubizService;
 use Illuminate\Http\Request;
 use App\Models\StateDivision;
+use App\Models\CompanySetting;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
-
 
 class CheckoutController extends Controller
 {
@@ -61,10 +61,22 @@ class CheckoutController extends Controller
     }
 
     public function pagarconfirmar($id,Request $request){ //dd($id);
-        $order = Order::where('order_id',$id)->with(['stateDivision','city','township','user','paymentTransition'])->first();
-        $orderItems = OrderItem::where('order_id',$id)->with(['product','color','size'])->get();
-
-        return view('frontEnd.profile.payment')->with(['order'=>$order,'orderItems'=>$orderItems]);
+        if($id){
+            $order = Order::where('order_id',$id)->with(['stateDivision','city','township','user','paymentTransition'])->first();
+            if($order->status=='pending'){
+                $orderItems = OrderItem::where('order_id',$id)->with(['product','color','size'])->get();
+                $companyInfo = CompanySetting::orderBy('id','desc')->first();
+                $token = $this->niubizService->generateToken();
+                $sessionKey = $this->niubizService->generateSesion($order->grand_total, $token);
+                return view('frontEnd.profile.payment', compact('sessionKey'))->with(['order'=>$order,'orderItems'=>$orderItems,'companyInfo'=>$companyInfo]);
+            }else if($order->status=='confirmed'){
+                return redirect()->route('user#myOrder')->with('status', 'La compra ya se realizó anteriormente');
+            }else{
+                return redirect()->route('user#myOrder')->with('status', 'El estado de la compra no corresponde para pago');
+            }
+        }else{
+            return redirect()->route('user#myOrder')->with('status', 'El codigo de la compra no corresponde para pago');
+        }
     }
 
 

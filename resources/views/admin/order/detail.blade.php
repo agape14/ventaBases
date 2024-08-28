@@ -70,7 +70,7 @@
                 <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i>  Back</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('admin#dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('admin#order') }}" class="">Orders</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Details</li>
+              <li class="breadcrumb-item active" aria-current="page">Detalles</li>
             </ol>
           </nav>
     </div>
@@ -105,11 +105,11 @@
                 <table class="table table-bordered">
                     <tbody class="">
                         <tr>
-                            <th>Invoice Number</th>
+                            <th>Número de Pedido</th>
                             <td>{{ $order->invoice_number }}</td>
                         </tr>
                         <tr>
-                            <th>Payment</th>
+                            <th>Metodo de Pago</th>
                             <td>{{ $order->payment_method }}</td>
                         </tr>
                         <tr>
@@ -118,20 +118,20 @@
                         </tr>
                         @if (!empty($order->coupon_id))
                         <tr>
-                            <th>Coupon Discount</th>
-                            <td>{{ $order->coupon_discount }} Ks</td>
+                            <th>Cupon de Descuento</th>
+                            <td>{{ $order->coupon_discount }}</td>
                         </tr>
                         @endif
                         <tr>
-                            <th>Grand Total</th>
-                            <td>{{ $order->grand_total }} Ks</td>
+                            <th> Total</th>
+                            <td>{{ $order->grand_total }}</td>
                         </tr>
                         <tr>
-                            <th>Order Date</th>
+                            <th>Fecha Pedido</th>
                             <td>{{ $order->order_date }}</td>
                         </tr>
                         <tr>
-                            <th>Status</th>
+                            <th>Estado</th>
                             <td>
                                 <div class="badge bg-success">{{ $order->status }}</div>
                             </td>
@@ -141,19 +141,19 @@
                 <div class="float-right py-3 mt-3">
                     @if ($order->status == 'pending')
 
-                        <a href="{{ route('admin#confirmOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Confirm Order</a>
+                        <a href="{{ route('admin#confirmOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Confirmar pedido</a>
 
                     @elseif ($order->status == 'confirmed')
 
-                        <a href="{{ route('admin#processOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Process Order</a>
+                        <a href="{{ route('admin#processOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Procesar Pedido</a>
 
                     @elseif ($order->status == 'processing')
 
-                        <a href="{{ route('admin#pickOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Pick Order</a>
+                        <a href="{{ route('admin#pickOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Elegir Pedido</a>
 
                     @elseif ($order->status == 'picked')
 
-                        <a href="{{ route('admin#shipOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Ship Order</a>
+                        <a href="{{ route('admin#shipOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Enviar Pedido</a>
 
                     @elseif ($order->status == 'shipped')
 
@@ -243,9 +243,9 @@
                                 <td>{{ $item->product->name }}</td>
                                 <td>{{ empty($item->color) ? '---' : $item->color->name}}</td>
                                 <td>{{ empty($item->size) ? '---' : $item->size->name}}</td>
-                                <td>{{ $item->unit_price }} Ks</td>
+                                <td>{{ $item->unit_price }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>{{ $item->total_price }} Ks</td>
+                                <td>{{ $item->total_price }}</td>
 
                             </tr>
                             @endforeach
@@ -255,7 +255,7 @@
             </div>
         </div>
     </div>
-    @if ($order->payment_method != 'cos')
+    @if ($order->payment_method != 'tarjeta')
     <div class="col-12">
         <div class="my-3 shadow-none card">
             <div class="bg-transparent card-header">
@@ -277,7 +277,7 @@
                         </tr>
                         <tr>
                             <th>Amount</th>
-                            <td>{{ $order->paymentTransition->order->grand_total }} Ks</td>
+                            <td>{{ $order->paymentTransition->order->grand_total }}</td>
                         </tr>
                         <tr>
                             <th>Payment Photo</th>

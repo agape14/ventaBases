@@ -11,6 +11,8 @@ use App\Http\Controllers\Controller;
 use App\Models\CashOnDelivery;
 use App\Models\PaymentInfo;
 use App\Models\PaymentTransition;
+use App\Models\ProductVariant;
+use App\Models\StockHistory;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\UserOrderNotification;
@@ -145,7 +147,7 @@ class OrderController extends Controller
 
     //insert order data to ( order table and orderitems table )
     private function insertOrderData($request){
-        //insert data to order table
+        //insert data to order table 'MYSHOP'.'-'.
         $data = [
             'user_id' => auth()->user()->id,
             'name' => $request->name,
@@ -158,11 +160,11 @@ class OrderController extends Controller
             'note' => $request->note,
             'payment_method' => $request->paymentMethod,
             'sub_total' => Session::get('subTotal'),
-            'invoice_number' => 'MYSHOP'.'-'.mt_rand(10000000,99999999),
+            'invoice_number' => mt_rand(10000000,99999999),
             'order_date' => Carbon::now()->format('d F Y'),
              'order_month' => Carbon::now()->format('F'),
              'order_year' => Carbon::now()->format('Y'),
-             'status' => 'pending',
+             'status' => 'pendiente',
              'created_at' => Carbon::now(),
           ];
 
@@ -206,4 +208,50 @@ class OrderController extends Controller
         $admin = User::where('role','admin')->get();
         Notification::send($admin, new UserOrderNotification($data));
     }
+
+    public function completePurchase($id,Request $request)
+    {
+        //dd($request);
+        // Obtener el token de transacción y otros datos de la solicitud
+        $transactionToken = $request->input('transactionToken');
+        //$orderNumber = $request->input('orderNumber');
+        //dd($transactionToken,$id);
+        // Aquí puedes procesar la transacción, por ejemplo:
+        // - Validar el token de transacción con Niubiz
+        // - Actualizar el estado del pedido en la base de datos
+        // - Notificar al usuario sobre el estado de su compra
+        if($transactionToken){
+            $this->changeOrderStatus($id,'pagado','confirmed_date');
+            //decrease product stock
+            $orderItems = OrderItem::where('order_id',$id)->get();
+            foreach($orderItems as $orderItem){
+                $productVariant = ProductVariant::where('product_variant_id',$orderItem->product_variant_id)->first();
+                $stock = [
+                    'available_stock' => $productVariant->available_stock - $orderItem->quantity,
+                ];
+                ProductVariant::where('product_variant_id',$orderItem->product_variant_id)->update($stock);
+
+                //stock history
+                StockHistory::create([
+                    'product_id' => $productVariant->product_id,
+                    'product_variant_id' => $productVariant->product_variant_id,
+                    'quantity' => $orderItem->quantity,
+                    'note' => 'user order',
+                    'type' => 'out',
+                    'created_at' => Carbon::now(),
+                ]);
+            }
+            // Para este ejemplo, simplemente redirigimos a una página de éxito
+            return redirect()->route('user#myOrder')->with('status', 'Compra completada con éxito.');
+        }
+
+    }
+
+    private function changeOrderStatus($id,$status,$statusDate){
+        Order::where('order_id',$id)->update([
+            'status'=>$status,
+            $statusDate => Carbon::now(),
+        ]);
+    }
+
 }

@@ -38,7 +38,7 @@
                         </tr>
                         <tr>
                             <th>Amount</th>
-                            <td>{{ $paymentTransition->order->grand_total }} Ks</td>
+                            <td>{{ $paymentTransition->order->grand_total }}</td>
                         </tr>
                         <tr>
                             <th>Payment Photo</th>
@@ -83,12 +83,12 @@
                         @if (!empty($order->coupon_id))
                         <tr>
                             <th>Coupon Discount</th>
-                            <td>{{ $paymentTransition->order->coupon_discount }} Ks</td>
+                            <td>{{ $paymentTransition->order->coupon_discount }}</td>
                         </tr>
                         @endif
                         <tr>
-                            <th>Grand Total</th>
-                            <td>{{ $paymentTransition->order->grand_total }} Ks</td>
+                            <th> Total</th>
+                            <td>{{ $paymentTransition->order->grand_total }}</td>
                         </tr>
                         <tr>
                             <th>Order Date</th>

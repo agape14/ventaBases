@@ -75,7 +75,7 @@
                                 </td>
                                 <td class="text-start">${ response.wishlists[i].name }</td>
                                 <td class="text-start">${response.wishlists[i].short_description}</td>
-                                <td>${ response.wishlists[i].discount_price == null || response.wishlists[i].discount_price == 0 ? response.wishlists[i].selling_price : response.wishlists[i].selling_price - response.wishlists[i].discount_price } Ks</td>
+                                <td>${ response.wishlists[i].discount_price == null || response.wishlists[i].discount_price == 0 ? response.wishlists[i].selling_price : response.wishlists[i].selling_price - response.wishlists[i].discount_price }</td>
                                 <td>
                                     <a href="{{ url('product/detail/') }}/${response.wishlists[i].product_id}" class="btn btn-primary btn-sm text-white"><i class="fas fa-eye me-2"></i>View Detail</a>
                                 </td>

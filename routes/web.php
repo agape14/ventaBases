@@ -280,7 +280,6 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
 
     //NiubizController
     Route::post('/niubiz/session', [NiubizController::class, 'createSession'])->name('niubiz.session');
-    Route::post('/purchase/complete', [NiubizController::class, 'completePurchase'])->name('purchase.complete');
     Route::get('userpayment/{id}', [CheckoutController::class, 'pagarconfirmar'])->name('user#misPagos');
 
     //coupon
@@ -295,6 +294,8 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
 
     //my order track
     Route::get('track/myOrder',[OrderController::class,'trackOrder'])->name('user#trackOrder');
+
+    Route::post('purchase/complete/{id}', [OrderController::class, 'completePurchase'])->name('purchase.complete');
 
     //profile
     Route::get('profile',[ProfileController::class,'index'])->name('user#profile');
