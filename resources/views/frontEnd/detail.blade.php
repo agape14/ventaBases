@@ -104,6 +104,7 @@
                                             <a class="text-white btn btn-secondary" href="{{ route('frontend#index') }}">Seguir comprando <i class="fa fa-plus" aria-hidden="true"></i></a>
                                         @else
                                             <button class="text-white addToCart btn btn-primary" onclick="addToCart({{$product->product_id}},{{ $price }})">Agregar al carrito <i class="fa fa-cart-plus" aria-hidden="true"></i></button>
+                                            <a id="viewCartButton" class="text-white btn btn-success d-none" href="{{ route('frontend#viewCarts') }}"> Ver mi carrito <i class="fa fa-cart-arrow-down" aria-hidden="true"></i></a>
                                         @endif
                                     </div>
 

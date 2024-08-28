@@ -6,10 +6,10 @@
                 <div class="col-12">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb d-flex align-items-center ">
-                            <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i> Back</a></li>
-                          <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Home</a></li>
-                          <li class="breadcrumb-item"><a href="#">Profile</a></li>
-                          <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                            <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i> Regresar</a></li>
+                          <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Inicio</a></li>
+                          <li class="breadcrumb-item"><a href="#">Perfil</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Editar</li>
                         </ol>
                     </nav>
                 </div>
@@ -21,7 +21,7 @@
                 <div class="col-9">
                     <div class="mb-4 border-0 rounded card">
                         <div class="bg-white card-header">
-                            <h5 class="my-2">Edit Profile</h5>
+                            <h5 class="my-2">Editar Perfil</h5>
                         </div>
                         <div class="card-body">
                             @if (!empty($user->profile_photo_path))
@@ -32,28 +32,28 @@
                             <form action="{{ route('user#updateProfile') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="" class="form-label">Change Profile Photo</label>
+                                    <label for="" class="form-label">Cambiar foto de perfil</label>
                                     <input name="photo" type="file" class="form-control">
                                     @error('photo')
                                         <small class="text-danger">{{ $message }}</small>
                                     @enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label for="" class="form-label">Name</label>
+                                    <label for="" class="form-label">Nombre</label>
                                     <input name="name" type="text" class="form-control" value="{{ $user->name }}">
                                     @error('name')
                                         <small class="text-danger">{{ $message }}</small>
                                     @enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label for="" class="form-label">Email Address</label>
+                                    <label for="" class="form-label">Correo electrónico</label>
                                     <input name="email" type="email" class="form-control" value="{{ $user->email }}">
                                     @error('email')
                                         <small class="text-danger">{{ $message }}</small>
                                     @enderror
                                 </div>
 
-                                <button class="mt-3 text-white shadow btn btn-primary float-end">Update Profile</button>
+                                <button class="mt-3 text-white shadow btn btn-primary float-end">Actualizar Perfil</button>
                             </form>
                         </div>
                     </div>

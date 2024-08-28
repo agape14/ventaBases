@@ -17,9 +17,15 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\UserOrderNotification;
 use Illuminate\Support\Facades\Notification;
+use App\Services\NiubizService;
 
 class OrderController extends Controller
 {
+    protected $niubizService;
+    public function __construct(NiubizService $niubizService)
+    {
+        $this->niubizService = $niubizService;
+    }
     //track order by invoice
     public function trackOrder(Request $request){
 
@@ -161,8 +167,8 @@ class OrderController extends Controller
             'payment_method' => $request->paymentMethod,
             'sub_total' => Session::get('subTotal'),
             'invoice_number' => mt_rand(10000000,99999999),
-            'order_date' => Carbon::now()->format('d F Y'),
-             'order_month' => Carbon::now()->format('F'),
+            'order_date' => Carbon::now()->format('d/m/Y'),
+             'order_month' => Carbon::now()->locale('es')->format('F'),
              'order_year' => Carbon::now()->format('Y'),
              'status' => 'pendiente',
              'created_at' => Carbon::now(),
@@ -209,49 +215,108 @@ class OrderController extends Controller
         Notification::send($admin, new UserOrderNotification($data));
     }
 
-    public function completePurchase($id,Request $request)
+    public function completePurchase($id, Request $request)
     {
-        //dd($request);
         // Obtener el token de transacción y otros datos de la solicitud
         $transactionToken = $request->input('transactionToken');
-        //$orderNumber = $request->input('orderNumber');
-        //dd($transactionToken,$id);
-        // Aquí puedes procesar la transacción, por ejemplo:
-        // - Validar el token de transacción con Niubiz
-        // - Actualizar el estado del pedido en la base de datos
-        // - Notificar al usuario sobre el estado de su compra
-        if($transactionToken){
-            $this->changeOrderStatus($id,'pagado','confirmed_date');
-            //decrease product stock
-            $orderItems = OrderItem::where('order_id',$id)->get();
-            foreach($orderItems as $orderItem){
-                $productVariant = ProductVariant::where('product_variant_id',$orderItem->product_variant_id)->first();
-                $stock = [
-                    'available_stock' => $productVariant->available_stock - $orderItem->quantity,
-                ];
-                ProductVariant::where('product_variant_id',$orderItem->product_variant_id)->update($stock);
+        // Aquí puedes procesar la transacción con Niubiz y manejar los errores
+        if ($transactionToken) {
+            // Simulación de la respuesta de la API de Niubiz (debes reemplazar esto con la integración real)
+            $responseniubiztrans = $this->processNiubizTransaction($transactionToken, $id);
+            if (isset($responseniubiztrans['dataMap'])) {
+                $responseCode = $responseniubiztrans['dataMap']['ACTION_CODE'];
+                $responseMeg=$responseniubiztrans['dataMap']['ACTION_DESCRIPTION'];
+                // Manejo de diferentes códigos de respuesta
+                if ($responseCode == '000') {
+                    // Código 000 significa transacción exitosa
+                    $this->changeOrderStatus($id, 'pagado', 'confirmed_date');
 
-                //stock history
-                StockHistory::create([
-                    'product_id' => $productVariant->product_id,
-                    'product_variant_id' => $productVariant->product_variant_id,
-                    'quantity' => $orderItem->quantity,
-                    'note' => 'user order',
-                    'type' => 'out',
-                    'created_at' => Carbon::now(),
-                ]);
+                    // Disminuir stock de productos
+                    $this->decreaseStock($id);
+
+                    // Redirigir a la página de éxito
+                    return redirect()->route('user#myOrder')->with('status', 'Compra completada con éxito.');
+                } else {
+                    return redirect()->back()->with('error', $responseMeg);
+                }
+            } elseif (isset($responseniubiztrans['data'])) {
+                $responseCode = $responseniubiztrans['data']['ACTION_CODE'];
+                $responseMeg=$responseniubiztrans['data']['ACTION_DESCRIPTION'];
+                return redirect()->back()->with('error', $responseMeg);
             }
-            // Para este ejemplo, simplemente redirigimos a una página de éxito
-            return redirect()->route('user#myOrder')->with('status', 'Compra completada con éxito.');
+            else {
+                // Puedes lanzar una excepción, retornar un error específico o manejarlo de otra manera
+                $responseMeg = 'Error: formato de respuesta no reconocido';
+                return redirect()->back()->with('error', $responseMeg);
+            }
+        } else {
+            // En caso de que no se reciba el token
+            return redirect()->back()->with('error', 'No se pudo procesar la transacción. Inténtelo de nuevo.');
         }
-
     }
 
-    private function changeOrderStatus($id,$status,$statusDate){
-        Order::where('order_id',$id)->update([
-            'status'=>$status,
+    private function processNiubizTransaction($transactionToken, $id)
+    {
+        $order = Order::where('order_id', $id)->first();
+        $respuesta=$this->niubizService->generateAuthorization($order->grand_total,$order->invoice_number,$transactionToken);
+        return $respuesta;
+    }
+
+    private function getErrorMessage($responseCode)
+    {
+        $errorMessages = [
+            '101' => 'Tarjeta vencida.',
+            '102' => 'Operación no permitida para esta tarjeta.',
+            '113' => 'Monto no permitido.',
+            '116' => 'Fondos insuficientes.',
+            '118' => 'Tarjeta inválida.',
+            '129' => 'Tarjeta no operativa.',
+            '180' => 'Tarjeta inválida.',
+            '190' => 'Transacción inválida.',
+            '207' => 'Tarjeta perdida.',
+            '208' => 'Tarjeta perdida.',
+            '209' => 'Tarjeta robada.',
+            '666' => 'Problemas de comunicación.',
+            '670' => 'Transacción denegada por posible fraude.',
+            '678' => 'Error en autenticación.',
+            '754' => 'Comercio no válido.',
+            '191' => 'Contactar emisor.',
+            '0' => 'Afiliación a REC no exitosa.',
+            // Agrega otros códigos de error según sea necesario
+        ];
+
+        return $errorMessages[$responseCode] ?? 'Error desconocido. Inténtelo de nuevo.';
+    }
+
+    private function decreaseStock($id)
+    {
+        $orderItems = OrderItem::where('order_id', $id)->get();
+        foreach ($orderItems as $orderItem) {
+            $productVariant = ProductVariant::where('product_variant_id', $orderItem->product_variant_id)->first();
+            $stock = [
+                'available_stock' => $productVariant->available_stock - $orderItem->quantity,
+            ];
+            ProductVariant::where('product_variant_id', $orderItem->product_variant_id)->update($stock);
+
+            // Historial de stock
+            StockHistory::create([
+                'product_id' => $productVariant->product_id,
+                'product_variant_id' => $productVariant->product_variant_id,
+                'quantity' => $orderItem->quantity,
+                'note' => 'user order',
+                'type' => 'out',
+                'created_at' => Carbon::now(),
+            ]);
+        }
+    }
+
+    private function changeOrderStatus($id, $status, $statusDate)
+    {
+        Order::where('order_id', $id)->update([
+            'status' => $status,
             $statusDate => Carbon::now(),
         ]);
     }
+
 
 }

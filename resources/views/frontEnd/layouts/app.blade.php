@@ -388,7 +388,32 @@
     <script>
         $(document).ready(function () {
         // DataTable
-            $('#dataTable').DataTable();
+        $('#dataTable').DataTable({
+            language: {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
 
         // autocomplete search
             $('.searchInput').on('keyup',function () {
@@ -466,7 +491,7 @@
             Swal.fire({
                 icon: 'success',
                 title: "{{ Session::get('orderSuccess') }}",
-                text: 'El administrador confirmará su pedido pronto. ¡Gracias!',
+                text: 'El pedido se registro correctamente, para finalizar el proceso prosiga a pagar el pedido. ¡Gracias!',
                 showClass: {
                     popup: 'animate__animated animate__fadeInDown'
                 },
@@ -552,6 +577,10 @@
                                 icon: 'success',
                                 title: response.success,
                             })
+                            @if (!Session::has('cart'))
+                                $('#viewCartButton').removeClass('d-none');
+                            @endif
+
                         }
                     }
                 })

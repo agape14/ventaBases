@@ -1,8 +1,8 @@
 @extends('admin.layouts.app')
 @section('content')
     @php
-        $now = Carbon\Carbon::now();
-        $todaySales = App\Models\Order::where('order_date',$now->format('d F Y'))->sum('grand_total');
+        $now = Carbon\Carbon::now()->locale('es');
+        $todaySales = App\Models\Order::where('order_date',$now->format('d/m/Y'))->sum('grand_total');
         $monthlySales = App\Models\Order::where('order_month',$now->format('F'))->sum('grand_total');
         $yearlySales = App\Models\Order::where('order_year',$now->format('Y'))->sum('grand_total');
         $pendingOrders = App\Models\Order::where('status','pending')->count();

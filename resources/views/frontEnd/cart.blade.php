@@ -134,7 +134,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="my-2 mt-5 float-end">
-                                        <a href="{{ route('frontend#allProduct') }}" class=" btn btn-dark"><i class="fa fa-chevron-left"></i> Continuar Comprando</a>
+                                        <a href="{{ route('frontend#index') }}" class=" btn btn-dark"><i class="fa fa-chevron-left"></i> Continuar Comprando</a>
                                         <a href="{{ route('user#checkout') }}" class="text-white ms-3 btn btn-primary">Procesar el pago <i class="fa fa-credit-card"></i></a>
                                     </div>
                                 </div>

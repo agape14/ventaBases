@@ -13,6 +13,11 @@
                     </div>
                     <div class="card-body">
                         <h5 class="mb-2 text-info">Mi compra</h5>
+                        @if (session('error'))
+                            <div id="paymentErrorAlert" class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="bg-info text-white text-nowrap">
@@ -59,5 +64,30 @@
         </div>
     </div>
 </section>
+
+@endsection
+@section('script')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Encuentra el alert por su id
+        var paymentErrorAlert = document.getElementById('paymentErrorAlert');
+
+        // Solo si el alert existe
+        if (paymentErrorAlert) {
+            // Espera 5 segundos (5000 ms) antes de ocultar el alert
+            setTimeout(function() {
+                // Utiliza las clases de Bootstrap para ocultarlo con una animación de desvanecimiento
+                paymentErrorAlert.classList.add('fade');
+                paymentErrorAlert.classList.add('show');
+                paymentErrorAlert.style.transition = 'opacity 50s ease';
+
+                // Después de la animación, elimina el alert completamente del DOM
+                setTimeout(function() {
+                    paymentErrorAlert.remove();
+                }, 500); // Coincide con la duración de la animación de desvanecimiento
+            }, 5000); // Cambia el tiempo de espera aquí si lo deseas
+        }
+    });
+</script>
 
 @endsection

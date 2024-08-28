@@ -6,10 +6,10 @@
             <div class="col-12">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb d-flex align-items-center ">
-                        <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i> Back</a></li>
-                      <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Home</a></li>
-                      <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Products</a></li>
-                      <li class="breadcrumb-item active" aria-current="page">All</li>
+                        <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i> Regresar</a></li>
+                      <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Inicio</a></li>
+                      <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Productos</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Todo</li>
                     </ol>
                 </nav>
             </div>
@@ -21,7 +21,7 @@
 
                     <!-- -------------------------------categories------------------------------------- -->
                     <div class="">
-                      <div class="mb-2 fw-bolder">Categories</div>
+                      <div class="mb-2 fw-bolder">Categorias</div>
                       <div class="list-group">
                         @foreach ($categories as $item)
                             <a href="{{ route('frontend#catProduct',$item->category_id) }}" class="list-group-item list-group-item-action {{ Request::url() == route('frontend#catProduct',$item->category_id) ? 'active' : '' }}">{{ $item->name }}</a>
@@ -50,7 +50,7 @@
                         </div>
                         <div class="d-flex ">
                             <button class="btn btn-primary text-white w-100 me-2">Filter</button>
-                            <a href="{{ route('frontend#allProduct') }}" class="btn btn-outline-primary w-100 ">Cancel</a>
+                            <a href="{{ route('frontend#index') }}" class="btn btn-outline-primary w-100 ">Cancel</a>
                         </div>
                     </form>
 

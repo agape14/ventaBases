@@ -56,8 +56,10 @@ class NiubizService
     }
 
 
-    public function generateAuthorization($amount, $purchaseNumber, $transactionToken, $token)
+    public function generateAuthorization($amount, $purchaseNumber, $transactionToken)
     {
+        $token=$this->generateToken();
+        $url=config('niubiz.authorization_url').config('niubiz.merchantt_id');
         $data = [
             'antifraud' => null,
             'captureType' => 'manual',
@@ -72,11 +74,10 @@ class NiubizService
             'recurrence' => null,
             'sponsored' => null
         ];
-
-        $response = Http::withToken($token)
-            ->post(config('niubiz.authorization_url'), $data);
-
-        return json_decode($response->body());
+        $response = $this->postRequest($url,$data,$token);
+        $responseBody = json_decode($response, true);
+        //dd($responseBody );
+        return $responseBody;
     }
 
     public function generatePurchaseNumber()

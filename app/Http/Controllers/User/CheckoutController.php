@@ -63,7 +63,7 @@ class CheckoutController extends Controller
     public function pagarconfirmar($id,Request $request){ //dd($id);
         if($id){
             $order = Order::where('order_id',$id)->with(['stateDivision','city','township','user','paymentTransition'])->first();
-            if($order->status=='pending'){
+            if($order->status=='pendiente'){
                 $orderItems = OrderItem::where('order_id',$id)->with(['product','color','size'])->get();
                 $companyInfo = CompanySetting::orderBy('id','desc')->first();
                 $token = $this->niubizService->generateToken();

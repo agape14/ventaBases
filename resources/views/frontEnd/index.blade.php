@@ -93,7 +93,7 @@
                 <div class="mb-5">
                     <div class="d-flex justify-content-between align-items-baseline">
                         <h4 class="px-3 py-2 mb-0 text-white product-section-title bg-dark rounded-top">Listado de bases</h4>
-                        {{-- <a href="{{ route('frontend#allProduct') }}" class="btn">View All <i class="fas fa-chevron-right"></i></a> --}}
+                        {{-- <a href="{{ route('frontend#index') }}" class="btn">View All <i class="fas fa-chevron-right"></i></a> --}}
                     </div>
                     <div class="bg-dark" style="width: 100%;height: 2px;"></div>
                 </div>
@@ -161,7 +161,7 @@
                 <div class="mb-5">
                     <div class="d-flex justify-content-between align-items-baseline">
                         <h4 class="px-3 py-2 mb-0 text-white product-section-title bg-dark rounded-top">Just For You</h4>
-                        <a href="{{ route('frontend#allProduct') }}" class="btn">View All <i class="fas fa-chevron-right"></i></a>
+                        <a href="{{ route('frontend#index') }}" class="btn">View All <i class="fas fa-chevron-right"></i></a>
                     </div>
                     <div class="bg-dark" style="width: 100%;height: 2px;"></div>
                 </div>
