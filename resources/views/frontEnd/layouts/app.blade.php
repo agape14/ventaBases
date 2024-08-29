@@ -211,7 +211,7 @@
                                       </ul>
                                       <div class="d-flex align-items-center">
                                         <div class="me-2 d-none d-md-block">
-                                            <button type="button" class="py-3 text-white btn rounded-0 orderTrack" data-bs-toggle="modal" data-bs-target="#orderTrackModal" style="border-left: 1px solid #ffffff50;border-right: 1px solid #ffffff50;">Seguimiento de pedidos</button>
+                                            <button type="button" class="py-3 text-white btn rounded-0 orderTrack" data-bs-toggle="modal" data-bs-target="#orderTrackModal" style="border-left: 1px solid #ffffff50;border-right: 1px solid #ffffff50;">Seguimiento de pedidoss</button>
                                             <!-- Modal -->
                                             <div class="modal fade" id="orderTrackModal" tabindex="-1" aria-labelledby="orderTrackModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
@@ -235,9 +235,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="me-2 d-none d-md-block">
+                                        {{--<div class="me-2 d-none d-md-block">
                                             <a href="{{ route('user#wishlist') }}" class="btn btn-outline-light" title="My Wishlist"><i class="fas fa-heart"></i></a>
-                                        </div>
+                                        </div>--}}
                                         <div class="myAccount me-2 position-relative d-none d-md-block">
                                             <div class=" btn btn-outline-light"><i class="fas fa-user-alt"></i></div>
                                             @if (auth()->check())
@@ -374,10 +374,10 @@
     <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('js/jquery.waypoints.min.js') }}"></script>
 
-    {{--<script src="{{ asset('frontEnd/node_modules/jquery/dist/jquery.min.js')}}"></script>
+    <script src="{{ asset('frontEnd/node_modules/jquery/dist/jquery.min.js')}}"></script>
     <script src="{{ asset('frontEnd/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
     <script src="{{ asset('frontEnd/node_modules/owl.carousel/dist/owl.carousel.min.js')}}"></script>
-    <script src="{{ asset('frontEnd/node_modules/waypoints/lib/jquery.waypoints.min.js')}}"></script>--}}
+    <script src="{{ asset('frontEnd/node_modules/waypoints/lib/jquery.waypoints.min.js')}}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- datatable --}}
     <script src="{{ asset('admin/plugins/data_table/jquery.dataTables.min.js') }}"></script>
