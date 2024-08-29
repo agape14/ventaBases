@@ -65,26 +65,26 @@ class OrderController extends Controller
                 'created_at' => Carbon::now(),
             ]);
         }
-        return back()->with(['success'=>'Order Status Updated Successfully']);
+        return back()->with(['success'=>'Estado del pedido actualizado correctamente']);
     }
 
     public function processOrder($id){
-        $this->changeOrderStatus($id,'processing','processing_date');
-        return back()->with(['success'=>'Order Status Updated Successfully']);
+        $this->changeOrderStatus($id,'procesando','processing_date');
+        return back()->with(['success'=>'Estado del pedido actualizado correctamente']);
     }
 
     public function pickOrder($id){
-        $this->changeOrderStatus($id,'picked','picked_date');
-        return back()->with(['success'=>'Order Status Updated Successfully']);
+        $this->changeOrderStatus($id,'seleccionado','picked_date');
+        return back()->with(['success'=>'Estado del pedido actualizado correctamente']);
     }
     public function shipOrder($id){
-        $this->changeOrderStatus($id,'shipped','shipped_date');
-        return back()->with(['success'=>'Order Status Updated Successfully']);
+        $this->changeOrderStatus($id,'enviado','shipped_date');
+        return back()->with(['success'=>'Estado del pedido actualizado correctamente']);
     }
     public function deliverOrder($id){
         //update order status
-        $this->changeOrderStatus($id,'delivered','delivered_date');
-        return back()->with(['success'=>'Order Status Updated Successfully']);
+        $this->changeOrderStatus($id,'entregado','delivered_date');
+        return back()->with(['success'=>'Estado del pedido actualizado correctamente']);
     }
 
     private function changeOrderStatus($id,$status,$statusDate){

@@ -46,7 +46,8 @@ class CheckoutController extends Controller
 
     //get city ajax
     public function getCity(Request $request){
-        $cities = City::where('state_division_id',$request->id)->get();
+        //$cities = City::where('state_division_id',$request->id)->get();
+        $cities = City::where('city_id',1)->get();
         return response()->json([
             'cities' => $cities,
         ]);
@@ -54,7 +55,8 @@ class CheckoutController extends Controller
 
     //get township ajax
     public function getTownship(Request $request){
-        $townships = Township::where('city_id',$request->id)->get();
+        //$townships = Township::where('city_id',$request->id)->get();
+        $townships = Township::where('city_id',1)->get();
         return response()->json([
             'townships' => $townships,
         ]);

@@ -15,6 +15,7 @@ class Order extends Model
     use HasFactory;
     protected $fillable = [
         'order_id',
+        'customer_id',
         'user_id',
         'state_division_id',
         'city_id',
@@ -22,6 +23,8 @@ class Order extends Model
         'name',
         'email',
         'phone',
+        'tipo_persona',
+        'tipo_comprobante',
         'note',
         'payment_method',
         'sub_total',
@@ -60,5 +63,10 @@ class Order extends Model
 
     public function paymentTransition(){
         return $this->hasOne(PaymentTransition::class,'order_id','order_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 }

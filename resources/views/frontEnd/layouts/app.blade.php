@@ -20,9 +20,8 @@
      <link rel="stylesheet" href="{{ asset('admin/plugins/data_table/dataTables.bootstrap4.min.css') }}">
     {{-- animated css  --}}
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-     {{-- custom css  --}}
+     {{-- custom css <script src="{{ asset('frontEnd/node_modules/owl.carousel/dist/owl.carousel.min.js')}}"></script> --}}
     <link rel="stylesheet" href="{{ asset('frontEnd/resources/css/style.css')}}">
-
     <title>{{ $companyInfo->company_name}}</title>
 
     <style>
@@ -369,10 +368,10 @@
     </footer>
 
     <!-- JS -->
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    {{--<script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.waypoints.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.waypoints.min.js') }}"></script>--}}
 
     <script src="{{ asset('frontEnd/node_modules/jquery/dist/jquery.min.js')}}"></script>
     <script src="{{ asset('frontEnd/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>

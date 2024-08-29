@@ -25,6 +25,18 @@ return [
     'email' => 'El :attribute debe ser una dirección de correo electrónico válida.',
     'exists' => 'El :attribute seleccionado no es válido.',
     'filled' => 'El campo :attribute es obligatorio.',
+    'gt' => [
+        'array' => 'El :attribute debe tener más de :value elementos.',
+        'file' => 'El :attribute El debe ser mayor que :value kilobytes.',
+        'numeric' => 'El :attribute El debe ser mayor que :value.',
+        'string' => 'El :attribute El debe ser mayor de :value caracteres.',
+    ],
+    'gte' => [
+        'array' => 'El :attribute must have :value items or more.',
+        'file' => 'El :attribute El debe ser mayor o igual a :value kilobytes.',
+        'numeric' => 'El :attribute El debe ser mayor o igual a :value.',
+        'string' => 'El :attribute El debe ser mayor o igual a :value caracteres.',
+    ],
     'image' => 'El :attribute debe ser una imagen.',
     'in' => 'El :attribute seleccionado no es válido.',
     'in_array' => 'El campo :attribute no existe en :other.',

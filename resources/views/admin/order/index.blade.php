@@ -4,9 +4,9 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="bg-white breadcrumb d-flex align-items-center">
-                <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i>  Back</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin#dashboard') }}">Dashboard</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i>  Regresar</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin#dashboard') }}">Dasboard</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Pedidos</li>
             </ol>
           </nav>
     </div>
@@ -16,21 +16,21 @@
         <div class="rounded card" style="box-shadow: none !important">
             <div class="card-header">
                <div class="my-1 d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">All Orders - <div class="badge bg-dark">{{ $data->count() }}</div></h4>
+                    <h4 class="mb-0">Todos los Pedidos - <div class="badge bg-dark">{{ $data->count() }}</div></h4>
                     <form class="d-flex align-items-center" action="{{ route('admin#filterOrder') }}" method="GET">
                         @csrf
-                        <p class="mb-0 mr-2 text-nowrap">Order Status :</p>
+                        <p class="mb-0 mr-2 text-nowrap">Estado Pedidos :</p>
                         <select name="orderStatus" id="" class="mb-0 mr-2 custom-select">
-                            <option value="">All</option>
-                            <option value="pending" {{ request()->orderStatus == 'pending' ? 'selected' : ''}}>Pending</option>
-                            <option value="confirmed" {{ request()->orderStatus == 'confirmed' ? 'selected' : ''}}>confirmed</option>
-                            <option value="processing" {{ request()->orderStatus == 'processing' ? 'selected' : ''}}>processing</option>
-                            <option value="picked" {{ request()->orderStatus == 'picked' ? 'selected' : ''}}>picked</option>
-                            <option value="shipped" {{ request()->orderStatus == 'shipped' ? 'selected' : ''}}>shipped</option>
-                            <option value="delivered" {{ request()->orderStatus == 'delivered' ? 'selected' : ''}}>deliverd</option>
-                            <option value="completed" {{ request()->orderStatus == 'completed' ? 'selected' : ''}}>completed</option>
+                            <option value="">Todos</option>
+                            <option value="pendiente" {{ request()->orderStatus == 'pendiente' ? 'selected' : ''}}>Pendiente</option>
+                            <option value="pagado" {{ request()->orderStatus == 'pagado' ? 'selected' : ''}}>Pagado</option>
+                            <option value="procesando" {{ request()->orderStatus == 'procesando' ? 'selected' : ''}}>Procesando</option>
+                            <option value="seleccionado" {{ request()->orderStatus == 'seleccionado' ? 'selected' : ''}}>Seleccionado</option>
+                            <option value="enviado" {{ request()->orderStatus == 'enviado' ? 'selected' : ''}}>Enviado</option>
+                            <option value="entregado" {{ request()->orderStatus == 'entregado' ? 'selected' : ''}}>Entregado</option>
+                            <option value="completado" {{ request()->orderStatus == 'completado' ? 'selected' : ''}}>Completado</option>
                         </select>
-                        <button class="btn btn-primary">Filter</button>
+                        <button class="btn btn-primary">Filtrar</button>
                     </form>
                </div>
             </div>

@@ -26,43 +26,47 @@
                             <div class="my-3 border-0 card">
                                 <div class="bg-transparent card-header">
                                     <div class="d-flex justify-content-between">
-                                        <div class="h5">Order Detail</div>
-                                        <a href="{{ route('user#download#downloadInvoice',$order->order_id) }}" class="text-white btn btn-sm btn-dark"><i class="me-2 fas fa-download"></i> Download Invoice</a>
+                                        <div class="h5">Detalle de Pedidos</div>
+                                        {{--<a href="{{ route('user#download#downloadInvoice',$order->order_id) }}" class="text-white btn btn-sm btn-dark"><i class="me-2 fas fa-download"></i> Download Invoice</a>--}}
                                     </div>
                                 </div>
                                 <div class="card-body">
                                     <table class="table table-bordered">
                                         <tbody class="">
                                             <tr>
-                                                <th>Invoice Number</th>
+                                                <th>Numero de Pedido</th>
                                                 <td>{{ $order->invoice_number }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Payment</th>
+                                                <th>Metodo Pago</th>
                                                 <td>{{ $order->payment_method }}</td>
                                             </tr>
                                             <tr>
                                                 <th>Sub Total</th>
-                                                <td>{{ $order->sub_total }}</td>
+                                                <td>S/ {{ number_format($order->sub_total,2)  }}</td>
                                             </tr>
                                             @if (!empty($order->coupon_id))
                                             <tr>
-                                                <th>Coupon Discount</th>
+                                                <th>Cupon de Descuento</th>
                                                 <td>{{ $order->coupon_discount }}</td>
                                             </tr>
                                             @endif
                                             <tr>
                                                 <th> Total</th>
-                                                <td>{{ $order->grand_total }}</td>
+                                                <td>S/ {{ number_format($order->grand_total,2) }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Order Date</th>
+                                                <th>Fecha Pedido</th>
                                                 <td>{{ $order->order_date }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Status</th>
+                                                <th>Estado</th>
                                                 <td>
-                                                    <div class="badge bg-success">{{ $order->status }}</div>
+                                                    @if ($order->status == "pendiente")
+                                                        <div class="badge bg-danger">{{ $order->status }}</div>
+                                                    @else
+                                                        <div class="badge bg-success">{{ $order->status }}</div>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -74,7 +78,7 @@
                             <div class="bg-white border-0 card">
                                 <div class="bg-transparent card-header">
                                     <div class="my-1 d-flex justify-content-between align-items-center">
-                                        <h4 class="mb-0">Order Items</h4>
+                                        <h4 class="mb-0">Articulos</h4>
                                         {{-- <button class="btn btn-dark">Download Invoice</button> --}}
                                     </div>
                                 </div>
@@ -83,29 +87,25 @@
                                         <table class="table">
                                             <thead class="text-nowrap">
                                                 <tr>
-                                                    <th>id</th>
-                                                    <th>Image</th>
-                                                    <th>product</th>
-                                                    <th>color</th>
-                                                    <th>size</th>
-                                                    <th>unit Price</th>
-                                                    <th>quantity</th>
-                                                    <th>Total Price</th>
+                                                    {{--<th>id</th>--}}
+                                                    <th>Imagen</th>
+                                                    <th>producto</th>
+                                                    <th>Precio Unitario</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Total</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($orderItems as $item)
                                                 <tr>
-                                                    <td scope="row">{{ $item->order_item_id }}</td>
+                                                    {{--<td scope="row">{{ $item->order_item_id }}</td>--}}
                                                     <td>
                                                         <img src="{{ asset('uploads/products/'.$item->product->preview_image) }}" class="shadow-sm" alt="" srcset="" style="width: 100px; height: 100px">
                                                     </td>
                                                     <td>{{ $item->product->name }}</td>
-                                                    <td>{{ empty($item->color) ? '---' : $item->color->name}}</td>
-                                                    <td>{{ empty($item->size) ? '---' : $item->size->name}}</td>
-                                                    <td>{{ $item->unit_price }}</td>
+                                                    <td>{{ number_format($item->unit_price,2) }}</td>
                                                     <td>{{ $item->quantity }}</td>
-                                                    <td>{{ $item->total_price }}</td>
+                                                    <td>{{ number_format($item->total_price,2) }}</td>
 
                                                 </tr>
                                                 @endforeach
@@ -119,38 +119,38 @@
                             <div class="my-3 border-0 card">
                                 <div class="bg-transparent card-header">
                                     <div class="">
-                                        <div class="h5">Shipping Detail</div>
+                                        <div class="h5">Detalle de envío</div>
                                     </div>
                                 </div>
                                 <div class="card-body">
                                     <table class="table table-bordered">
                                         <tbody class="">
                                             <tr>
-                                                <th>Name</th>
+                                                <th>Nombre</th>
                                                 <td>{{ $order->name }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Email</th>
+                                                <th>Correo</th>
                                                 <td>{{ $order->email }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Phone</th>
+                                                <th>Celular</th>
                                                 <td>{{ $order->phone }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Region</th>
+                                                <th>Departamento</th>
                                                 <td>{{ $order->stateDivision->name }}</td>
                                             </tr>
                                             <tr>
-                                                <th>City</th>
+                                                <th>Provincia</th>
                                                 <td>{{ $order->city->name }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Township</th>
+                                                <th>Distrito</th>
                                                 <td>{{ $order->township->name }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Address</th>
+                                                <th>Dirección</th>
                                                 <td>{{ $order->address }}</td>
                                             </tr>
                                         </tbody>

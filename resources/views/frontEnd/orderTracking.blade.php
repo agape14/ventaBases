@@ -72,7 +72,7 @@
                         <ol class="breadcrumb d-flex align-items-center ">
                             <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i> Regresar</a></li>
                           <li class="breadcrumb-item"><a href="{{ route('frontend#index') }}">Inicio</a></li>
-                          <li class="breadcrumb-item active" aria-current="page">Order Tracking</li>
+                          <li class="breadcrumb-item active" aria-current="page">Seguimiento de Pedidos</li>
                         </ol>
                     </nav>
                 </div>
@@ -82,33 +82,33 @@
 
                     <div class="bg-white border-0 card rouned">
                         <div class="bg-transparent card-header">
-                            <h5 class="my-2"> My Orders / Tracking</h5>
+                            <h5 class="my-2"> Mis Pedidos / Seguimiento</h5>
                         </div>
                         <div class="card-body">
                             {{-- <h6 class="mb-3">Invoice Number: <strong>{{ $order->invoice_number }}</strong> </h6> --}}
                             <div class="card">
                                 <div class="card-body row">
-                                    <div class="col"> <strong>Invoice Number:</strong> <br>{{ $order->invoice_number }} </div>
-                                    <div class="col"> <strong>Order Date:</strong> <br>{{ $order->order_date }} </div>
-                                    <div class="col"> <strong>Customer:</strong> <br>{{ $order->name }} </div>
-                                    <div class="col"> <strong>Address :</strong> <br> {{ $order->address }} </div>
-                                    <div class="col"> <strong>Order Items :</strong> <br> {{ $order->order_item_count }} items </div>
-                                    <div class="col"> <strong> Total:</strong> <br> {{$order->grand_total}}</div>
-                                    <div class="col"> <strong>Status:</strong> <br> {{ $order->status }} </div>
+                                    <div class="col"> <strong>Número de Pedido:</strong> <br>{{ $order->invoice_number }} </div>
+                                    <div class="col"> <strong>Fecha de Pedido:</strong> <br>{{ $order->order_date }} </div>
+                                    <div class="col"> <strong>Cliente:</strong> <br>{{ $order->name }} </div>
+                                    <div class="col"> <strong>Direccion :</strong> <br> {{ $order->address }} </div>
+                                    <div class="col"> <strong>Articulos del pedido :</strong> <br> {{ $order->order_item_count }} articulo(s) </div>
+                                    <div class="col"> <strong> Total:</strong> <br>S/ {{ number_format($order->grand_total,2) }}</div>
+                                    <div class="col"> <strong>Estado:</strong> <br> {{ $order->status }} </div>
                                 </div>
                             </div>
                             <div class="track">
-                                <div class="step active"> <span class="icon"> <i class="fas fa-ellipsis-h"></i> </span> <span class="text">Pending</span> </div>
-                                <div class="step {{ $order->confirmed_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-check-circle"></i></span> <span class="text">Confirmed</span> </div>
-                                <div class="step {{ $order->processing_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-spinner"></i> </span> <span class="text">Processing</span> </div>
-                                <div class="step {{ $order->picked_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-box"></i> </span> <span class="text">Picked</span> </div>
-                                <div class="step {{ $order->shipped_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-truck"></i> </span> <span class="text">Shipped</span> </div>
-                                <div class="step {{ $order->delivered_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Delivered</span> </div>
+                                <div class="step active"> <span class="icon"> <i class="fas fa-ellipsis-h"></i> </span> <span class="text">Pendiente</span> </div>
+                                <div class="step {{ $order->confirmed_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-check-circle"></i></span> <span class="text">Pagado</span> </div>
+                                <div class="step {{ $order->processing_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-spinner"></i> </span> <span class="text">Procesando</span> </div>
+                                <div class="step {{ $order->picked_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-box"></i> </span> <span class="text">Seleccionado</span> </div>
+                                <div class="step {{ $order->shipped_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-truck"></i> </span> <span class="text">Enviado</span> </div>
+                                <div class="step {{ $order->delivered_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Entregado</span> </div>
                             </div>
                             <hr>
 
-                            <a href="{{ URL::previous() }}" class="btn btn-dark"> <i class="fa fa-chevron-left"></i> Back</a>
-                            <a href="{{ route('user#orderDetail',$order->order_id) }}" class="text-white btn btn-primary">View Order</a>
+                            <a href="{{ URL::previous() }}" class="btn btn-dark"> <i class="fa fa-chevron-left"></i> Regresar</a>
+                            <a href="{{ route('user#orderDetail',$order->order_id) }}" class="text-white btn btn-primary">Ver Pedido</a>
 
                         </div>
                     </div>

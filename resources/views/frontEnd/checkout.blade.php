@@ -29,84 +29,249 @@
                         <form action="{{ route('user#createOrder') }}" method="POST">
                            @csrf
                             <div class="row">
-                                <div class="col-4">
-                                    <div class="border-0 card">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Nombres Completos</label>
-                                                <input name="name" type="text" class="form-control" value="{{ old('name') }}" placeholder="Ingrese sus Nombres Completos" required>
-                                                @error('name')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Correo Electrónico</label>
-                                                <input name="email" type="email" class="form-control" value="{{ old('email') }}" placeholder="Ingrese su Correo Electrónico" required >
-                                                @error('email')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Celular</label>
-                                                <input name="phone" type="number" class="form-control" value="{{ old('phone') }}" placeholder="Ingrese su Celular" required>
-                                                @error('phone')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Mensaje</label>
-                                                <textarea name="note" class="form-control" id="" rows="3" placeholder="Ingrese su mensaje">{{ old('note') }}</textarea>
-                                                @error('note')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
+                                <div class="col-md-8">
+                                    <ul class="nav nav-tabs mb-3" id="myTab0" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link active" id="home-tab0" data-toggle="tab"  href="#persona_nat" role="tab" aria-controls="persona_nat" aria-selected="true">Persona Natural</a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" id="profile-tab0" data-toggle="tab" href="#persona_jur" role="tab" aria-controls="persona_jur" aria-selected="false">Persona Juridica</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent0">
+                                        <input type="hidden" name="tipo_persona" id="tipo_persona">
+                                        <div class="col-12">
+                                            <div class="alert alert-info  mb-0" role="alert">
+                                                <label class="form-label">Tipo Comprobante: </label>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="tipo_comprobante" id="tipo_comprobantef" value="B" checked>
+                                                    <label class="form-check-label" for="tipo_comprobantef">
+                                                      Boleta Electrónica
+                                                    </label>
+                                                  </div>
+                                                  <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="tipo_comprobante" id="tipo_comprobanteb" value="F">
+                                                    <label class="form-check-label" for="tipo_comprobanteb">
+                                                      Factura Electrónica
+                                                    </label>
+                                                  </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="border-0 card">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Departamento</label>
-                                                <select name="stateDivisionId" id="" class="stateDivisionsOption form-control" required>
-                                                    <option value="">----Seleccione Departamento----</option>
-                                                    @foreach ($stateDivisions as $item)
-                                                        <option value="{{ $item->state_division_id }}">{{ $item->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('stateDivisionId')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Provincia</label>
-                                                <select name="cityId" id="" class="cityOption form-control" disabled required>
-                                                    <option value="">----Seleccione Provincia----</option>
-                                                </select>
-                                                @error('cityId')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Distrito</label>
-                                                <select name="townshipId" id="" class="townshipOption form-control" disabled required>
-                                                    <option value="">----Seleccione Distrito----</option>
-                                                </select>
-                                                @error('townshipId')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-4">
-                                                <label for="" class="form-label">Dirección completa</label>
-                                                <input name="address" type="text" class="form-control" value="{{ old('address') }}" placeholder="Ingrese su Direccion completa" required>
-                                                @error('address')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
+                                        <div class="tab-pane fade show active" id="persona_nat" role="tabpanel" aria-labelledby="home-tab0">
 
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="border-0 card">
+                                                        <div class="card-body">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">DNI</label>
+                                                                <input name="persona_natural[dni]" type="number" class="form-control" value="{{ old('persona_natural.dni') }}" placeholder="00000000" maxlength="8" >
+                                                                @error('persona_natural.dni')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Correo Electrónico</label>
+                                                                <input name="persona_natural[email]" type="email" class="form-control" value="{{ old('persona_natural.email') }}" placeholder="Ingrese su Correo Electrónico"  >
+                                                                @error('persona_natural.email')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Celular</label>
+                                                                <input name="persona_natural[phone]" type="number" class="form-control" value="{{ old('persona_natural.phone') }}" placeholder="Ingrese su Celular" >
+                                                                @error('persona_natural.phone')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3 d-none">
+                                                                <label for="" class="form-label">Mensaje</label>
+                                                                <textarea name="note" class="form-control" id="" rows="3" placeholder="Ingrese su mensaje">{{ old('note') }}</textarea>
+                                                                @error('note')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="border-0 card">
+                                                        <div class="card-body">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Nombres Completos</label>
+                                                                <input name="persona_natural[name]" type="text" class="form-control" value="{{ old('persona_natural.name') }}" placeholder="Ingrese sus Nombres Completos" >
+                                                                @error('persona_natural.name')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-4">
+                                                                <label for="" class="form-label">Dirección completa</label>
+                                                                <input name="persona_natural[address]" type="text" class="form-control" value="{{ old('persona_natural.address') }}" placeholder="Ingrese su Direccion completa" >
+                                                                @error('persona_natural.address')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3 d-none">
+                                                                <label for="" class="form-label">Departamento</label>
+                                                                <select name="stateDivisionId" id="cbxDepartamentoNat" class="stateDivisionsOption form-control" >
+                                                                    <option value="">----Seleccione Departamento----</option>
+                                                                    @foreach ($stateDivisions as $item)
+                                                                        <option value="{{ $item->state_division_id }}">{{ $item->name }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                @error('stateDivisionId')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3 d-none">
+                                                                <label for="" class="form-label">Provincia</label>
+                                                                <select name="cityId" id="cbxProvinciaNat" class="cityOption form-control" disabled >
+                                                                    <option value="">----Seleccione Provincia----</option>
+                                                                </select>
+                                                                @error('cityId')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Distrito</label>
+                                                                <select name="persona_natural[distrito]" id="cbxDistritoNat" class="townshipOption form-control" disabled >
+                                                                    <option value="">----Seleccione Distrito----</option>
+                                                                </select>
+                                                                @error('persona_natural.distrito')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="persona_jur" role="tabpanel" aria-labelledby="profile-tab0">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="border-0 card">
+                                                        <div class="card-body">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">RUC</label>
+                                                                <input name="persona_juridica[ruc]" type="number" class="form-control" value="{{ old('persona_juridica.ruc') }}" placeholder="00000000000" maxlength="11" >
+                                                                @error('persona_juridica.ruc')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Correo Electrónico</label>
+                                                                <input name="persona_juridica[email]" type="email" class="form-control" value="{{ old('persona_juridica.email') }}" placeholder="Ingrese su Correo Electrónico"  >
+                                                                @error('persona_juridica.email')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Celular</label>
+                                                                <input name="persona_juridica[phone]" type="number" class="form-control" value="{{ old('persona_juridica.phone') }}" placeholder="Ingrese su Celular" >
+                                                                @error('persona_juridica.phone')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="border-0 card">
+                                                        <div class="card-body">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Razon Social</label>
+                                                                <input name="persona_juridica[razon_social]" type="text" class="form-control" value="{{ old('persona_juridica.razon_social') }}" placeholder="Ingrese sus Nombres Completos" >
+                                                                @error('persona_juridica.razon_social')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-4">
+                                                                <label for="" class="form-label">Dirección completa</label>
+                                                                <input name="persona_juridica[address]" type="text" class="form-control" value="{{ old('persona_juridica.address') }}" placeholder="Ingrese su Direccion completa" >
+                                                                @error('persona_juridica.address')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Distrito</label>
+                                                                <select name="persona_juridica[distrito]" id="cbxDistritoJuridica" class="townshipOption form-control" disabled >
+                                                                    <option value="">----Seleccione Distrito----</option>
+                                                                </select>
+                                                                @error('persona_juridica.distrito')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h5>Representante Legal</h5>
+                                                    <div class="row">
+                                                        <div class="col-3">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">DNI</label>
+                                                                <input name="representante_legal[dni]" type="number" class="form-control" value="{{ old('representante_legal.dni') }}" placeholder="00000000" maxlength="8" >
+                                                                @error('representante_legal.dni')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-9">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Nombres Completos</label>
+                                                                <input name="representante_legal[name]" type="text" class="form-control" value="{{ old('representante_legal.name') }}" placeholder="Ingrese sus Nombres Completos" >
+                                                                @error('representante_legal.name')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Correo Electrónico</label>
+                                                                <input name="representante_legal[email]" type="email" class="form-control" value="{{ old('representante_legal.email') }}" placeholder="Ingrese su Correo Electrónico"  >
+                                                                @error('representante_legal.email')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <div class="mb-4">
+                                                                <label for="" class="form-label">Dirección completa</label>
+                                                                <input name="representante_legal[address]" type="text" class="form-control" value="{{ old('representante_legal.address') }}" placeholder="Ingrese su Direccion completa" >
+                                                                @error('representante_legal.address')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Celular</label>
+                                                                <input name="representante_legal[phone]" type="number" class="form-control" value="{{ old('representante_legal.phone') }}" placeholder="Ingrese su Celular">
+                                                                @error('representante_legal.phone')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <div class="mb-3">
+                                                                <label for="" class="form-label">Distrito</label>
+                                                                <select name="representante_legal[distrito]" id="cbxDistritoRepresentante" class="townshipOption form-control" disabled>
+                                                                    <option value="">----Seleccione Distrito----</option>
+                                                                </select>
+                                                                @error('representante_legal.distrito')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-4">
                                     <div class="border-0 card">
                                         <div class="card-body">
@@ -164,10 +329,10 @@
                                                         <div class="card-body">
                                                             <div class="form-check" style="">
                                                                 <div class="p-1">
-                                                                    <input class="form-check-input" name="paymentMethod" value="cos" type="radio" id="flexRadioDefault3" checked>
+                                                                    <input class="form-check-input" name="paymentMethod" value="tarjeta" type="radio" id="flexRadioDefault3" checked>
                                                                     <label class="form-check-label" for="flexRadioDefault3">
                                                                         <img src="https://e7.pngegg.com/pngimages/510/354/png-clipart-food-indian-cuisine-bangladeshi-cuisine-devops-dubai-cash-on-delivery-text-logo.png" alt="" srcset="" class="rounded" style="width: 60px">
-                                                                        <span class="ms-2">Contra reembolso</span>
+                                                                        <span class="ms-2">Tarjeta</span>
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -176,31 +341,6 @@
                                                             <small class="text-danger">{{ $message }}</small>
                                                         @enderror
                                                     </div>
-
-                                                    {{--<button type="submit"  class="mt-3 text-white shadow btn btn-primary float-end btn-lg">Place Order</button>
-                                                    <button id="niubiz-button">Pagar con Niubiz</button>
-                                                    <form id="niubiz-form" action="{{ route('purchase.complete') }}" method="POST" style="display: none;">
-                                                        @csrf
-                                                        <input type="hidden" name="transactionToken" id="transactionToken">
-                                                        <input type="hidden" name="orderNumber" value="12525">
-                                                    </form>--}}
-
-                                                    <!-- Botón de pago (visible por defecto)
-                                                    <button id="btnVisaNet" onclick="showVisaForm()">Pagar con Niubiz</button>-->
-
-                                                    <!-- Formulario para el script de pago (oculto por defecto) -->
-                                                    {{--<form id="frmVisaNet" style="display:none" action="{{ route('purchase.complete') }}">
-                                                        <script src="{{ config('niubiz.js_url') }}"
-                                                            data-sessiontoken="{{ $sessionKey }}"
-                                                            data-channel="web"
-                                                            data-merchantid="{{ config('niubiz.merchant_id') }}"
-                                                            data-merchantlogo="{{ asset('uploads/logo/'.$companyInfo->logo) }}"
-                                                            data-purchasenumber="{{ $purchaseNumber }}"
-                                                            data-amount="{{ $amount }}"
-                                                            data-expirationminutes="5"
-                                                            data-timeouturl="{{ route('frontend#index') }}">
-                                                        </script>
-                                                    </form>--}}
                                                     <button type="submit"  class="mt-3 text-white shadow btn btn-primary float-end btn-lg">Realizar el pago</button>
                                                 </div>
                                             </div>
@@ -304,6 +444,14 @@
         $('.stateDivisionsOption').on('change',function(){
             let stateDivisionId = $(this).val();
             // alert(stateDivisionId);
+            getProvincias(stateDivisionId,0);
+        })
+        $('.cityOption').on('change',function(){
+            let cityId = $(this).val();
+            getDistritos(cityId);
+        })
+
+        function getProvincias(stateDivisionId,selected){
             $.ajax({
                 url: "{{ route('user#getCity') }}",
                 method: "post",
@@ -314,21 +462,23 @@
                 },
                 beforeSend:function(){
                     $('.cityOption').prop("disabled", false);
-                    $('.cityOpiton').html('<option>-----Loading-----</option>');
+                    $('.cityOpiton').html('<option>-----Cargando-----</option>');
                 },
                 success:function(response){
-                    let cityHtml = '<option  value="">-----Select City-----</option>';
+                    let cityHtml = '<option  value="">-----Seleccciona Provincia-----</option>';
                     for(let i= 0; i < response.cities.length; i++){
                         cityHtml += `<option value="${response.cities[i].city_id}">${response.cities[i].name}</option>`;
                     };
                     $('.cityOption').html(cityHtml);
-                    $('.townshipOption').html("<option>-----Select Township-----</option>");
-
+                    $('.townshipOption').html("<option>-----Seleccciona Distrito-----</option>");
+                    if(selected==1){
+                        $('#cbxProvinciaNat').val('1');
+                    }
                 }
             })
-        })
-        $('.cityOption').on('change',function(){
-            let cityId = $(this).val();
+        }
+
+        function getDistritos(cityId,selected){
             $.ajax({
                 url: "{{ route('user#getTownship') }}",
                 method: "post",
@@ -338,24 +488,97 @@
                     id: cityId,
                 },
                 beforeSend:function(){
-                    $('.townshipOption').prop("disabled", false);
-                    $('.townshipOpiton').html('<option>-----Loading-----</option>');
+                    $('#cbxDistritoNat').prop("disabled", false);
+                    $('#cbxDistritoNat').html('<option>-----Cargando-----</option>');
+                    $('#cbxDistritoJuridica').prop("disabled", false);
+                    $('#cbxDistritoJuridica').html('<option>-----Cargando-----</option>');
+                    $('#cbxDistritoRepresentante').prop("disabled", false);
+                    $('#cbxDistritoRepresentante').html('<option>-----Cargando-----</option>');
                 },
                 success:function(response){
-                    let townshipHtml = '<option value="">-----Select Township-----</option>';
+                    let townshipHtml = '<option value="">-----Seleccciona Distrito-----</option>';
                     for(let i= 0; i < response.townships.length; i++){
                         townshipHtml += `<option value="${response.townships[i].township_id}">${response.townships[i].name}</option>`;
                     };
-                    $('.townshipOption').html(townshipHtml);
+                    $('#cbxDistritoNat').html(townshipHtml);
+                    $('#cbxDistritoJuridica').html(townshipHtml);
+                    $('#cbxDistritoRepresentante').html(townshipHtml);
+                    if(selected==1){
+                        $('#cbxDistritoNat').val('2');
+                        $('#cbxDistritoJuridica').val('2');
+                        $('#cbxDistritoRepresentante').val('2');
+                    }
                 }
             })
-        })
+        }
+        $('#cbxDepartamentoNat').val('1');
+        getProvincias(1,1);
+        getDistritos(1,0);
+        $('#tipo_persona').val('N');
+        quitarrequiere_pers_natural();
+        $('#myTab0 a').on('click', function (e) {
+            e.preventDefault();
+            // Extrae el valor del atributo href
+            var target = $(this).attr('href');
 
-        showVisaForm = function() {
-            var frmVisa = document.getElementById('frmVisaNet');
-            if (frmVisa) {
-                frmVisa.style.display = 'block';
+            // Usa el valor del atributo href para determinar el tipo
+            var tipo = '';
+            if (target === '#persona_nat') {
+                $('#tipo_persona').val('N');
+                quitarrequiere_pers_natural();
+            } else if (target === '#persona_jur') {
+                $('#tipo_persona').val('J');
+                quitarrequiere_pers_juridica();
             }
+
+            console.log('Tipo seleccionado:', $('#tipo_persona').val());
+
+            $(this).tab('show');
+        });
+
+        function quitarrequiere_pers_natural(){
+
+            $('input[name="persona_natural[dni]"]').attr('required', true);
+            $('input[name="persona_natural[name]"]').attr('required', true);
+            $('input[name="persona_natural[email]"]').attr('required', true);
+            $('input[name="persona_natural[address]"]').attr('required', true);
+            $('input[name="persona_natural[phone]"]').attr('required', true);
+            $('input[name="persona_natural[distrito]"]').attr('required', true);
+
+            $('input[name="persona_juridica[ruc]"]').removeAttr('required');
+            $('input[name="persona_juridica[razon_social]"]').removeAttr('required');
+            $('input[name="persona_juridica[email]"]').removeAttr('required');
+            $('input[name="persona_juridica[address]"]').removeAttr('required');
+            $('input[name="persona_juridica[phone]"]').removeAttr('required');
+            $('input[name="persona_juridica[distrito]"]').removeAttr('required');
+            $('input[name="representante_legal[dni]"]').removeAttr('required');
+            $('input[name="representante_legal[name]"]').removeAttr('required');
+            $('input[name="representante_legal[email]"]').removeAttr('required');
+            $('input[name="representante_legal[address]"]').removeAttr('required');
+            $('input[name="representante_legal[phone]"]').removeAttr('required');
+            $('input[name="representante_legal[distrito]"]').removeAttr('required');
+        }
+        function quitarrequiere_pers_juridica(){
+            $('input[name="persona_juridica[ruc]"]').attr('required', true);
+            $('input[name="persona_juridica[razon_social]"]').attr('required', true);
+            $('input[name="persona_juridica[email]"]').attr('required', true);
+            $('input[name="persona_juridica[address]"]').attr('required', true);
+            $('input[name="persona_juridica[phone]"]').attr('required', true);
+            $('input[name="persona_juridica[distrito]"]').attr('required', true);
+
+            $('input[name="representante_legal[dni]"]').attr('required', true);
+            $('input[name="representante_legal[name]"]').attr('required', true);
+            $('input[name="representante_legal[email]"]').attr('required', true);
+            $('input[name="representante_legal[address]"]').attr('required', true);
+            $('input[name="representante_legal[phone]"]').attr('required', true);
+            $('input[name="representante_legal[distrito]"]').attr('required', true);
+
+            $('input[name="persona_natural[dni]"]').removeAttr('required');
+            $('input[name="persona_natural[name]"]').removeAttr('required');
+            $('input[name="persona_natural[email]"]').removeAttr('required');
+            $('input[name="persona_natural[address]"]').removeAttr('required');
+            $('input[name="persona_natural[phone]"]').removeAttr('required');
+            $('input[name="persona_natural[distrito]"]').removeAttr('required');
         }
     })
 // -----------for coupon-------------

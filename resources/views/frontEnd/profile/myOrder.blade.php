@@ -59,7 +59,7 @@
                                                 <a href="{{ route('user#misPagos',$item->order_id) }}" class="btn btn-sm btn-success text-white "><i class="far fa-money-bill-alt me-2"></i>Pagar</a>
                                                 @endif
                                                 <a href="{{ route('user#orderDetail',$item->order_id) }}" class="btn btn-sm btn-info text-white "><i class="fas fa-eye me-2"></i>Ver</a>
-                                                <a target="_blank" href="{{ route('user#download#downloadInvoice',$item->order_id) }}" class="btn btn-sm btn-dark text-white"><i class="fas fa-download me-2"></i>Recibo</a>
+                                                {{--<a target="_blank" href="{{ route('user#download#downloadInvoice',$item->order_id) }}" class="btn btn-sm btn-dark text-white"><i class="fas fa-download me-2"></i>Recibo</a>--}}
                                             </td>
                                         </tr>
                                         @endforeach

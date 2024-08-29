@@ -67,9 +67,9 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="bg-white breadcrumb d-flex align-items-center">
-                <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i>  Back</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin#dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin#order') }}" class="">Orders</a></li>
+                <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i>  Regresar</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin#dashboard') }}">Panel de Control</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin#order') }}" class="">Pedidos</a></li>
               <li class="breadcrumb-item active" aria-current="page">Detalles</li>
             </ol>
           </nav>
@@ -80,12 +80,12 @@
         <div class="my-2 shadow-none card">
             <div class="card-body">
                 <div class="track">
-                    <div class="step active"> <span class="icon"> <i class="fas fa-ellipsis-h"></i> </span> <span class="text">Pending</span> </div>
-                    <div class="step {{ $order->confirmed_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-check-circle"></i></span> <span class="text">Confirmed</span> </div>
-                    <div class="step {{ $order->processing_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-spinner"></i> </span> <span class="text">Processing</span> </div>
-                    <div class="step {{ $order->picked_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-box"></i> </span> <span class="text">Picked</span> </div>
-                    <div class="step {{ $order->shipped_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-truck"></i> </span> <span class="text">Shipped</span> </div>
-                    <div class="step {{ $order->delivered_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Delivered</span> </div>
+                    <div class="step active"> <span class="icon"> <i class="fas fa-ellipsis-h"></i> </span> <span class="text">Pendiente</span> </div>
+                    <div class="step {{ $order->confirmed_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-check-circle"></i></span> <span class="text">Confirmado</span> </div>
+                    <div class="step {{ $order->processing_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-spinner"></i> </span> <span class="text">Procesando</span> </div>
+                    <div class="step {{ $order->picked_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-box"></i> </span> <span class="text">Seleccionado</span> </div>
+                    <div class="step {{ $order->shipped_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-truck"></i> </span> <span class="text">Enviado</span> </div>
+                    <div class="step {{ $order->delivered_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Entregado</span> </div>
                 </div>
             </div>
         </div>
@@ -139,25 +139,24 @@
                     </tbody>
                 </table>
                 <div class="float-right py-3 mt-3">
-                    @if ($order->status == 'pending')
-
+                    {{--@if ($order->status == 'pendiente')
                         <a href="{{ route('admin#confirmOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Confirmar pedido</a>
-
-                    @elseif ($order->status == 'confirmed')
+                    @else--}}
+                    @if ($order->status == 'pagado')
 
                         <a href="{{ route('admin#processOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Procesar Pedido</a>
 
-                    @elseif ($order->status == 'processing')
+                    @elseif ($order->status == 'procesando')
 
                         <a href="{{ route('admin#pickOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Elegir Pedido</a>
 
-                    @elseif ($order->status == 'picked')
+                    @elseif ($order->status == 'seleccionado')
 
                         <a href="{{ route('admin#shipOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Enviar Pedido</a>
 
-                    @elseif ($order->status == 'shipped')
+                    @elseif ($order->status == 'enviado')
 
-                        <a href="{{ route('admin#deliverOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Deliver Order</a>
+                        <a href="{{ route('admin#deliverOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Entregar Pedido</a>
 
                     @endif
 
@@ -307,13 +306,14 @@
                 e.preventDefault();
                 let link = $(this).attr("href");
                 Swal.fire({
-                    title: 'Are you sure to change order status?',
+                    title: '¿Estás seguro de cambiar el estado del pedido?',
                     // text: "",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Change Status!'
+                    confirmButtonText: 'Sí, cambiar estado!',
+                    cancelButtonText: 'Cancelar',
                     }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = link;

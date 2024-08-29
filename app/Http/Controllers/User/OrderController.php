@@ -13,6 +13,7 @@ use App\Models\PaymentInfo;
 use App\Models\PaymentTransition;
 use App\Models\ProductVariant;
 use App\Models\StockHistory;
+use App\Models\CountOrder;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\UserOrderNotification;
@@ -33,19 +34,19 @@ class OrderController extends Controller
             'invoiceNumber'=> 'required',
         ]);
         if($validation->fails()){
-            return back()->with(['error'=>'Invoice code must be requird']);
+            return back()->with(['error'=>'El código de pedido es obligatorio.']);
         }
 
         $order = Order::select('*')->where('invoice_number',$request->invoiceNumber)->withCount('orderItem')->first();
         if($order){
             return view('frontEnd.orderTracking')->with(['order'=>$order]);
         }else{
-            return back()->with(['error'=>'Your invoice code is Invalid']);
+            return back()->with(['error'=>'Su código de pedido no es válido']);
         }
     }
 
     //create
-    public function createOrder(Request $request){
+    public function createOrder(Request $request){ dd($request);
         //empty cart checking
         if(Session::has('cart')){
             if(count(Session::get('cart')) == 0){
@@ -70,7 +71,7 @@ class OrderController extends Controller
         }
 
         //cash on delivery
-        if($request->paymentMethod == 'cos'){
+        if($request->paymentMethod == 'tarjeta'){
 
             $checkCos = CashOnDelivery::where('status','1')->where('township_id',$request->townshipId)->exists();
             if(!$checkCos){
@@ -139,9 +140,9 @@ class OrderController extends Controller
         $this->destroySessionData();
 
         //new order notify to admin
-        $this->notifyToAdmin($orderId,'placed a new order');
+        $this->notifyToAdmin($orderId,'realizó un nuevo pedido');
 
-        return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Order successfully']);
+        return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Pedido realizado exitosamente']);
     }
 
     //destory session data
@@ -153,7 +154,8 @@ class OrderController extends Controller
 
     //insert order data to ( order table and orderitems table )
     private function insertOrderData($request){
-        //insert data to order table 'MYSHOP'.'-'.
+        //insert data to order table 'MYSHOP'.'-'. //mt_rand(10000000,99999999),
+        $countOrder = CountOrder::first();
         $data = [
             'user_id' => auth()->user()->id,
             'name' => $request->name,
@@ -166,7 +168,7 @@ class OrderController extends Controller
             'note' => $request->note,
             'payment_method' => $request->paymentMethod,
             'sub_total' => Session::get('subTotal'),
-            'invoice_number' => mt_rand(10000000,99999999),
+            'invoice_number' => $countOrder->order_number,
             'order_date' => Carbon::now()->format('d/m/Y'),
              'order_month' => Carbon::now()->locale('es')->format('F'),
              'order_year' => Carbon::now()->format('Y'),
@@ -199,7 +201,10 @@ class OrderController extends Controller
                   'total_price' => $cart['price'] * $cart['quantity'],
               ]);
           }
-
+          if($orderId){
+            $countOrder->order_number += 1;
+            $countOrder->save();
+          }
           return $orderId;
     }
 
@@ -260,32 +265,6 @@ class OrderController extends Controller
         $order = Order::where('order_id', $id)->first();
         $respuesta=$this->niubizService->generateAuthorization($order->grand_total,$order->invoice_number,$transactionToken);
         return $respuesta;
-    }
-
-    private function getErrorMessage($responseCode)
-    {
-        $errorMessages = [
-            '101' => 'Tarjeta vencida.',
-            '102' => 'Operación no permitida para esta tarjeta.',
-            '113' => 'Monto no permitido.',
-            '116' => 'Fondos insuficientes.',
-            '118' => 'Tarjeta inválida.',
-            '129' => 'Tarjeta no operativa.',
-            '180' => 'Tarjeta inválida.',
-            '190' => 'Transacción inválida.',
-            '207' => 'Tarjeta perdida.',
-            '208' => 'Tarjeta perdida.',
-            '209' => 'Tarjeta robada.',
-            '666' => 'Problemas de comunicación.',
-            '670' => 'Transacción denegada por posible fraude.',
-            '678' => 'Error en autenticación.',
-            '754' => 'Comercio no válido.',
-            '191' => 'Contactar emisor.',
-            '0' => 'Afiliación a REC no exitosa.',
-            // Agrega otros códigos de error según sea necesario
-        ];
-
-        return $errorMessages[$responseCode] ?? 'Error desconocido. Inténtelo de nuevo.';
     }
 
     private function decreaseStock($id)
