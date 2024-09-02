@@ -14,6 +14,9 @@ use App\Models\PaymentTransition;
 use App\Models\ProductVariant;
 use App\Models\StockHistory;
 use App\Models\CountOrder;
+use App\Models\Customer;
+use App\Models\PersonaNatural;
+use App\Models\PersonaJuridica;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\UserOrderNotification;
@@ -46,7 +49,7 @@ class OrderController extends Controller
     }
 
     //create
-    public function createOrder(Request $request){ dd($request);
+    public function createOrder(Request $request){ //dd($request);
         //empty cart checking
         if(Session::has('cart')){
             if(count(Session::get('cart')) == 0){
@@ -56,27 +59,59 @@ class OrderController extends Controller
             return back()->with(['error'=>'¡Tu carrito está vacío!']);
         }
         //validation
-        $validation = Validator::make($request->all(),[
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required',
-            'stateDivisionId' => 'required',
-            'cityId' => 'required',
-            'townshipId' => 'required',
-            'address' => 'required',
-            'paymentMethod' => 'required',
-        ]);//dd($request);
-        if($validation->fails()){
+         // Validación común para ambos tipos de persona
+         // Reglas comunes
+        $rules = [
+            'tipo_persona' => 'required|in:N,J',
+            'tipo_comprobante' => 'required|string',
+            'stateDivisionId' => 'required|integer',
+            'cityId' => 'required|integer',
+            'paymentMethod' => 'required|string',
+        ];
+
+        // Validación condicional para persona natural
+        if ($request->input('tipo_persona') === 'N') {
+            $rules['persona_natural.dni'] = 'required|string|max:8';
+            $rules['persona_natural.email'] = 'required|email';
+            $rules['persona_natural.phone'] = 'required|string';
+            $rules['persona_natural.name'] = 'required|string';
+            $rules['persona_natural.address'] = 'required|string';
+            $rules['persona_natural.distrito'] = 'required|integer';
+        }
+
+        // Validación condicional para persona jurídica
+        if ($request->input('tipo_persona') === 'J') {
+            $rules['persona_juridica.ruc'] = 'required|string|max:11';
+            $rules['persona_juridica.email'] = 'required|email';
+            $rules['persona_juridica.phone'] = 'required|string';
+            $rules['persona_juridica.razon_social'] = 'required|string';
+            $rules['persona_juridica.address'] = 'required|string';
+            $rules['persona_juridica.distrito'] = 'required|integer';
+
+            $rules['representante_legal.dni'] = 'required|string|max:8';
+            $rules['representante_legal.name'] = 'required|string';
+            $rules['representante_legal.email'] = 'required|email';
+            $rules['representante_legal.address'] = 'required|string';
+            $rules['representante_legal.phone'] = 'required|string';
+            $rules['representante_legal.distrito'] = 'required|integer';
+        }
+
+        // Realizar la validación
+        $validation = Validator::make($request->all(), $rules);
+        //dd($validation->fails());
+        //dd($request);
+        // Manejar los errores de validación
+        if ($validation->fails()) {
             return back()->withErrors($validation)->withInput();
         }
 
         //cash on delivery
         if($request->paymentMethod == 'tarjeta'){
-
+            /*
             $checkCos = CashOnDelivery::where('status','1')->where('township_id',$request->townshipId)->exists();
             if(!$checkCos){
                 return back()->with(['error'=>'El pago contra reembolso no está disponible actualmente para su ubicación. ¡Elija otra!']);
-            }
+            }*/
 
             //insert data to order table and order items table
             $orderId = $this->insertOrderData($request);
@@ -156,25 +191,86 @@ class OrderController extends Controller
     private function insertOrderData($request){
         //insert data to order table 'MYSHOP'.'-'. //mt_rand(10000000,99999999),
         $countOrder = CountOrder::first();
+
+
+
+        if ($request->input('tipo_persona') === 'N') {
+            // Datos de persona natural
+            $name = $request->input('persona_natural.name');
+            $email = $request->input('persona_natural.email');
+            $phone = $request->input('persona_natural.phone');
+            $address = $request->input('persona_natural.address');
+            $distrito = $request->input('persona_natural.distrito');
+        } else {
+            // Datos de persona jurídica
+            $name = $request->input('persona_juridica.razon_social');
+            $email = $request->input('persona_juridica.email');
+            $phone = $request->input('persona_juridica.phone');
+            $address = $request->input('persona_juridica.address');
+            $distrito = $request->input('persona_juridica.distrito');
+        }
+
+        $customerData = [
+            'customer_type' => $request->input('tipo_persona') === 'N' ? 'natural' : 'juridica',
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'address' => $address,
+            'created_at' => Carbon::now(),
+        ];
+
+        $customerId = Customer::insertGetId($customerData);
+        if ($request->input('tipo_persona') === 'N') {
+            // Insertar en 'personas_naturales'
+            $personaNaturalId = PersonaNatural::insertGetId([
+                'customer_id' => $customerId,
+                'dni' => $request->input('persona_natural.dni'),
+                'created_at' => Carbon::now(),
+            ]);
+        } else {
+            // Insertar en 'personas_juridicas'
+            $customerRepresentante = [
+                'customer_type' => 'natural',
+                'name' => $request->input('representante_legal.name'),
+                'email' => $request->input('representante_legal.email'),
+                'phone' => $request->input('representante_legal.phone'),
+                'address' => $request->input('representante_legal.address'),
+                'created_at' => Carbon::now(),
+            ];
+
+            $representanteId = Customer::insertGetId($customerRepresentante);
+            $representanteNaturalId = PersonaNatural::insertGetId([
+                'customer_id' => $representanteId,
+                'dni' => $request->input('representante_legal.dni'),
+                'created_at' => Carbon::now(),
+            ]);
+            $personaJuridicaId = PersonaJuridica::insertGetId([
+                'customer_id' => $customerId,
+                'ruc' => $request->input('persona_juridica.ruc'),
+                'razon_social' => $request->input('persona_juridica.razon_social'),
+                'representante_legal_id' => $representanteNaturalId,
+                'created_at' => Carbon::now(),
+            ]);
+        }
         $data = [
             'user_id' => auth()->user()->id,
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
             'state_division_id' => $request->stateDivisionId,
             'city_id' => $request->cityId,
-            'township_id' => $request->townshipId,
-            'address' => $request->address,
+            'township_id' => $distrito,
+            'address' => $address,
             'note' => $request->note,
             'payment_method' => $request->paymentMethod,
             'sub_total' => Session::get('subTotal'),
             'invoice_number' => $countOrder->order_number,
             'order_date' => Carbon::now()->format('d/m/Y'),
-             'order_month' => Carbon::now()->locale('es')->format('F'),
-             'order_year' => Carbon::now()->format('Y'),
-             'status' => 'pendiente',
-             'created_at' => Carbon::now(),
-          ];
+            'order_month' => Carbon::now()->locale('es')->format('F'),
+            'order_year' => Carbon::now()->format('Y'),
+            'status' => 'pendiente',
+            'created_at' => Carbon::now(),
+        ];
 
           if(Session::has('coupon')){
               $coupon = Session::get('coupon');
