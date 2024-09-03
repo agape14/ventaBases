@@ -356,6 +356,9 @@ class OrderController extends Controller
                      "<b>Tipo de moneda:</b> $tipomonedaTexto<br>".
                      "<b>Tarjeta:</b> $tarjeta<br>" .
                      "<b>Tipo Tarjeta:</b> $tipotarjeta"  ;
+                     Order::where('order_id', $id)->update([
+                        'note' => $responseniubiztrans['dataMap']
+                    ]);
                      //dd($mensajeSuccessFormateado );
                      return redirect()->route('user#myOrder')->with(['niubizbtnpagorealizado'=>$mensajeSuccessFormateado]);
                 } else {
@@ -368,7 +371,9 @@ class OrderController extends Controller
                 $fechahorapedido=$responseniubiztrans['data']['TRANSACTION_DATE'];
                 $parsedDate = Carbon::createFromFormat('ymdHis', $fechahorapedido);
                 $formattedDate = $parsedDate->format('d/m/y H:i:s');
-
+                Order::where('order_id', $id)->update([
+                    'note' => $responseniubiztrans['data']
+                ]);
                 $mensajeErrorFormateado = "<b>Número de pedido:</b> $nropedido<br>" .
                      "<b>Fecha y hora del pedido:</b> $formattedDate<br>" .
                      "<b>Descripción de la denegación:</b> $responseMeg";
