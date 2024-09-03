@@ -14,8 +14,23 @@ class OrderController extends Controller
 {
     //index
     public function index(){
-        $data = Order::with('user')->get();
-        return view('admin.order.index')->with(['data'=>$data]);
+        $orders = Order::where('status', 'pagado')
+        ->with('user')
+        ->orderby('order_id', 'desc')
+        ->get();
+
+        // Crear un array para almacenar los datos procesados
+        $ordersWithBrand = $orders->map(function($order) {
+            // Decodificar el JSON en el campo note
+            $paymentData = json_decode($order->note, true);
+
+            // Extraer el valor de BRAND
+            $order->brand = $paymentData['BRAND'] ?? '';
+
+            return $order;
+        });
+
+        return view('admin.order.index', compact('ordersWithBrand'));
     }
 
     //ordrer filter

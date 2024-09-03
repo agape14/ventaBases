@@ -16,7 +16,7 @@
         <div class="rounded card" style="box-shadow: none !important">
             <div class="card-header">
                <div class="my-1 d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">Todos los Pedidos - <div class="badge bg-dark">{{ $data->count() }}</div></h4>
+                    <h4 class="mb-0">Todos los Pedidos - <div class="badge bg-dark">{{ $ordersWithBrand->count() }}</div></h4>
                     <form class="d-flex align-items-center" action="{{ route('admin#filterOrder') }}" method="GET">
                         @csrf
                         <p class="mb-0 mr-2 text-nowrap">Estado Pedidos :</p>
@@ -24,11 +24,11 @@
                             <option value="">Todos</option>
                             <option value="pendiente" {{ request()->orderStatus == 'pendiente' ? 'selected' : ''}}>Pendiente</option>
                             <option value="pagado" {{ request()->orderStatus == 'pagado' ? 'selected' : ''}}>Pagado</option>
-                            <option value="procesando" {{ request()->orderStatus == 'procesando' ? 'selected' : ''}}>Procesando</option>
+                            {{--<option value="procesando" {{ request()->orderStatus == 'procesando' ? 'selected' : ''}}>Procesando</option>
                             <option value="seleccionado" {{ request()->orderStatus == 'seleccionado' ? 'selected' : ''}}>Seleccionado</option>
                             <option value="enviado" {{ request()->orderStatus == 'enviado' ? 'selected' : ''}}>Enviado</option>
                             <option value="entregado" {{ request()->orderStatus == 'entregado' ? 'selected' : ''}}>Entregado</option>
-                            <option value="completado" {{ request()->orderStatus == 'completado' ? 'selected' : ''}}>Completado</option>
+                            <option value="completado" {{ request()->orderStatus == 'completado' ? 'selected' : ''}}>Completado</option>--}}
                         </select>
                         <button class="btn btn-primary">Filtrar</button>
                     </form>
@@ -36,28 +36,28 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover" id="dataTable">
+                    <table class="table table-hover" id="tblPedidos">
                         <thead class="bg-primary text-nowrap">
                           <tr>
                             <th>#</th>
-                            <th>Order Date</th>
-                            <th>Invoice Number</th>
-                            <th>User Name</th>
+                            <th>Fecha</th>
+                            <th>Numero Pedido</th>
+                            <th>Cliente</th>
                             <th> Total</th>
-                            <th>Payment Method</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>Metodo Pago</th>
+                            <th>Estado</th>
+                            <th>Accion</th>
                           </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data as $item)
+                            @foreach ($ordersWithBrand as $item)
                             <tr>
                                 <td>{{ $item->order_id }}</td>
                                 <td>{{ $item->order_date }}</td>
                                 <td>{{ $item->invoice_number }}</td>
                                 <td>{{ $item->user->name }}</td>
                                 <td>{{ $item->grand_total }}</td>
-                                <td>{{ $item->payment_method }}</td>
+                                <td>{{ $item->brand }}</td>
                                 <td>
                                     <div class="badge bg-success">{{ $item->status }}</div>
                                 </td>

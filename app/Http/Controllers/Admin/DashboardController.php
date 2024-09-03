@@ -15,14 +15,17 @@ class DashboardController extends Controller
     //index
     public function index(){
         $orders = Order::select(DB::raw("COUNT(*) as count"))
+                            ->where('status','pagado')
                             ->whereYear('created_at',date('Y'))
                             ->groupBy(DB::raw('Month(created_at)'))
                             ->pluck('count');
         $totalSales = Order::select(DB::raw("SUM(grand_total) as totalSales"))
+                            ->where('status','pagado')
                             ->whereYear('created_at',date('Y'))
                             ->groupBy(DB::raw('Month(created_at)'))
                             ->pluck('totalSales');
         $months = Order::select(DB::raw("Month(created_at) as month"))
+                            ->where('status','pagado')
                             ->whereYear('created_at',date('Y'))
                             ->groupBy(DB::raw('Month(created_at)'))
                             ->pluck('month');

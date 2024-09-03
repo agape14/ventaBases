@@ -139,6 +139,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
+            @if (auth()->user()->role == 'admin' || auth()->user()->role == 'tesoreria')
           <li class="nav-item">
             <a href="{{ route('admin#dashboard') }}" class="nav-link {{ Request::url() == route('admin#dashboard') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-home"></i>
@@ -147,6 +148,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </p>
             </a>
           </li>
+          @endif
+          @if (auth()->user()->role == 'admin')
           <li class="text-white nav-header text-uppercase">Tools</li>
           <li class="nav-item">
             <a href="{{ route('admin#brand') }}" class="nav-link {{ Request::url() == route('admin#brand') ? 'active' : '' }}">
@@ -267,24 +270,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </a>
           </li>
-
-          <li class="text-white nav-header text-uppercase">Manage Orders</li>
+          @endif
+          @if (auth()->user()->role == 'admin' || auth()->user()->role == 'tesoreria')
+          <li class="text-white nav-header text-uppercase">Gestionar Pedidos</li>
           <li class="nav-item">
             <a href="{{ route('admin#order') }}" class="nav-link {{ Request::url() == route('admin#order') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-shopping-bag"></i>
               <p>
-                All Orders
+                Pedidos
               </p>
             </a>
         </li>
+        @if (auth()->user()->role == 'admin')
         <li class="nav-item">
             <a href="{{ route('admin#pendingOrder') }}" class="nav-link {{ Request::url() == route('admin#pendingOrder') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-shopping-bag"></i>
               <p>
-                Pending Orders
+                Pedidos Pendientes
               </p>
             </a>
         </li>
+        @endif
+        @endif
+        @if (auth()->user()->role == 'admin')
         <li class="text-white nav-header text-uppercase">Report Orders</li>
         <li class="nav-item">
             <a href="{{ route('admin#report') }}" class="nav-link {{ Request::url() == route('admin#report') ? 'active' : '' }}">
@@ -357,12 +365,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </a>
           </li>
-          <li class="text-white nav-header text-uppercase">Manage Profile</li>
+          @endif
+          @if (auth()->user()->role == 'admin' || auth()->user()->role == 'tesoreria')
+          <li class="text-white nav-header text-uppercase">Gestionar Perfil</li>
           <li class="nav-item">
             <a href="{{ route('admin#editProfile') }}" class="nav-link {{ Request::url() == route('admin#editProfile') ? 'active' : '' }}">
               <i class="nav-icon fas fa-user-circle"></i>
               <p>
-                Edit Profile
+                Editar Perfil
               </p>
             </a>
           </li>
@@ -370,7 +380,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <a href="{{ route('admin#editPassword') }}" class="nav-link {{ Request::url() == route('admin#editPassword') ? 'active' : '' }}">
               <i class="nav-icon fas fa-lock"></i>
               <p>
-                Change Password
+                Cambiar Contraseña
               </p>
             </a>
           </li>
@@ -379,10 +389,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 @csrf
                 <button onclick="return confirm('Are you sure do you want to logout?')" class="btn nav-link d-flex align-items-center justify-content-start">
                     <i class="fas fa-sign-out-alt nav-icon"></i>
-                    <p class="">Logout</p>
+                    <p class="">Cerrar Sesión</p>
                 </button>
             </form>
           </li>
+          @endif
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -438,6 +449,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     $(document).ready(function () {
          $('#dataTable').DataTable({
             order: [[1, 'desc']]
+        } );
+
+        $('#tblPedidos').DataTable({
+            order: [[0, 'desc']]
         } );
     });
 

@@ -17,10 +17,12 @@ class AdminCheckMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::check() && auth()->user()->role == 'admin'){
+        if (Auth::check() && in_array(Auth::user()->role, ['admin', 'tesoreria'])) {
+        //if(Auth::check() && auth()->user()->role == 'admin'){
             return $next($request);
         }else{
-            return abort(404);
+            return redirect()->route('login')->withErrors(['error' => 'No tienes permiso para acceder a esta área.']);
+            //return abort(404);
         }
     }
 }

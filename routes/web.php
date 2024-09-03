@@ -61,17 +61,24 @@ Route::middleware([
     'verified'
 ])->group(function () {
     Route::get('/dashboard', function () {
-        if(Auth::check()){
-            if(Auth::user()->role == 'admin'){
-                return redirect()->route('admin#dashboard');
-            }else if(Auth::user()->role == 'user'){
-                return redirect()->route('frontend#index');
+        if (Auth::check()) {
+            switch (Auth::user()->role) {
+                case 'admin':
+                case 'tesoreria':
+                    return redirect()->route('admin#dashboard');
+                case 'user':
+                    return redirect()->route('frontend#index');
+                default:
+                    return redirect()->route('login'); // Redirige a una ruta por defecto si no se cumplen las condiciones
             }
+        } else {
+            return redirect()->route('login'); // Redirige al login si el usuario no está autenticado
         }
     })->name('dashboard');
 });
 
 Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> [AdminCheckMiddleware::class]],function(){
+
     //dashboard
     Route::get('dashboard',[DashboardController::class,'index'])->name('admin#dashboard');
 

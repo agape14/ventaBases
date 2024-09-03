@@ -84,7 +84,7 @@
                             <form method="POST" action="{{ route('register') }}">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="" class="form-label">Nombre</label>
+                                    <label for="" class="form-label">Nombres y Apellidos Completos</label>
                                     <input type="text" class="form-control" name="name" id="name" value="{{ old('name') }}" required autofocus>
                                     @error('name')
                                         <small class="text-danger">{{ $message }}</small>
