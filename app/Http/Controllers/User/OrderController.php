@@ -271,6 +271,8 @@ class OrderController extends Controller
             'order_date' => Carbon::now()->format('d/m/Y'),
             'order_month' => Carbon::now()->locale('es')->format('F'),
             'order_year' => Carbon::now()->format('Y'),
+            'tipo_persona' => $request->input('tipo_persona'),
+            'tipo_comprobante' => $request->input('tipo_comprobante'),
             'status' => 'pendiente',
             'created_at' => Carbon::now(),
         ];

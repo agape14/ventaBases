@@ -187,6 +187,18 @@
                             </td>
                         </tr>
                         <tr>
+                            <th>Tipo Persona</th>
+                            <td>
+                                @if($order->tipo_persona=="N")
+                                    Natural
+                                @elseif($order->tipo_persona=="J")
+                                    Juridico
+                                @else
+                                    No definido
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
                             <th>Nro. Documento</th>
                             <td>
                                 @if($order->customer)
