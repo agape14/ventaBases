@@ -36,6 +36,10 @@ use App\Http\Controllers\Admin\StockHistoryController;
 use App\Models\CompanySetting;
 use App\Http\Controllers\User\NiubizController;
 use App\Http\Controllers\TerminosController;
+
+use App\Mail\OrderConfirmation;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Order;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -318,3 +322,17 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
 });
 
 Route::get('/terminos', [TerminosController::class, 'show'])->name('terminos.show');
+Route::get('/enviarmail', function () {
+    // Simula una orden para prueba
+    $order = Order::where('order_id', 17)->first(); // O especifica un ID: Order::find(1);
+    $nropedido=$order->invoice_number;
+    $formattedDate=$order->order_date;
+    $montopagado=number_format($order->grand_total, 2) ;
+    $mensajeSuccessFormateado = "<b>Número de pedido:</b> $nropedido<br>" .
+                     "<b>Fecha del pedido:</b> $formattedDate<br>" .
+                     "<b>Importe pagado:</b> $montopagado<br>" ;
+    // Enviar el correo
+    Mail::to($order->email)->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
+
+    return 'Correo enviado correctamente a ' . $order->email;
+});

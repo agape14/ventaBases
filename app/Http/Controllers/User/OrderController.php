@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Notifications\UserOrderNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Services\NiubizService;
+use App\Mail\OrderConfirmation;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -356,10 +358,14 @@ class OrderController extends Controller
                      "<b>Tipo de moneda:</b> $tipomonedaTexto<br>".
                      "<b>Tarjeta:</b> $tarjeta<br>" .
                      "<b>Tipo Tarjeta:</b> $tipotarjeta"  ;
+                     $order = Order::where('order_id', $id)->first();
                      Order::where('order_id', $id)->update([
                         'note' => $responseniubiztrans['dataMap']
                     ]);
-                     //dd($mensajeSuccessFormateado );
+                    // Enviar correo al cliente con PDF adjunto
+                    Mail::to($order->email)->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
+
+                     //dd($mensajeSuccessFormateado ); Agape
                      return redirect()->route('user#myOrder')->with(['niubizbtnpagorealizado'=>$mensajeSuccessFormateado]);
                 } else {
                     return redirect()->back()->with('error', $responseMeg);
