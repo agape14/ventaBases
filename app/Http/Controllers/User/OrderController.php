@@ -381,7 +381,7 @@ class OrderController extends Controller
             }
         } else {
             // En caso de que no se reciba el token
-            return redirect()->back()->with('error', '<b>No</b>  se pudo procesar la transacción. Inténtelo de nuevo.');
+            return redirect()->back()->with('error', '<b>No</b>  se pudo procesar la transacción. Inténtelo de nuevo. <br>'.$request->input('errorMessage'));
         }
     }
 
