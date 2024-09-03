@@ -325,7 +325,7 @@ class OrderController extends Controller
         if ($transactionToken) {
             // Simulación de la respuesta de la API de Niubiz (debes reemplazar esto con la integración real)
             $responseniubiztrans = $this->processNiubizTransaction($transactionToken, $id);
-            //dd($responseniubiztrans);
+            dd($responseniubiztrans);
             if (isset($responseniubiztrans['dataMap'])) {
                 $responseCode = $responseniubiztrans['dataMap']['ACTION_CODE'];
                 $responseMeg=$responseniubiztrans['dataMap']['ACTION_DESCRIPTION'];
