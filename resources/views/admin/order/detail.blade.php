@@ -81,11 +81,11 @@
             <div class="card-body">
                 <div class="track">
                     <div class="step active"> <span class="icon"> <i class="fas fa-ellipsis-h"></i> </span> <span class="text">Pendiente</span> </div>
-                    <div class="step {{ $order->confirmed_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-check-circle"></i></span> <span class="text">Confirmado</span> </div>
-                    <div class="step {{ $order->processing_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-spinner"></i> </span> <span class="text">Procesando</span> </div>
+                    <div class="step {{ $order->confirmed_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-check-circle"></i></span> <span class="text">Pagado</span> </div>
+                    {{--<div class="step {{ $order->processing_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-spinner"></i> </span> <span class="text">Pagado</span> </div>
                     <div class="step {{ $order->picked_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-box"></i> </span> <span class="text">Seleccionado</span> </div>
                     <div class="step {{ $order->shipped_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fas fa-truck"></i> </span> <span class="text">Enviado</span> </div>
-                    <div class="step {{ $order->delivered_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Entregado</span> </div>
+                    <div class="step {{ $order->delivered_date != null ? 'active' : ''}}"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Entregado</span> </div>--}}
                 </div>
             </div>
         </div>
@@ -97,8 +97,8 @@
         <div class="my-3 shadow-none card">
             <div class="bg-transparent card-header">
                 <div class="d-flex justify-content-between">
-                    <div class="h5">Order Detail</div>
-                    <a href="{{ route('user#download#downloadInvoice',$order->order_id) }}" class="text-white btn btn-sm btn-dark"><i class="mr-2 fas fa-download"></i> Download Invoice</a>
+                    <div class="h5">Detalle Pedido</div>
+                    {{--<a href="{{ route('user#download#downloadInvoice',$order->order_id) }}" class="text-white btn btn-sm btn-dark"><i class="mr-2 fas fa-download"></i> Download Invoice</a>--}}
                 </div>
             </div>
             <div class="card-body">
@@ -141,7 +141,7 @@
                 <div class="float-right py-3 mt-3">
                     {{--@if ($order->status == 'pendiente')
                         <a href="{{ route('admin#confirmOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Confirmar pedido</a>
-                    @else--}}
+                    @else
                     @if ($order->status == 'pagado')
 
                         <a href="{{ route('admin#processOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Procesar Pedido</a>
@@ -158,7 +158,7 @@
 
                         <a href="{{ route('admin#deliverOrder',$order->order_id) }}" class="shadow-lg orderStatusBtn btn btn-primary">Entregar Pedido</a>
 
-                    @endif
+                    @endif--}}
 
                 </div>
             </div>
@@ -168,38 +168,38 @@
         <div class="my-3 shadow-none card">
             <div class="bg-transparent card-header">
                 <div class="">
-                    <div class="h5">Delivery Detail</div>
+                    <div class="h5">Detalle Envio</div>
                 </div>
             </div>
             <div class="card-body">
                 <table class="table table-bordered">
                     <tbody class="">
                         <tr>
-                            <th>Name</th>
+                            <th>Nombres y Apellidos Completos</th>
                             <td>{{ $order->name }}</td>
                         </tr>
                         <tr>
-                            <th>Email</th>
+                            <th>Correo</th>
                             <td>{{ $order->email }}</td>
                         </tr>
                         <tr>
-                            <th>Phone</th>
+                            <th>Celular</th>
                             <td>{{ $order->phone }}</td>
                         </tr>
                         <tr>
-                            <th>Region</th>
+                            <th>Departamento</th>
                             <td>{{ $order->stateDivision->name }}</td>
                         </tr>
                         <tr>
-                            <th>City</th>
+                            <th>Provincia</th>
                             <td>{{ $order->city->name }}</td>
                         </tr>
                         <tr>
-                            <th>Township</th>
+                            <th>Distrito</th>
                             <td>{{ $order->township->name }}</td>
                         </tr>
                         <tr>
-                            <th>Address</th>
+                            <th>Direccion</th>
                             <td>{{ $order->address }}</td>
                         </tr>
                     </tbody>
@@ -213,7 +213,7 @@
         <div class="shadow-none card">
             <div class="bg-transparent card-header">
                 <div class="my-1 d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Order Items</h4>
+                    <h4 class="mb-0">Items Pedido</h4>
                     {{-- <button class="btn btn-dark">Download Invoice</button> --}}
                 </div>
             </div>
@@ -222,14 +222,14 @@
                     <table class="table">
                         <thead class="text-nowrap">
                             <tr>
-                                <th>id</th>
-                                <th>Image</th>
-                                <th>product</th>
-                                <th>color</th>
-                                <th>size</th>
-                                <th>unit Price</th>
-                                <th>quantity</th>
-                                <th>Total Price</th>
+                                <th>Id</th>
+                                <th>Imagen</th>
+                                <th>Item</th>
+                                {{--<th>color</th>
+                                <th>size</th>--}}
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -240,8 +240,8 @@
                                     <img src="{{ asset('uploads/products/'.$item->product->preview_image) }}" class="shadow-sm" alt="" srcset="" style="width: 100px; height: 100px">
                                 </td>
                                 <td>{{ $item->product->name }}</td>
-                                <td>{{ empty($item->color) ? '---' : $item->color->name}}</td>
-                                <td>{{ empty($item->size) ? '---' : $item->size->name}}</td>
+                                {{--<td>{{ empty($item->color) ? '---' : $item->color->name}}</td>
+                                <td>{{ empty($item->size) ? '---' : $item->size->name}}</td>--}}
                                 <td>{{ $item->unit_price }}</td>
                                 <td>{{ $item->quantity }}</td>
                                 <td>{{ $item->total_price }}</td>

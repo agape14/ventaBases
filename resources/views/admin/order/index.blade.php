@@ -62,8 +62,8 @@
                                     <div class="badge bg-success">{{ $item->status }}</div>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin#showOrder',$item->order_id) }}" class="text-white btn btn-sm btn-info "><i class="fas fa-eye me-2"></i>View</a>
-                                    <a href="{{ route('user#download#downloadInvoice',$item->order_id) }}" class="text-white btn btn-sm btn-dark"><i class="fas fa-download me-2"></i>Invoice</a>
+                                    <a href="{{ route('admin#showOrder',$item->order_id) }}" class="text-white btn btn-sm btn-info "><i class="fas fa-eye me-2"></i>Detalles</a>
+                                    {{--<a href="{{ route('user#download#downloadInvoice',$item->order_id) }}" class="text-white btn btn-sm btn-dark"><i class="fas fa-download me-2"></i>Invoice</a>--}}
                                 </td>
                             </tr>
                             @endforeach
