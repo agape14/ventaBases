@@ -348,9 +348,8 @@ class OrderController extends Controller
                     $tipomoneda = $responseniubiztrans['dataMap']['CURRENCY'];
                     $tipomonedaTexto = $currencyMap[$tipomoneda] ?? 'desconocido';
                     $tarjeta = $responseniubiztrans['dataMap']['CARD'];
-                    $tipotarjeta = $responseniubiztrans['dataMap']['BRAND']; //$tipotarjeta=Str::upper($tipotarjeta);
+                    $tipotarjeta = $responseniubiztrans['dataMap']['BRAND'];
                     // Redirigir a la página de éxito
-                    //return redirect()->route('user#myOrder')->with('status', 'Compra completada con éxito.');
                     $mensajeSuccessFormateado = "<b>Número de pedido:</b> $nropedido<br>" .
                      "<b>Fecha y hora del pedido:</b> $formattedDate<br>" .
                      "<b>Importe pagado:</b> $montopagado<br>" .
@@ -359,7 +358,6 @@ class OrderController extends Controller
                      "<b>Tipo Tarjeta:</b> $tipotarjeta"  ;
                      //dd($mensajeSuccessFormateado );
                      return redirect()->route('user#myOrder')->with(['niubizbtnpagorealizado'=>$mensajeSuccessFormateado]);
-                    //return redirect()->back()->with('niubizbtnpagorealizado', $mensajeSuccessFormateado );
                 } else {
                     return redirect()->back()->with('error', $responseMeg);
                 }
