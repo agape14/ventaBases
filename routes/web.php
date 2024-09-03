@@ -322,17 +322,26 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
 });
 
 Route::get('/terminos', [TerminosController::class, 'show'])->name('terminos.show');
-Route::get('/enviarmail', function () {
-    // Simula una orden para prueba
-    $order = Order::where('order_id', 17)->first(); // O especifica un ID: Order::find(1);
-    $nropedido=$order->invoice_number;
-    $formattedDate=$order->order_date;
-    $montopagado=number_format($order->grand_total, 2) ;
-    $mensajeSuccessFormateado = "<b>Número de pedido:</b> $nropedido<br>" .
-                     "<b>Fecha del pedido:</b> $formattedDate<br>" .
-                     "<b>Importe pagado:</b> $montopagado<br>" ;
-    // Enviar el correo
-    Mail::to($order->email)->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
+Route::get('/enviarmail/{id}/{cc?}', function ($id, $cc = null) {
+    // Busca la orden usando el ID proporcionado en la URL
+    $order = Order::where('order_id', $id)->firstOrFail();
 
-    return 'Correo enviado correctamente a ' . $order->email;
+    // Preparar los datos del correo
+    $nropedido = $order->invoice_number;
+    $formattedDate = $order->order_date;
+    $montopagado = number_format($order->grand_total, 2);
+    $mensajeSuccessFormateado = "<b>Número de pedido:</b> $nropedido<br>" .
+                                "<b>Fecha del pedido:</b> $formattedDate<br>" .
+                                "<b>Importe pagado:</b> $montopagado<br>";
+
+    // Enviar el correo con o sin CC dependiendo si $cc está definido
+    $email = Mail::to($order->email);
+
+    if ($cc) {
+        $email->cc($cc);
+    }
+
+    $email->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
+
+    return 'Correo enviado correctamente a ' . $order->email . ($cc ? ' con copia a ' . $cc : '');
 });
