@@ -175,6 +175,34 @@
                 <table class="table table-bordered">
                     <tbody class="">
                         <tr>
+                            <th>Tipo Comprobante</th>
+                            <td>
+                                @if($order->tipo_comprobante=="B")
+                                    Boleta
+                                @elseif($order->tipo_comprobante=="F")
+                                    Factura
+                                @else
+                                    No definido
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Nro. Documento</th>
+                            <td>
+                                @if($order->customer)
+                                    @if($order->customer->customer_type == 'natural')
+                                        {{ $order->customer->personaNatural->dni ?? 'N/A' }}
+                                    @elseif($order->customer->customer_type == 'juridica')
+                                        {{ $order->customer->personaJuridica->ruc ?? 'N/A' }}
+                                    @else
+                                        No definido
+                                    @endif
+                                @else
+                                    Sin cliente
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
                             <th>Nombres y Apellidos Completos</th>
                             <td>{{ $order->name }}</td>
                         </tr>
