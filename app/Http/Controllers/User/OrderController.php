@@ -325,7 +325,7 @@ class OrderController extends Controller
         if ($transactionToken) {
             // Simulación de la respuesta de la API de Niubiz (debes reemplazar esto con la integración real)
             $responseniubiztrans = $this->processNiubizTransaction($transactionToken, $id);
-            dd($responseniubiztrans);
+            //dd($responseniubiztrans);
             if (isset($responseniubiztrans['dataMap'])) {
                 $responseCode = $responseniubiztrans['dataMap']['ACTION_CODE'];
                 $responseMeg=$responseniubiztrans['dataMap']['ACTION_DESCRIPTION'];
@@ -381,7 +381,7 @@ class OrderController extends Controller
             }
         } else {
             // En caso de que no se reciba el token
-            return redirect()->back()->with('error', 'No se pudo procesar la transacción. Inténtelo de nuevo.');
+            return redirect()->back()->with('error', '<b>No</b>  se pudo procesar la transacción. Inténtelo de nuevo.');
         }
     }
 
