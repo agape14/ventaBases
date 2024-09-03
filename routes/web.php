@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\StockHistoryController;
 use App\Models\CompanySetting;
 use App\Http\Controllers\User\NiubizController;
+use App\Http\Controllers\TerminosController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -315,3 +316,5 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
 
 
 });
+
+Route::get('/terminos', [TerminosController::class, 'show'])->name('terminos.show');

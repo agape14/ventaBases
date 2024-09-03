@@ -4,6 +4,7 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class NiubizService
 {
@@ -23,17 +24,22 @@ class NiubizService
         return $response->body();
     }
 
-    public function generateSesion($amount, $token)
+    public function generateSesion($amount, $token, $correo,$idcustomer,$dateregister)
     {
+        $dateregister = Carbon::parse($dateregister);
+        $currentDate = Carbon::now();
+        $differenceInDays = $dateregister->diffInDays($currentDate);
         // Datos de la sesión
         $sessionData = [
             'amount' => $amount,
             'antifraud' => [
                 'clientIp' => request()->ip(), // Obtener la IP del cliente de la solicitud
                 'merchantDefineData' => [
-                    'MDD4' => "mail@domain.com",
-                    'MDD33' => "DNI",
-                    'MDD34' => '87654321',
+                    'MDD4' => $correo,
+                    "MDD21"=> 0,
+                    'MDD32' => $idcustomer,
+                    'MDD75' => 'Registrado',
+                    'MDD77' => $differenceInDays,
                 ],
             ],
             'channel' => 'web',

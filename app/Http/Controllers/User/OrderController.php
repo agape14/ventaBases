@@ -254,6 +254,7 @@ class OrderController extends Controller
         }
         $data = [
             'user_id' => auth()->user()->id,
+            'customer_id' => $customerId,
             'name' => $name,
             'email' => $email,
             'phone' => $phone,
@@ -324,6 +325,7 @@ class OrderController extends Controller
         if ($transactionToken) {
             // Simulación de la respuesta de la API de Niubiz (debes reemplazar esto con la integración real)
             $responseniubiztrans = $this->processNiubizTransaction($transactionToken, $id);
+            //dd($responseniubiztrans);
             if (isset($responseniubiztrans['dataMap'])) {
                 $responseCode = $responseniubiztrans['dataMap']['ACTION_CODE'];
                 $responseMeg=$responseniubiztrans['dataMap']['ACTION_DESCRIPTION'];
@@ -331,19 +333,48 @@ class OrderController extends Controller
                 if ($responseCode == '000') {
                     // Código 000 significa transacción exitosa
                     $this->changeOrderStatus($id, 'pagado', 'confirmed_date');
-
+                    $currencyMap = [
+                        '0604' => 'Soles',
+                        '0480' => 'Dólares',
+                        // Agrega otros códigos de moneda según sea necesario
+                    ];
                     // Disminuir stock de productos
                     $this->decreaseStock($id);
-
+                    $nropedido=$responseniubiztrans['dataMap']['TRACE_NUMBER'];
+                    $fechahorapedido=$responseniubiztrans['dataMap']['TRANSACTION_DATE'];
+                    $parsedDate = Carbon::createFromFormat('ymdHis', $fechahorapedido);
+                    $formattedDate = $parsedDate->format('d/m/y H:i:s');
+                    $montopagado=$responseniubiztrans['dataMap']['AMOUNT'];
+                    $tipomoneda = $responseniubiztrans['dataMap']['CURRENCY'];
+                    $tipomonedaTexto = $currencyMap[$tipomoneda] ?? 'desconocido';
+                    $tarjeta = $responseniubiztrans['dataMap']['CARD'];
+                    $tipotarjeta = $responseniubiztrans['dataMap']['BRAND']; //$tipotarjeta=Str::upper($tipotarjeta);
                     // Redirigir a la página de éxito
-                    return redirect()->route('user#myOrder')->with('status', 'Compra completada con éxito.');
+                    //return redirect()->route('user#myOrder')->with('status', 'Compra completada con éxito.');
+                    $mensajeSuccessFormateado = "<b>Número de pedido:</b> $nropedido<br>" .
+                     "<b>Fecha y hora del pedido:</b> $formattedDate<br>" .
+                     "<b>Importe pagado:</b> $montopagado<br>" .
+                     "<b>Tipo de moneda:</b> $tipomonedaTexto<br>".
+                     "<b>Tarjeta:</b> $tarjeta<br>" .
+                     "<b>Tipo Tarjeta:</b> $tipotarjeta"  ;
+                     //dd($mensajeSuccessFormateado );
+                     return redirect()->route('user#myOrder')->with(['niubizbtnpagorealizado'=>$mensajeSuccessFormateado]);
+                    //return redirect()->back()->with('niubizbtnpagorealizado', $mensajeSuccessFormateado );
                 } else {
                     return redirect()->back()->with('error', $responseMeg);
                 }
             } elseif (isset($responseniubiztrans['data'])) {
                 $responseCode = $responseniubiztrans['data']['ACTION_CODE'];
                 $responseMeg=$responseniubiztrans['data']['ACTION_DESCRIPTION'];
-                return redirect()->back()->with('error', $responseMeg);
+                $nropedido=$responseniubiztrans['data']['TRACE_NUMBER'];
+                $fechahorapedido=$responseniubiztrans['data']['TRANSACTION_DATE'];
+                $parsedDate = Carbon::createFromFormat('ymdHis', $fechahorapedido);
+                $formattedDate = $parsedDate->format('d/m/y H:i:s');
+
+                $mensajeErrorFormateado = "<b>Número de pedido:</b> $nropedido<br>" .
+                     "<b>Fecha y hora del pedido:</b> $formattedDate<br>" .
+                     "<b>Descripción de la denegación:</b> $responseMeg";
+                return redirect()->back()->with('error', $mensajeErrorFormateado );
             }
             else {
                 // Puedes lanzar una excepción, retornar un error específico o manejarlo de otra manera

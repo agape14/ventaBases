@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{{ asset('frontEnd/scss/custom.css')}}">
     <!-- data tables -->
      <link rel="stylesheet" href="{{ asset('admin/plugins/data_table/dataTables.bootstrap4.min.css') }}">
+
     {{-- animated css  --}}
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
      {{-- custom css <script src="{{ asset('frontEnd/node_modules/owl.carousel/dist/owl.carousel.min.js')}}"></script> --}}
@@ -210,7 +211,7 @@
                                       </ul>
                                       <div class="d-flex align-items-center">
                                         <div class="me-2 d-none d-md-block">
-                                            <button type="button" class="py-3 text-white btn rounded-0 orderTrack" data-bs-toggle="modal" data-bs-target="#orderTrackModal" style="border-left: 1px solid #ffffff50;border-right: 1px solid #ffffff50;">Seguimiento de pedidoss</button>
+                                            <button type="button" class="py-3 text-white btn rounded-0 orderTrack" data-bs-toggle="modal" data-bs-target="#orderTrackModal" style="border-left: 1px solid #ffffff50;border-right: 1px solid #ffffff50;">Seguimiento de pedidos</button>
                                             <!-- Modal -->
                                             <div class="modal fade" id="orderTrackModal" tabindex="-1" aria-labelledby="orderTrackModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
@@ -374,7 +375,7 @@
     <script src="{{ asset('js/jquery.waypoints.min.js') }}"></script>--}}
 
     <script src="{{ asset('frontEnd/node_modules/jquery/dist/jquery.min.js')}}"></script>
-    <script src="{{ asset('frontEnd/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
+
     <script src="{{ asset('frontEnd/node_modules/owl.carousel/dist/owl.carousel.min.js')}}"></script>
     <script src="{{ asset('frontEnd/node_modules/waypoints/lib/jquery.waypoints.min.js')}}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -383,6 +384,7 @@
     <script src="{{ asset('admin/plugins/data_table/dataTables.bootstrap4.min.js')}}"></script>
     {{-- custom js  --}}
     <script src="{{ asset('frontEnd/resources/js/script.js')}}"></script>
+    <script src="{{ asset('frontEnd/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
     @yield('script')
     <script>
         $(document).ready(function () {
@@ -481,9 +483,10 @@
         @endif
         @if (Session::has('error'))
             Swal.fire({
-                        icon: 'info',
-                        // title: "{{ Session::get('error') }}",
-                        text: '{{ Session::get('error') }}',
+                        icon: 'error',
+                        title: 'Error',
+                        html: "{!! Session::get('error') !!}",
+                        confirmButtonText: 'Aceptar'
                     })
         @endif
         @if (Session::has('orderSuccess'))
@@ -498,6 +501,14 @@
                     popup: 'animate__animated animate__fadeOutUp'
                 }
             })
+        @endif
+        @if (Session::has('niubizbtnpagorealizado'))
+            Swal.fire({
+                        icon: 'success',
+                        title: 'Pago Confirmado',
+                        html: "{!! Session::get('niubizbtnpagorealizado') !!}",
+                        confirmButtonText: 'Aceptar'
+                    })
         @endif
         //auth check
         var authStatus = @if (auth()->check())

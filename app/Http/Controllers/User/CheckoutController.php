@@ -62,14 +62,14 @@ class CheckoutController extends Controller
         ]);
     }
 
-    public function pagarconfirmar($id,Request $request){ //dd($id);
+    public function pagarconfirmar($id,Request $request){
         if($id){
             $order = Order::where('order_id',$id)->with(['stateDivision','city','township','user','paymentTransition'])->first();
             if($order->status=='pendiente'){
                 $orderItems = OrderItem::where('order_id',$id)->with(['product','color','size'])->get();
                 $companyInfo = CompanySetting::orderBy('id','desc')->first();
                 $token = $this->niubizService->generateToken();
-                $sessionKey = $this->niubizService->generateSesion($order->grand_total, $token);
+                $sessionKey = $this->niubizService->generateSesion($order->grand_total, $token,$order->email,$order->customer_id,$order->created_at);
                 return view('frontEnd.profile.payment', compact('sessionKey'))->with(['order'=>$order,'orderItems'=>$orderItems,'companyInfo'=>$companyInfo]);
             }else if($order->status=='confirmed'){
                 return redirect()->route('user#myOrder')->with('status', 'La compra ya se realizó anteriormente');
