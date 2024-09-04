@@ -448,11 +448,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script>
     $(document).ready(function () {
          $('#dataTable').DataTable({
-            order: [[1, 'desc']]
+            order: [[1, 'desc']],
+            language: {
+                url: "{{ asset('vendor/datatables/lang/spanish.json') }}" // Ruta al archivo de idioma
+            }
         } );
 
         $('#tblPedidos').DataTable({
-            order: [[0, 'desc']]
+            order: [[0, 'desc']],
+            language: {
+                url: "{{ asset('vendor/datatables/lang/spanish.json') }}" // Ruta al archivo de idioma
+            }
         } );
     });
 

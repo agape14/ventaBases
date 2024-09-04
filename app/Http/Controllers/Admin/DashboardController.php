@@ -37,17 +37,22 @@ class DashboardController extends Controller
             $salesByMonth[$month-1] = $totalSales[$index];
         }
 
-        $topProducts = Product::
-                        select('products.*', DB::raw('SUM(order_items.total_price) as total_sales'))
-                        ->join('order_items','products.product_id','order_items.product_id')
-                        ->groupBy('order_items.product_id')
-                        ->orderBy('total_sales','desc')
-                        ->limit(5)
-                        ->get();
-        $topCustomers = User::select('users.*',DB::raw('SUM(orders.grand_total) as total_sales'))
-                        ->join('orders','orders.user_id','users.id')
+        $topProducts = Product::select('products.*', DB::raw('SUM(order_items.total_price) as total_sales'))
+                      ->join('order_items', 'products.product_id', '=', 'order_items.product_id')
+                      ->join('orders', 'order_items.order_id', '=', 'orders.order_id')
+                      ->where('orders.status','pagado')
+                      ->groupBy('order_items.product_id')
+                      ->orderBy('total_sales', 'desc')
+                      ->limit(5)
+                      ->get();
+
+        $topCustomers = User::select('users.*', DB::raw('SUM(orders.grand_total) as total_sales'))
+                        ->join('orders', function($join) {
+                            $join->on('orders.user_id', '=', 'users.id')
+                                 ->where('orders.status', '=', 'pagado');
+                        })
                         ->groupBy('users.id')
-                        ->orderBy('total_sales','desc')
+                        ->orderBy('total_sales', 'desc')
                         ->limit(5)
                         ->get();
                         // dd($topUsers->toArray());

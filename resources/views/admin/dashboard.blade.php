@@ -2,10 +2,10 @@
 @section('content')
     @php
         $now = Carbon\Carbon::now()->locale('es');
-        $todaySales = App\Models\Order::where('order_date',$now->format('d/m/Y'))->sum('grand_total');
-        $monthlySales = App\Models\Order::where('order_month',$now->format('F'))->sum('grand_total');
-        $yearlySales = App\Models\Order::where('order_year',$now->format('Y'))->sum('grand_total');
-        $pendingOrders = App\Models\Order::where('status','pending')->count();
+        $todaySales = App\Models\Order::where('order_date',$now->format('d/m/Y'))->where('status','pagado')->sum('grand_total');
+        $monthlySales = App\Models\Order::where('order_month',$now->format('F'))->where('status','pagado')->sum('grand_total');
+        $yearlySales = App\Models\Order::where('order_year',$now->format('Y'))->where('status','pagado')->sum('grand_total');
+        $pendingOrders = App\Models\Order::where('status','pendiente')->count();
 
     @endphp
     <div class="pt-4 mb-3 row">
@@ -16,8 +16,8 @@
                         <i class="fas fa-calendar-day text-primary" style="font-size: 40px"></i>
                     </div>
                     <div class="ml-3">
-                        <h6 class="mb-0 text-secondary">Today's Sale</h6>
-                        <h4 class="mb-0 font-weight-bolder">{{ number_format($todaySales) }}</h4>
+                        <h6 class="mb-0 text-secondary">Ventas del día</h6>
+                        <h4 class="mb-0 font-weight-bolder">S/ {{ number_format($todaySales,2) }}</h4>
                     </div>
                 </div>
             </div>
@@ -29,8 +29,8 @@
                         <i class="fas fa-th text-primary" style="font-size: 40px"></i>
                     </div>
                     <div class="ml-3">
-                        <h6 class="mb-0 text-secondary">Monthly's Sale</h6>
-                        <h4 class="mb-0 font-weight-bolder">{{ number_format($monthlySales) }}</h4>
+                        <h6 class="mb-0 text-secondary">Ventas del Mes</h6>
+                        <h4 class="mb-0 font-weight-bolder">S/ {{ number_format($monthlySales,2) }}</h4>
                     </div>
                 </div>
             </div>
@@ -42,8 +42,8 @@
                         <i class="fas fa-calendar-alt text-primary" style="font-size: 40px"></i>
                     </div>
                     <div class="ml-3">
-                        <h6 class="mb-0 text-secondary">Yearly Sale</h6>
-                        <h4 class="mb-0 font-weight-bolder">{{ number_format($yearlySales) }}</h4>
+                        <h6 class="mb-0 text-secondary">Ventas del Año</h6>
+                        <h4 class="mb-0 font-weight-bolder">S/ {{ number_format($yearlySales,2) }}</h4>
                     </div>
                 </div>
             </div>
@@ -56,8 +56,8 @@
 
                     </div>
                     <div class="ml-3">
-                        <h6 class="mb-0 text-secondary">Pending Order</h6>
-                        <h4 class="mb-0 font-weight-bolder">{{ $pendingOrders }} Orders</h4>
+                        <h6 class="mb-0 text-secondary">Pendiente pago</h6>
+                        <h4 class="mb-0 font-weight-bolder">{{ $pendingOrders }} Pedido(s)</h4>
                     </div>
                 </div>
             </a>
@@ -67,7 +67,7 @@
         <div class="col-6">
             <div class="rounded shadow-none card">
                 <div class="card-header">
-                    <h5 class="mb-0">Orders By Month ( {{ date('Y')}} )</h5>
+                    <h5 class="mb-0">Pedidos por Mes( {{ date('Y')}} )</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="myChart"></canvas>
@@ -77,7 +77,7 @@
         <div class="col-6">
             <div class="rounded shadow-none card">
                 <div class="card-header">
-                    <h5 class="mb-0">Sales By Month ( {{ date('Y')}} )</h5>
+                    <h5 class="mb-0">Ventas por Mes ( {{ date('Y')}} )</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="orderByMonth"></canvas>
@@ -90,7 +90,7 @@
             <div class="rounded card" style="box-shadow: none !important">
                 <div class="card-header">
                    <div class="my-1 d-flex align-items-center justify-content-between">
-                        <h5 class="mb-0">Best Sale Products</h5>
+                        <h5 class="mb-0">Los mejores productos en venta</h5>
                    </div>
                 </div>
                 <div class="card-body">
@@ -99,9 +99,9 @@
                             <thead class="bg-primary text-nowrap">
                               <tr>
                                 <th>#</th>
-                                <th>Product Image</th>
-                                <th>Name</th>
-                                <th>Total Sales</th>
+                                <th>Imagen</th>
+                                <th>Descripcion</th>
+                                <th>Total Venta</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -125,7 +125,7 @@
             <div class="rounded card" style="box-shadow: none !important">
                 <div class="card-header">
                    <div class="my-1 d-flex align-items-center justify-content-between">
-                        <h5 class="mb-0">Top Customers</h5>
+                        <h5 class="mb-0">Principales Clientes</h5>
                    </div>
                 </div>
                 <div class="card-body">
@@ -134,10 +134,10 @@
                             <thead class="bg-primary text-nowrap">
                               <tr>
                                 <th>#</th>
-                                <th>Customer Image</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Total Sales</th>
+                                <th>Imagen</th>
+                                <th>Nombres Completos</th>
+                                <th>Correo</th>
+                                <th>Total Ventas</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -168,7 +168,7 @@
         <div class="rounded card" style="box-shadow: none !important">
             <div class="card-header">
                <div class="my-1 d-flex align-items-center justify-content-between">
-                    <h5 class="mb-0">Products less than 5 Stocks</h5>
+                    <h5 class="mb-0">Productos con menos de 5 en Stock</h5>
                </div>
             </div>
             <div class="card-body">
@@ -182,12 +182,10 @@
                         <thead class="bg-primary text-nowrap">
                           <tr>
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Color</th>
-                            <th>Size</th>
-                            <th>Stocks</th>
-                            <th>Publish Status</th>
-                            <th>Action</th>
+                            <th>Descripcion</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Accion</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -195,14 +193,12 @@
                                 <tr>
                                     <th>{{ $item->product_variant_id }}</th>
                                     <td>{{ $item->product->name }}</td>
-                                    <td>{{ $item->color_id != null ? $item->color->name : '---'  }}</td>
-                                    <td>{{ $item->size_id != null ? $item->size->name : '---'  }}</td>
                                     <td>{{ $item->available_stock }}</td>
                                     <td>
                                         @if ($item->product->publish_status == 1)
-                                            <div class="badge badge-success">Publish</div>
+                                            <div class="badge badge-success">Publicado</div>
                                         @else
-                                            <div class="badge badge-danger">Unpublish</div>
+                                            <div class="badge badge-danger">Sin Publicar</div>
                                         @endif
                                     </td>
                                     <td class="text-wrap">
@@ -231,7 +227,7 @@
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun' , 'Jul' , 'Aug' , 'Sep' , 'Oct' , 'Nov' , 'Dec'],
                 datasets: [{
-                    label: 'orders by month {{ date('Y') }}',
+                    label: 'pedidos por mes {{ date('Y') }}',
                     data: data,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -283,7 +279,7 @@
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun' , 'Jul' , 'Aug' , 'Sep' , 'Oct' , 'Nov' , 'Dec'],
                 datasets: [{
-                    label: 'sales by month {{ date('Y') }}',
+                    label: 'ventas por mes {{ date('Y') }}',
                     data: salesByMonth,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
