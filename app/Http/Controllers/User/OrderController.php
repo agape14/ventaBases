@@ -365,20 +365,35 @@ class OrderController extends Controller
                         'note' => $responseniubiztrans['dataMap']
                     ]);
                     // Enviar correo al cliente con PDF adjunto
-                    Mail::to($order->email)->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
-
+                    //Mail::to($order->email)->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
+                    $email = Mail::to($order->email);
+                    $cc=env('MAIL_SEND_CC', 'ti03@emilima.com.pe');
+                    if ($cc) {
+                        $email->cc($cc);
+                    }
+                    $email->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
                      //dd($mensajeSuccessFormateado ); Agape
                      return redirect()->route('user#myOrder')->with(['niubizbtnpagorealizado'=>$mensajeSuccessFormateado]);
                 } else {
                     return redirect()->back()->with('error', $responseMeg);
                 }
             } elseif (isset($responseniubiztrans['data'])) {
-                $responseCode = $responseniubiztrans['data']['ACTION_CODE'];
-                $responseMeg=$responseniubiztrans['data']['ACTION_DESCRIPTION'];
-                $nropedido=$responseniubiztrans['data']['TRACE_NUMBER'];
-                $fechahorapedido=$responseniubiztrans['data']['TRANSACTION_DATE'];
-                $parsedDate = Carbon::createFromFormat('ymdHis', $fechahorapedido);
-                $formattedDate = $parsedDate->format('d/m/y H:i:s');
+                $responseCode = $responseniubiztrans['data']['ACTION_CODE'] ?? null;
+                $responseMeg = $responseniubiztrans['data']['ACTION_DESCRIPTION'] ?? 'Descripción no disponible';
+                $nropedido = $responseniubiztrans['data']['TRACE_NUMBER'] ?? 'S/N';
+                $fechahorapedido = $responseniubiztrans['data']['TRANSACTION_DATE'] ?? null;
+
+                if ($fechahorapedido) {
+                    try {
+                        $parsedDate = Carbon::createFromFormat('ymdHis', $fechahorapedido);
+                        $formattedDate = $parsedDate->format('d/m/y H:i:s');
+                    } catch (\Exception $e) {
+                        $formattedDate = 'Fecha inválida';
+                    }
+                } else {
+                    $formattedDate = '';
+                }
+
                 Order::where('order_id', $id)->update([
                     'note' => $responseniubiztrans['data']
                 ]);
