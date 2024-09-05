@@ -9,10 +9,15 @@
                     <div class="card-header bg-transparent">
                         <div class="d-flex justify-content-between my-1 align-items-center">
                             <h5 class="mb-0">Confirmar y Pagar</h5>
+                            <button class="btn btn-info " id="btnLoading" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm text-white" role="status" aria-hidden="true"></span>
+                                Procesando el pago...no cierre la ventana
+                              </button>
                         </div>
                     </div>
                     <div class="card-body">
                         <h5 class="mb-2 text-info">Mi compra</h5>
+
                         @if (session('error'))
                             <div id="paymentErrorAlert" class="alert alert-danger">
                                 {!! session('error') !!}
@@ -153,11 +158,14 @@
     if (document.body.contains(frmVisa)) {
         document.getElementById('frmVisaNet').setAttribute("style", "display:none");
     }
+    document.getElementById('btnLoading').setAttribute("style", "display:none");
     function visaNetEc3() {
         if (document.getElementById('ckbTerms').checked) {
             document.getElementById('frmVisaNet').setAttribute("style", "display:auto");
+            document.getElementById('btnLoading').setAttribute("style", "display:auto");
         } else {
             document.getElementById('frmVisaNet').setAttribute("style", "display:none");
+            document.getElementById('btnLoading').setAttribute("style", "display:none");
         }
     }
 </script>
