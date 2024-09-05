@@ -11,7 +11,6 @@
                             <h5 class="mb-0">Confirmar y Pagar</h5>
                             <button class="btn btn-info " id="btnLoading" type="button" disabled>
                                 <span class="spinner-border spinner-border-sm text-white" role="status" aria-hidden="true"></span>
-                                Procesando el pago...no cierre la ventana
                               </button>
                         </div>
                     </div>
