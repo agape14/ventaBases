@@ -56,7 +56,7 @@ class CheckoutController extends Controller
     //get township ajax
     public function getTownship(Request $request){
         //$townships = Township::where('city_id',$request->id)->get();
-        $townships = Township::where('city_id',1)->get();
+        $townships = Township::where('city_id',1)->orderBy('name','asc')->get();
         return response()->json([
             'townships' => $townships,
         ]);

@@ -65,21 +65,21 @@
                                                         <div class="card-body">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">DNI</label>
-                                                                <input name="persona_natural[dni]" type="number" class="form-control" value="{{ old('persona_natural.dni') }}" placeholder="00000000" maxlength="8" >
+                                                                <input name="persona_natural[dni]" type="text" class="form-control" value="{{ old('persona_natural.dni') }}" placeholder="00000000" maxlength="8" pattern="\d{1,8}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                                 @error('persona_natural.dni')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Correo Electrónico</label>
-                                                                <input name="persona_natural[email]" type="email" class="form-control" value="{{ old('persona_natural.email') }}" placeholder="Ingrese su Correo Electrónico"  >
+                                                                <input name="persona_natural[email]" type="email" class="form-control" value="{{ old('persona_natural.email') }}" placeholder="Ingrese su Correo Electrónico" maxlength="250" >
                                                                 @error('persona_natural.email')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Celular</label>
-                                                                <input name="persona_natural[phone]" type="number" class="form-control" value="{{ old('persona_natural.phone') }}" placeholder="Ingrese su Celular" >
+                                                                <input name="persona_natural[phone]" type="text" class="form-control" value="{{ old('persona_natural.phone') }}" placeholder="Ingrese su Celular"  placeholder="000000000"  maxlength="9" pattern="\d{1,9}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                                 @error('persona_natural.phone')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -99,14 +99,14 @@
                                                         <div class="card-body">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Nombres Completos</label>
-                                                                <input name="persona_natural[name]" type="text" class="form-control" value="{{ old('persona_natural.name') }}" placeholder="Ingrese sus Nombres Completos" >
+                                                                <input name="persona_natural[name]" type="text" class="form-control" value="{{ old('persona_natural.name') }}" placeholder="Ingrese sus Nombres Completos" maxlength="250">
                                                                 @error('persona_natural.name')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
                                                             </div>
                                                             <div class="mb-4">
                                                                 <label for="" class="form-label">Dirección completa</label>
-                                                                <input name="persona_natural[address]" type="text" class="form-control" value="{{ old('persona_natural.address') }}" placeholder="Ingrese su Direccion completa" >
+                                                                <input name="persona_natural[address]" type="text" class="form-control" value="{{ old('persona_natural.address') }}" placeholder="Ingrese su Direccion completa"  maxlength="250">
                                                                 @error('persona_natural.address')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -153,21 +153,21 @@
                                                         <div class="card-body">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">RUC</label>
-                                                                <input name="persona_juridica[ruc]" type="number" class="form-control" value="{{ old('persona_juridica.ruc') }}" placeholder="00000000000" maxlength="11" >
+                                                                <input name="persona_juridica[ruc]" type="text" class="form-control" value="{{ old('persona_juridica.ruc') }}" placeholder="00000000000" maxlength="11" maxlength="8" pattern="\d{1,11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                                 @error('persona_juridica.ruc')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Correo Electrónico</label>
-                                                                <input name="persona_juridica[email]" type="email" class="form-control" value="{{ old('persona_juridica.email') }}" placeholder="Ingrese su Correo Electrónico"  >
+                                                                <input name="persona_juridica[email]" type="email" class="form-control" value="{{ old('persona_juridica.email') }}" placeholder="Ingrese su Correo Electrónico"  maxlength="250">
                                                                 @error('persona_juridica.email')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Celular</label>
-                                                                <input name="persona_juridica[phone]" type="number" class="form-control" value="{{ old('persona_juridica.phone') }}" placeholder="Ingrese su Celular" >
+                                                                <input name="persona_juridica[phone]" type="text" class="form-control" value="{{ old('persona_juridica.phone') }}" placeholder="Ingrese su Celular"  placeholder="000000000"  maxlength="9" pattern="\d{1,9}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                                 @error('persona_juridica.phone')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -180,14 +180,14 @@
                                                         <div class="card-body">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Razon Social</label>
-                                                                <input name="persona_juridica[razon_social]" type="text" class="form-control" value="{{ old('persona_juridica.razon_social') }}" placeholder="Ingrese sus Nombres Completos" >
+                                                                <input name="persona_juridica[razon_social]" type="text" class="form-control" value="{{ old('persona_juridica.razon_social') }}" placeholder="Ingrese sus Nombres Completos" maxlength="250">
                                                                 @error('persona_juridica.razon_social')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
                                                             </div>
                                                             <div class="mb-4">
                                                                 <label for="" class="form-label">Dirección completa</label>
-                                                                <input name="persona_juridica[address]" type="text" class="form-control" value="{{ old('persona_juridica.address') }}" placeholder="Ingrese su Direccion completa" >
+                                                                <input name="persona_juridica[address]" type="text" class="form-control" value="{{ old('persona_juridica.address') }}" placeholder="Ingrese su Direccion completa" maxlength="250">
                                                                 @error('persona_juridica.address')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -212,7 +212,7 @@
                                                         <div class="col-3">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">DNI</label>
-                                                                <input name="representante_legal[dni]" type="number" class="form-control" value="{{ old('representante_legal.dni') }}" placeholder="00000000" maxlength="8" >
+                                                                <input name="representante_legal[dni]" type="text" class="form-control" value="{{ old('representante_legal.dni') }}" placeholder="00000000" maxlength="8" pattern="\d{1,8}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                                 @error('representante_legal.dni')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -221,7 +221,7 @@
                                                         <div class="col-9">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Nombres Completos</label>
-                                                                <input name="representante_legal[name]" type="text" class="form-control" value="{{ old('representante_legal.name') }}" placeholder="Ingrese sus Nombres Completos" >
+                                                                <input name="representante_legal[name]" type="text" class="form-control" value="{{ old('representante_legal.name') }}" placeholder="Ingrese sus Nombres Completos" maxlength="250">
                                                                 @error('representante_legal.name')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -230,7 +230,7 @@
                                                         <div class="col-6">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Correo Electrónico</label>
-                                                                <input name="representante_legal[email]" type="email" class="form-control" value="{{ old('representante_legal.email') }}" placeholder="Ingrese su Correo Electrónico"  >
+                                                                <input name="representante_legal[email]" type="email" class="form-control" value="{{ old('representante_legal.email') }}" placeholder="Ingrese su Correo Electrónico" maxlength="250" >
                                                                 @error('representante_legal.email')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -239,7 +239,7 @@
                                                         <div class="col-6">
                                                             <div class="mb-4">
                                                                 <label for="" class="form-label">Dirección completa</label>
-                                                                <input name="representante_legal[address]" type="text" class="form-control" value="{{ old('representante_legal.address') }}" placeholder="Ingrese su Direccion completa" >
+                                                                <input name="representante_legal[address]" type="text" class="form-control" value="{{ old('representante_legal.address') }}" placeholder="Ingrese su Direccion completa" maxlength="250" >
                                                                 @error('representante_legal.address')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -248,7 +248,7 @@
                                                         <div class="col-6">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Celular</label>
-                                                                <input name="representante_legal[phone]" type="number" class="form-control" value="{{ old('representante_legal.phone') }}" placeholder="Ingrese su Celular">
+                                                                <input name="representante_legal[phone]" type="text" class="form-control" value="{{ old('representante_legal.phone') }}" placeholder="Ingrese su Celular" placeholder="000000000"  maxlength="9" pattern="\d{1,9}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                                 @error('representante_legal.phone')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
