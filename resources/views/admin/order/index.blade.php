@@ -55,7 +55,7 @@
                                 <td>{{ $item->order_id }}</td>
                                 <td>{{ $item->order_date }}</td>
                                 <td>{{ $item->invoice_number }}</td>
-                                <td>{{ $item->user->name }}</td>
+                                <td>{{ $item->customer->name }}</td>
                                 <td>{{ $item->grand_total }}</td>
                                 <td>{{ $item->brand }}</td>
                                 <td>

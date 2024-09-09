@@ -16,6 +16,7 @@ class OrderController extends Controller
     public function index(){
         $orders = Order::where('status', 'pagado')
         ->with('user')
+        ->with('customer')
         ->orderby('order_id', 'desc')
         ->get();
 
