@@ -55,14 +55,14 @@
                                 <td>{{ $item->order_id }}</td>
                                 <td>{{ $item->order_date }}</td>
                                 <td>{{ $item->invoice_number }}</td>
-                                <td>{{ $item->customer->name }}</td>
+                                <td>{{ $item->customer->name ?? ''}}</td>
                                 <td>{{ $item->grand_total }}</td>
                                 <td>{{ $item->brand }}</td>
                                 <td>
                                     <div class="badge bg-success">{{ $item->status }}</div>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin#showOrder',$item->order_id) }}" class="text-white btn btn-sm btn-info "><i class="fas fa-eye me-2"></i>Detalles</a>
+                                    <a href="{{ route('admin#showOrder',$item->order_id) }}" class="text-white btn btn-sm btn-info "><i class="fas fa-eye me-2"></i> Detalles</a>
                                     {{--<a href="{{ route('user#download#downloadInvoice',$item->order_id) }}" class="text-white btn btn-sm btn-dark"><i class="fas fa-download me-2"></i>Invoice</a>--}}
                                 </td>
                             </tr>
