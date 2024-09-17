@@ -204,6 +204,9 @@
                                 @if($order->customer)
                                     @if($order->customer->customer_type == 'natural')
                                         {{ $order->customer->personaNatural->dni ?? 'N/A' }}
+                                        @if($order->customer->personaNatural->ruc)
+                                            <br>RUC: {{ $order->customer->personaNatural->ruc }}
+                                        @endif
                                     @elseif($order->customer->customer_type == 'juridica')
                                         {{ $order->customer->personaJuridica->ruc ?? 'N/A' }}
                                     @else

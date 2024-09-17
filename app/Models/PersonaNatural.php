@@ -11,7 +11,7 @@ class PersonaNatural extends Model
     protected $primaryKey = 'persona_natural_id';
 
     protected $fillable = [
-        'customer_id', 'dni', 'birthdate',
+        'customer_id', 'dni','ruc', 'birthdate',
     ];
 
     public function customer()

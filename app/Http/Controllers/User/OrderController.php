@@ -79,18 +79,21 @@ class OrderController extends Controller
             $rules['persona_natural.name'] = 'required|string';
             $rules['persona_natural.address'] = 'required|string';
             $rules['persona_natural.distrito'] = 'required|integer';
+            if ($request->input('tipo_comprobante') === 'F') {
+                $rules['persona_natural.ruc'] = 'required|string|digits:11';
+            }
         }
 
         // Validación condicional para persona jurídica
         if ($request->input('tipo_persona') === 'J') {
-            $rules['persona_juridica.ruc'] = 'required|string|max:11';
+            $rules['persona_juridica.ruc'] = 'required|string|digits:11';
             $rules['persona_juridica.email'] = 'required|email';
             $rules['persona_juridica.phone'] = 'required|string';
             $rules['persona_juridica.razon_social'] = 'required|string';
             $rules['persona_juridica.address'] = 'required|string';
             $rules['persona_juridica.distrito'] = 'required|integer';
 
-            $rules['representante_legal.dni'] = 'required|string|max:8';
+            $rules['representante_legal.dni'] = 'required|string|digits:8';
             $rules['representante_legal.name'] = 'required|string';
             $rules['representante_legal.email'] = 'required|email';
             $rules['representante_legal.address'] = 'required|string';
@@ -224,9 +227,14 @@ class OrderController extends Controller
         $customerId = Customer::insertGetId($customerData);
         if ($request->input('tipo_persona') === 'N') {
             // Insertar en 'personas_naturales'
+            $ruc_persona_natural=null;
+            if($request->input('tipo_comprobante') === 'F'){
+                $ruc_persona_natural=$request->input('persona_natural.ruc');
+            }
             $personaNaturalId = PersonaNatural::insertGetId([
                 'customer_id' => $customerId,
                 'dni' => $request->input('persona_natural.dni'),
+                'ruc' => $ruc_persona_natural,
                 'created_at' => Carbon::now(),
             ]);
         } else {

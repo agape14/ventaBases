@@ -44,14 +44,14 @@
                                             <div class="alert alert-info  mb-0" role="alert">
                                                 <label class="form-label">Tipo Comprobante: </label>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="tipo_comprobante" id="tipo_comprobantef" value="B" checked>
-                                                    <label class="form-check-label" for="tipo_comprobantef">
+                                                    <input class="form-check-input" type="radio" name="tipo_comprobante" id="tipo_comprobanteb" value="B" {{ old('tipo_comprobante', 'B') == 'B' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="tipo_comprobanteb">
                                                       Boleta Electrónica
                                                     </label>
                                                   </div>
                                                   <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="tipo_comprobante" id="tipo_comprobanteb" value="F">
-                                                    <label class="form-check-label" for="tipo_comprobanteb">
+                                                    <input class="form-check-input" type="radio" name="tipo_comprobante" id="tipo_comprobantef" value="F" {{ old('tipo_comprobante', 'B') == 'F' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="tipo_comprobantef">
                                                       Factura Electrónica
                                                     </label>
                                                   </div>
@@ -60,7 +60,26 @@
                                         <div class="tab-pane fade show active" id="persona_nat" role="tabpanel" aria-labelledby="home-tab0">
 
                                             <div class="row">
-                                                <div class="col-6">
+                                                <div class="col-12 mb-0 {{ old('tipo_comprobante') == 'F' ? '' : 'd-none' }}" id="div_ruc_persona_natural">
+                                                    <div class="border-0 card">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-1">
+                                                                    <label for="" class="form-label">RUC</label>
+                                                                </div>
+                                                                <div class="col-11">
+                                                                    <div>
+                                                                        <input name="persona_natural[ruc]" type="text" class="form-control" value="{{ old('persona_natural.ruc') }}" placeholder="00000000000" maxlength="11" pattern="\d{1,11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                                        @error('persona_natural.ruc')
+                                                                            <small class="text-danger">{{ $message }}</small>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 mt-0">
                                                     <div class="border-0 card">
                                                         <div class="card-body">
                                                             <div class="mb-3">
@@ -153,7 +172,7 @@
                                                         <div class="card-body">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">RUC</label>
-                                                                <input name="persona_juridica[ruc]" type="text" class="form-control" value="{{ old('persona_juridica.ruc') }}" placeholder="00000000000" maxlength="11" maxlength="8" pattern="\d{1,11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                                <input name="persona_juridica[ruc]" type="text" class="form-control" value="{{ old('persona_juridica.ruc') }}" placeholder="00000000000" maxlength="11" pattern="\d{1,11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                                 @error('persona_juridica.ruc')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -537,7 +556,6 @@
         });
 
         function quitarrequiere_pers_natural(){
-
             $('input[name="persona_natural[dni]"]').attr('required', true);
             $('input[name="persona_natural[name]"]').attr('required', true);
             $('input[name="persona_natural[email]"]').attr('required', true);
@@ -573,6 +591,7 @@
             $('input[name="representante_legal[phone]"]').attr('required', true);
             $('input[name="representante_legal[distrito]"]').attr('required', true);
 
+            $('input[name="persona_natural[ruc]"]').removeAttr('required');
             $('input[name="persona_natural[dni]"]').removeAttr('required');
             $('input[name="persona_natural[name]"]').removeAttr('required');
             $('input[name="persona_natural[email]"]').removeAttr('required');
@@ -580,6 +599,19 @@
             $('input[name="persona_natural[phone]"]').removeAttr('required');
             $('input[name="persona_natural[distrito]"]').removeAttr('required');
         }
+
+        $('input[name="tipo_comprobante"]').change(function() {
+            // Verifica si la opción seleccionada es Factura (F)
+            if ($('#tipo_comprobantef').is(':checked')) {
+                // Muestra el campo RUC
+                $('#div_ruc_persona_natural').removeClass('d-none');
+                $('input[name="persona_natural[ruc]"]').attr('required', true);
+            } else {
+                // Oculta el campo RUC si no es Factura
+                $('#div_ruc_persona_natural').addClass('d-none');
+                $('input[name="persona_natural[ruc]"]').removeAttr('required');
+            }
+        });
     })
 // -----------for coupon-------------
     function applyCoupon(){
