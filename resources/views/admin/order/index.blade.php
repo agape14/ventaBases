@@ -63,6 +63,24 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('admin#showOrder',$item->order_id) }}" class="text-white btn btn-sm btn-info "><i class="fas fa-eye me-2"></i> Detalles</a>
+
+                                    @if ($item->emitido==0)
+                                        @if ($item->tipo_comprobante=='B')
+                                            <form action="{{ route('admin#insertcomprobante', [$item->order_id, $item->tipo_comprobante]) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="text-white btn btn-sm btn-dark ml-2">
+                                                <i class="fa fa-cloud me-2"></i> Boleta</button>
+                                            </form>
+                                        @elseif ($item->tipo_comprobante=='F')
+                                            <form action="{{ route('admin#insertcomprobante', [$item->order_id, $item->tipo_comprobante]) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="text-white btn btn-sm btn-dark ml-2">
+                                                <i class="fa fa-cloud me-2"></i> Factura</button>
+                                            </form>
+                                        @endif
+
+                                    @endif
+
                                     {{--<a href="{{ route('user#download#downloadInvoice',$item->order_id) }}" class="text-white btn btn-sm btn-dark"><i class="fas fa-download me-2"></i>Invoice</a>--}}
                                 </td>
                             </tr>

@@ -16,7 +16,7 @@ class UserController extends Controller
 
     //admin list
     public function adminList(){
-        $data = User::where('role','admin')->get();
+        $data = User::whereIn('role', ['admin', 'tesoreria'])->get();
         return view('admin.user.adminList')->with(['data'=>$data]);
     }
 

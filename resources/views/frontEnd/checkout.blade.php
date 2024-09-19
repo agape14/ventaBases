@@ -545,9 +545,16 @@
             if (target === '#persona_nat') {
                 $('#tipo_persona').val('N');
                 quitarrequiere_pers_natural();
+                $( '#tipo_comprobanteb' ).prop( 'disabled' , '' );
+                $( '#tipo_comprobanteb' ).prop( 'checked' , true );
+                $('#div_ruc_persona_natural').addClass('d-none');
+                $('input[name="persona_natural[ruc]"]').removeAttr('required');
             } else if (target === '#persona_jur') {
                 $('#tipo_persona').val('J');
                 quitarrequiere_pers_juridica();
+                $( '#tipo_comprobanteb' ).prop( 'checked' , false );
+                $( '#tipo_comprobanteb' ). prop ( 'disabled' , 'disabled' );
+                $( '#tipo_comprobantef' ). prop ( 'checked' , true );
             }
 
             console.log('Tipo seleccionado:', $('#tipo_persona').val());

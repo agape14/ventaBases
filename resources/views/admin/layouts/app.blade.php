@@ -480,6 +480,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 })
     @endif
 
+    @if (Session::has('registrosigiconfirmado'))
+        Swal.fire({
+                    icon: 'success',
+                    title: 'Comprobante Electronico Registrado',
+                    html: "{!! Session::get('registrosigiconfirmado') !!}",
+                    confirmButtonText: 'Aceptar'
+                })
+    @endif
+
     @if (Session::has('error'))
     Swal.fire({
                 icon: 'error',

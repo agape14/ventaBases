@@ -36,10 +36,12 @@ use App\Http\Controllers\Admin\StockHistoryController;
 use App\Models\CompanySetting;
 use App\Http\Controllers\User\NiubizController;
 use App\Http\Controllers\TerminosController;
+use App\Http\Controllers\ComprobanteController;
 
 use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -247,6 +249,7 @@ Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> [AdminCh
     Route::get('cashOnDelivery/delete/{id}',[CashOnDeliveryController::class,'delete'])->name('admin#deleteCos');
     Route::post('cashOnDelivery/getTownship',[CashOnDeliveryController::class,'getTownship'])->name('admin#getTownship');
 
+    Route::post('/registrar-comprobante/{id}/{bof}', [ComprobanteController::class, 'preparaRegistraComprobante'])->name('admin#insertcomprobante');
 });
 
 Route::group(['namespace' => 'FrontEnd'],function(){
@@ -269,7 +272,6 @@ Route::group(['namespace' => 'FrontEnd'],function(){
 
     //search product
     Route::get('product/search',[FrontEndController::class,'searchProduct'])->name('frontend#searchProduct');
-
 });
 
 Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],function(){
@@ -351,4 +353,21 @@ Route::get('/enviarmail/{id}/{cc?}', function ($id, $cc = null) {
     $email->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
 
     return 'Correo enviado correctamente a ' . $order->email . ($cc ? ' con copia a ' . $cc : '');
+});
+
+
+Route::get('/test-sqlserver-connection', function() {
+    try {
+        // Intentar la conexión a la base de datos SQL Server usando la conexión 'sqlsrv'
+        //DB::connection('sqlsrv')->getPdo();
+        $results = DB::connection('sqlsrv')->select('SELECT TOP 1 * FROM productos');
+
+        return 'Conexión a SQL Server exitosa. Primer usuario: ' . $results[0]->nombre_producto;
+
+        // Si la conexión es exitosa, devolver un mensaje
+        return 'Conexión a SQL Server exitosa.';
+    } catch (\Exception $e) {
+        // Si hay un error, capturarlo y devolver el mensaje de error
+        return 'Error al conectar con SQL Server: ' . $e->getMessage();
+    }
 });

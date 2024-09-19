@@ -42,7 +42,8 @@ class Order extends Model
         'cancel_date',
         'return_date',
         'return_reason',
-        'status'
+        'status',
+        'emitido',
     ];
     public function user(){
         return $this->belongsTo(User::class,'user_id','id');

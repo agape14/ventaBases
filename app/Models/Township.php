@@ -13,5 +13,6 @@ class Township extends Model
         'state_division_id',
         'city_id',
         'name',
+        'codubi',
     ];
 }
