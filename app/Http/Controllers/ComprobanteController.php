@@ -145,6 +145,12 @@ class ComprobanteController extends Controller
                 $nroConCeros= str_pad($numero, 8, '0', STR_PAD_LEFT);
                 $facturaElectronica = $tipoCompr . '-' . $serie . '-' . $nroConCeros . '.pdf' ;
                 $codIngreso = DB::connection('sqlsrv')->table('t_ingreso_tesoreria')->max('codIngreso') + 1;
+
+                $igv_rate = 0.18;
+                $subtotal = (float)$grantotal / (1 + $igv_rate);
+                $igv_value = (float)$grantotal - $subtotal;
+                $subtotal = number_format($subtotal, 2, '.', '');
+                $igv_value = number_format($igv_value, 2, '.', '');
                 DB::connection('sqlsrv')->table('t_ingreso_tesoreria')->insert([
                     'item' => 1,
                     'codComprob' => $codComprob,
@@ -154,8 +160,8 @@ class ComprobanteController extends Controller
                     'detalle' => $nombreconcepto,
                     'importe' => (float)$grantotal,
                     'intereses' => 0.00,
-                    'subtotal' => (float)$grantotal,
-                    'igv' => 0.00,
+                    'subtotal' => $subtotal,
+                    'igv' => $igv_value ,
                     'total' => (float)$grantotal,
                     'estIngreso' => 'R',
                     'codPla' => null,
@@ -179,8 +185,8 @@ class ComprobanteController extends Controller
                     'nombreCompletoSUNAT' => $razSoc ?? ($nombres),
                     'direccionSUNAT' => $direccion,
                     'ruc' => $nroruc,
-                    'subtotal' => (float)$grantotal,
-                    'igv' => 0.00,
+                    'subtotal' => $subtotal,
+                    'igv' => $igv_value ,
                     'total' => (float)$grantotal,
                     'emitido' => 'S',
                     'generado' => 'C',
