@@ -44,11 +44,19 @@
                                 <div class="card-body">
                                     <h5>{{ $product->name }}</h5>
                                     <hr>
-                                    <p>Recuerda que luego de la compra de las bases debes realizar el depósito de garantía equivalente al 10% del valor del precio base del lote que elegiste.
+                                    <p>
+                                        Recuerda que luego de la compra de las bases debes realizar el depósito de garantía equivalente al 10% del valor del precio base del lote que elegiste.
+                                    </p>
+                                    <p>
                                         Puedes hacer el depósito de dos maneras:
-                                        1. Cheque de gerencia no negociable, o
-                                        2. Depósito bancario a la cuenta corriente N. 191-4217528-0-91 (Código de Cuenta Interbancaria N. 00219100421752809158), a nombre de EMILIMA FOMUR.
-                                        *Recuerda enviar el comprobante al correo subasta@emilima.com.pe*</p>
+                                    </p>
+                                    <ul>
+                                        <li>1. Cheque de gerencia no negociable, o</li>
+                                        <li>2. Depósito bancario a la cuenta corriente N. 191-4217528-0-91 (Código de Cuenta Interbancaria N. 00219100421752809158), a nombre de EMILIMA FOMUR.</li>
+                                    </ul>
+                                    <p>
+                                        <strong>*Recuerda enviar el comprobante al correo <a href="mailto:subasta@emilima.com.pe">subasta@emilima.com.pe</a>*</strong>
+                                    </p>
                                     <p>Disponible : <span class="text-danger">En stock</span></p>
                                     <p class="text-black-50">{{ $product->short_description }}</p>
                                     <hr>
