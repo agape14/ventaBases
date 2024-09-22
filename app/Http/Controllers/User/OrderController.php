@@ -259,6 +259,7 @@ class OrderController extends Controller
                 'ruc' => $request->input('persona_juridica.ruc'),
                 'razon_social' => $request->input('persona_juridica.razon_social'),
                 'representante_legal_id' => $representanteNaturalId,
+                'representante_legal_distrito' => $request->input('representante_legal.distrito'),
                 'created_at' => Carbon::now(),
             ]);
         }

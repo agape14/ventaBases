@@ -11,7 +11,7 @@ class PersonaJuridica extends Model
     protected $primaryKey = 'persona_juridica_id';
 
     protected $fillable = [
-        'customer_id', 'ruc', 'razon_social', 'representante_legal_id',
+        'customer_id', 'ruc', 'razon_social', 'representante_legal_id','representante_legal_distrito',
     ];
 
     public function customer()
@@ -22,5 +22,9 @@ class PersonaJuridica extends Model
     public function representanteLegal()
     {
         return $this->belongsTo(PersonaNatural::class, 'representante_legal_id');
+    }
+
+    public function distrito(){
+        return $this->belongsTo(Township::class,'representante_legal_distrito','township_id');
     }
 }

@@ -49,7 +49,10 @@ class OrderController extends Controller
     //order detail page
     public function showOrder($id,$notiId = null){
         $order = Order::where('order_id',$id)
-        ->with(['stateDivision', 'city', 'township', 'user', 'paymentTransition', 'customer'])
+        ->with(['stateDivision', 'city', 'township', 'user',
+        'paymentTransition',
+        'customer.personaJuridica.representanteLegal.customer',
+        'customer.personaJuridica.distrito'])
         ->first();
 
         $orderItems = OrderItem::where('order_id',$id)->with(['product','color','size'])->get();

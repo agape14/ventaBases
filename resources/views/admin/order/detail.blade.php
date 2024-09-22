@@ -249,6 +249,50 @@
                 </table>
             </div>
         </div>
+        @if ($order->customer->personaJuridica)
+        <div class="my-3 shadow-none card">
+            <div class="bg-transparent card-header">
+                <div class="">
+                    <div class="h5"> Representante Legal</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody class="">
+                        <tr>
+                            <th>Nro. Documento</th>
+                            <td>
+                                {{ $order->customer->personaJuridica->representanteLegal->dni ?? 'N/A' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Nombres y Apellidos Completos</th>
+                            <td>{{ $order->customer->personaJuridica->representanteLegal->customer->name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Correo</th>
+                            <td>{{ $order->customer->personaJuridica->representanteLegal->customer->email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Celular</th>
+                            <td>{{ $order->customer->personaJuridica->representanteLegal->customer->phone }}</td>
+                        </tr>
+                        <tr>
+                            <th>Direccion</th>
+                            <td>{{ $order->customer->personaJuridica->representanteLegal->customer->address }}</td>
+                        </tr>
+                        @if ($order->customer->personaJuridica->distrito)
+                        <tr>
+                            <th>Distrito</th>
+                            <td>{{ $order->customer->personaJuridica->distrito->name }}</td>
+                        </tr>
+                        @endif
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @endif
     </div>
 
 

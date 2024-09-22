@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Customer;
+use App\Models\PersonaNatural;
+use App\Models\Township;
 
 class ComprobanteController extends Controller
 {
@@ -37,7 +39,7 @@ class ComprobanteController extends Controller
         if ($response['success']) {
             return redirect()->route('admin#order') ->with('registrosigiconfirmado', $response['message'].' Codigo: '.$response['codComprob']);
         } else {
-            return back()->with('error', $response['message']);
+            return back()->with('error', $response['message'] .' - ' .$response['error']);
         }
     }
 
@@ -72,6 +74,13 @@ class ComprobanteController extends Controller
                 $nroruc=null;
                 $tipodocucliente=null;
                 $codtipodocucliente=null;
+                $codrepresentantelegal=null;
+                $distrepresentantelegal=null;
+                $ubigeo_dist=null;
+                $rep_legal_dist=null;
+                $rep_legal_prov=null;
+                $rep_legal_dpto=null;
+                $dni_rep_legal=null;
                 $mes = Carbon::parse($fecha)->month;
                 if($tipopersona=='N'){
                     $personanatural=DB::table('personas_naturales')->where('customer_id', $idCliente)->first();
@@ -88,12 +97,45 @@ class ComprobanteController extends Controller
                     $tipodocucliente='RUC';
                     $nroruc=$nrodocumento;
                     $codtipodocucliente='06';
+                    $codrepresentantelegal=$personajuridica->representante_legal_id;
+                    $distrepresentantelegal=$personajuridica->representante_legal_distrito;
                 }
                 $personaExiste = DB::connection('sqlsrv')->table('t_persona')->where('codPersona', $nrodocumento)->exists();
                 $tbltown=DB::table('townships')->where('township_id', $iddistrito)->first();
                 $tblubigeo = DB::connection('sqlsrv')->table('t_ubigeo')->where('codUbi', $tbltown->codubi)->first();
                 $ubigeo = $tblubigeo->codUbi;
                 if (!$personaExiste) {
+                    if($codrepresentantelegal){
+                        $pers_rep_legal = DB::table('personas_naturales')->where('persona_natural_id',$codrepresentantelegal)->first();
+                        $clie_rep_legal = DB::table('customers')->where('customer_id',$pers_rep_legal->customer_id)->first();
+                        $ubig_rep_legal = DB::table('townships')->where('township_id',$distrepresentantelegal)->first();
+                        if($ubig_rep_legal){
+                            $tblubigeo = DB::connection('sqlsrv')->table('t_ubigeo')->where('codUbi', $ubig_rep_legal->codubi)->first();
+                            $ubigeo_dist = $tblubigeo->codUbi;
+                            $rep_legal_dist=$tblubigeo->dist;
+                            $rep_legal_prov=$tblubigeo->prov;
+                            $rep_legal_dpto=$tblubigeo->dpto;
+                        }
+                        $dni_rep_legal=$pers_rep_legal->dni;
+                        DB::connection('sqlsrv')->table('t_persona')->insert([
+                            'codPersona' => $dni_rep_legal,
+                            'tipoPersona' => 'N',
+                            'nombreCompleto' => $clie_rep_legal->name,
+                            'tipoDoc' => 'DNI',
+                            'email' => $clie_rep_legal->email,
+                            'movil' => $clie_rep_legal->phone,
+                            'estado' => 'A',
+                            'domicilio' => $clie_rep_legal->address,
+                            'ubigeo' => $ubigeo_dist,
+                            'tipoUsuario' => 'E',
+                            'registradoPor' => $registradoPor,
+                            'fechaRegistro' => $fechaRegistro,
+                            'dist' => $rep_legal_dist,
+                            'prov' => $rep_legal_prov,
+                            'dpto' => $rep_legal_dpto,
+                            'tipoDocumento' => '01'
+                        ]);
+                    }
                     DB::connection('sqlsrv')->table('t_persona')->insert([
                         'codPersona' => $nrodocumento,
                         'tipoPersona' => $tipopersona,
@@ -104,7 +146,7 @@ class ComprobanteController extends Controller
                         'telefono' => '',
                         'movil' => $telefono,
                         'estado' => 'A',
-                        'codRepresentante' => null,
+                        'codRepresentante' => $dni_rep_legal,
                         'domicilio' => $direccion,
                         'ruc' => $nroruc,
                         'ubigeo' => $ubigeo,
