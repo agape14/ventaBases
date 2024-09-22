@@ -44,6 +44,11 @@
                                 <div class="card-body">
                                     <h5>{{ $product->name }}</h5>
                                     <hr>
+                                    <p>Recuerda que luego de la compra de las bases debes realizar el depósito de garantía equivalente al 10% del valor del precio base del lote que elegiste.
+                                        Puedes hacer el depósito de dos maneras:
+                                        1. Cheque de gerencia no negociable, o
+                                        2. Depósito bancario a la cuenta corriente N. 191-4217528-0-91 (Código de Cuenta Interbancaria N. 00219100421752809158), a nombre de EMILIMA FOMUR.
+                                        *Recuerda enviar el comprobante al correo subasta@emilima.com.pe*</p>
                                     <p>Disponible : <span class="text-danger">En stock</span></p>
                                     <p class="text-black-50">{{ $product->short_description }}</p>
                                     <hr>
