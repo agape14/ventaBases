@@ -36,6 +36,9 @@ class OrderConfirmation extends Mailable
                         'order' => $this->order,
                         'mensajeSuccessFormateado' => $this->mensajeSuccessFormateado,
                     ])
-                    ->attach($pdfPath);
+                    ->attach($pdfPath)
+                    ->withSwiftMessage(function ($message) {
+                        $message->getHeaders()->addTextHeader('Content-Type', 'text/html; charset=UTF-8');
+                    });
     }
 }
