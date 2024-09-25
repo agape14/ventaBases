@@ -379,3 +379,9 @@ Route::get('/test-sqlserver-connection', function() {
         return 'Error al conectar con SQL Server: ' . $e->getMessage();
     }
 });
+
+Route::get('/export_excel', function () {
+    $timestamp = Carbon::now()->format('YmdHis');
+    $fileName = 'VentasBases_' . $timestamp . '.xlsx';
+    return Excel::download(new OrdersExport, $fileName);
+})->name('admin#exportexcel');
