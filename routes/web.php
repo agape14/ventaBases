@@ -37,6 +37,9 @@ use App\Models\CompanySetting;
 use App\Http\Controllers\User\NiubizController;
 use App\Http\Controllers\TerminosController;
 use App\Http\Controllers\ComprobanteController;
+use App\Exports\OrdersExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
@@ -200,6 +203,11 @@ Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> [AdminCh
     Route::get('order/pick/{id}',[AdminOrderController::class,'pickOrder'])->name('admin#pickOrder');
     Route::get('order/ship/{id}',[AdminOrderController::class,'shipOrder'])->name('admin#shipOrder');
     Route::get('order/deliver/{id}',[AdminOrderController::class,'deliverOrder'])->name('admin#deliverOrder');
+    Route::get('order/export', function () {
+        $timestamp = Carbon::now()->format('YmdHis');
+        $fileName = 'VentasBases_' . $timestamp . '.xlsx';
+        return Excel::download(new OrdersExport, $fileName);
+    })->name('admin#exportOrder');
 
     //user list
     Route::get('userList',[UserController::class,'userList'])->name('admin#userList');

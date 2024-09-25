@@ -36,8 +36,18 @@ class OrderController extends Controller
 
     //ordrer filter
     public function filterOrder(Request $request){
-        $data = Order::with('user')->where('status','like','%'.$request->orderStatus.'%')->get();
-        return view('admin.order.index')->with(['data'=>$data]);
+        $orders = Order::with('user')->where('status','like','%'.$request->orderStatus.'%')->get();
+        $ordersWithBrand = $orders->map(function ($order) {
+            // Decodificar el JSON en el campo note
+            $paymentData = json_decode($order->note, true);
+
+            // Extraer el valor de BRAND
+            $order->brand = $paymentData['BRAND'] ?? '';
+
+            return $order;
+        });
+
+        return view('admin.order.index', compact('ordersWithBrand'))->with(['data'=>$orders]);
     }
 
     //pending order

@@ -15,23 +15,32 @@
     <div class="col-12">
         <div class="rounded card" style="box-shadow: none !important">
             <div class="card-header">
-               <div class="my-1 d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">Todos los Pedidos - <div class="badge bg-dark">{{ $ordersWithBrand->count() }}</div></h4>
-                    <form class="d-flex align-items-center" action="{{ route('admin#filterOrder') }}" method="GET">
-                        @csrf
-                        <p class="mb-0 mr-2 text-nowrap">Estado Pedidos :</p>
-                        <select name="orderStatus" id="" class="mb-0 mr-2 custom-select">
-                            <option value="">Todos</option>
-                            <option value="pendiente" {{ request()->orderStatus == 'pendiente' ? 'selected' : ''}}>Pendiente</option>
-                            <option value="pagado" {{ request()->orderStatus == 'pagado' ? 'selected' : ''}}>Pagado</option>
-                            {{--<option value="procesando" {{ request()->orderStatus == 'procesando' ? 'selected' : ''}}>Procesando</option>
-                            <option value="seleccionado" {{ request()->orderStatus == 'seleccionado' ? 'selected' : ''}}>Seleccionado</option>
-                            <option value="enviado" {{ request()->orderStatus == 'enviado' ? 'selected' : ''}}>Enviado</option>
-                            <option value="entregado" {{ request()->orderStatus == 'entregado' ? 'selected' : ''}}>Entregado</option>
-                            <option value="completado" {{ request()->orderStatus == 'completado' ? 'selected' : ''}}>Completado</option>--}}
-                        </select>
-                        <button class="btn btn-primary">Filtrar</button>
-                    </form>
+               <div class="my-1 d-flex justify-content-between align-items-center ">
+                    <h4 class="mb-0">Todos los Pedidos - <div class="badge bg-dark">{{ $ordersWithBrand->count() }} </div></h4>
+                    <div class="d-flex">
+                        <form class="d-flex align-items-center" action="{{ route('admin#filterOrder') }}" method="GET">
+                            @csrf
+                            <p class="mb-0 mr-2 text-nowrap">Estado :</p>
+                            <select name="orderStatus" id="" class="mb-0 mr-2 custom-select">
+                                <option value="">Todos</option>
+                                <option value="pendiente" {{ request()->orderStatus == 'pendiente' ? 'selected' : ''}}>Pendiente</option>
+                                <option value="pagado" {{ request()->orderStatus == 'pagado' ? 'selected' : ''}}>Pagado</option>
+                                {{--<option value="procesando" {{ request()->orderStatus == 'procesando' ? 'selected' : ''}}>Procesando</option>
+                                <option value="seleccionado" {{ request()->orderStatus == 'seleccionado' ? 'selected' : ''}}>Seleccionado</option>
+                                <option value="enviado" {{ request()->orderStatus == 'enviado' ? 'selected' : ''}}>Enviado</option>
+                                <option value="entregado" {{ request()->orderStatus == 'entregado' ? 'selected' : ''}}>Entregado</option>
+                                <option value="completado" {{ request()->orderStatus == 'completado' ? 'selected' : ''}}>Completado</option>--}}
+                            </select>
+                            <button class="btn btn-primary  d-flex align-items-center">
+                                <i class="fas fa-search"></i> Filtrar
+                            </button>
+                        </form>
+                        <form action="{{ route('admin#exportOrder') }}" method="GET">
+                            <button type="submit" class="btn btn-success ml-2">
+                                <i class="fas fa-file-excel"></i> Exportar
+                            </button>
+                        </form>
+                    </div>
                </div>
             </div>
             <div class="card-body">
