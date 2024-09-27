@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Services\NiubizService;
 use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
+use App\Models\VoucherDetail;
 
 class OrderController extends Controller
 {
@@ -459,5 +460,183 @@ class OrderController extends Controller
         ]);
     }
 
+    public function registeOrder(Request $request){ //dd($request->all());
 
+        $rules = [
+            'tipo_persona' => 'required|in:N,J',
+            'tipo_comprobante' => 'required|string',
+            'stateDivisionId' => 'required|integer',
+            'cityId' => 'required|integer',
+            'paymentMethod' => 'required|string',
+            'invoice_number'=> 'required|integer',
+            'order_date'=> 'required|date',
+            'grand_total'=> 'required|numeric',
+            'product_id'=> 'required|integer',
+            'quantity'=> 'required|integer',
+        ];
+
+        if ($request->input('tipo_persona') === 'N') {
+            $rules['persona_natural.dni'] = 'required|string|max:8';
+            $rules['persona_natural.email'] = 'required|email';
+            $rules['persona_natural.phone'] = 'required|string';
+            $rules['persona_natural.name'] = 'required|string';
+            $rules['persona_natural.address'] = 'required|string';
+            $rules['persona_natural.distrito'] = 'required|integer';
+            if ($request->input('tipo_comprobante') === 'F') {
+                $rules['persona_natural.ruc'] = 'required|string|digits:11';
+            }
+        }
+
+        if ($request->input('tipo_persona') === 'J') {
+            $rules['persona_juridica.ruc'] = 'required|string|digits:11';
+            $rules['persona_juridica.email'] = 'required|email';
+            $rules['persona_juridica.phone'] = 'required|string';
+            $rules['persona_juridica.razon_social'] = 'required|string';
+            $rules['persona_juridica.address'] = 'required|string';
+            $rules['persona_juridica.distrito'] = 'required|integer';
+
+            $rules['representante_legal.dni'] = 'required|string|digits:8';
+            $rules['representante_legal.name'] = 'required|string';
+            $rules['representante_legal.email'] = 'required|email';
+            $rules['representante_legal.address'] = 'required|string';
+            $rules['representante_legal.phone'] = 'required|string';
+            $rules['representante_legal.distrito'] = 'required|integer';
+        }
+
+        $validation = Validator::make($request->all(), $rules);
+        //dd($validation->errors()->all());
+        if ($validation->fails()) {
+            return back()->withErrors($validation)->withInput();
+        }
+
+        if($request->paymentMethod == 'transferencia'){
+            $orderId = $this->insertOrderManualData($request);
+
+            //new order notify to admin
+            $this->notifyToAdmin($orderId,'realizó un nuevo pedido');
+
+            return redirect()->route('admin#order')->with(['orderSuccess'=>'Se registró exitosamente']);
+            //return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Orden exitosamente']);
+
+        }
+    }
+
+    private function insertOrderManualData($request){
+        if ($request->input('tipo_persona') === 'N') {
+            $name = $request->input('persona_natural.name');
+            $email = $request->input('persona_natural.email');
+            $phone = $request->input('persona_natural.phone');
+            $address = $request->input('persona_natural.address');
+            $distrito = $request->input('persona_natural.distrito');
+        } else {
+            // Datos de persona jurídica
+            $name = $request->input('persona_juridica.razon_social');
+            $email = $request->input('persona_juridica.email');
+            $phone = $request->input('persona_juridica.phone');
+            $address = $request->input('persona_juridica.address');
+            $distrito = $request->input('persona_juridica.distrito');
+        }
+
+        $customerData = [
+            'customer_type' => $request->input('tipo_persona') === 'N' ? 'natural' : 'juridica',
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'address' => $address,
+            'created_at' => Carbon::now(),
+        ];
+
+        $customerId = Customer::insertGetId($customerData);
+        if ($request->input('tipo_persona') === 'N') {
+            // Insertar en 'personas_naturales'
+            $ruc_persona_natural=null;
+            if($request->input('tipo_comprobante') === 'F'){
+                $ruc_persona_natural=$request->input('persona_natural.ruc');
+            }
+            $personaNaturalId = PersonaNatural::insertGetId([
+                'customer_id' => $customerId,
+                'dni' => $request->input('persona_natural.dni'),
+                'ruc' => $ruc_persona_natural,
+                'created_at' => Carbon::now(),
+            ]);
+        } else {
+            // Insertar en 'personas_juridicas'
+            $customerRepresentante = [
+                'customer_type' => 'natural',
+                'name' => $request->input('representante_legal.name'),
+                'email' => $request->input('representante_legal.email'),
+                'phone' => $request->input('representante_legal.phone'),
+                'address' => $request->input('representante_legal.address'),
+                'created_at' => Carbon::now(),
+            ];
+
+            $representanteId = Customer::insertGetId($customerRepresentante);
+            $representanteNaturalId = PersonaNatural::insertGetId([
+                'customer_id' => $representanteId,
+                'dni' => $request->input('representante_legal.dni'),
+                'created_at' => Carbon::now(),
+            ]);
+            $personaJuridicaId = PersonaJuridica::insertGetId([
+                'customer_id' => $customerId,
+                'ruc' => $request->input('persona_juridica.ruc'),
+                'razon_social' => $request->input('persona_juridica.razon_social'),
+                'representante_legal_id' => $representanteNaturalId,
+                'representante_legal_distrito' => $request->input('representante_legal.distrito'),
+                'created_at' => Carbon::now(),
+            ]);
+        }
+        $orderDate = Carbon::createFromFormat('Y-m-d', $request->input('order_date'));
+        $mes = $orderDate->format('m');
+        $año = $orderDate->format('Y');
+        $formattedDate = $orderDate->format('d/m/Y');
+        $data = [
+            'user_id' => auth()->user()->id,
+            'customer_id' => $customerId,
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'state_division_id' => $request->stateDivisionId,
+            'city_id' => $request->cityId,
+            'township_id' => $distrito,
+            'address' => $address,
+            'note' => $request->note,
+            'payment_method' => $request->paymentMethod,
+            'sub_total' => $request->input('grand_total'),
+            'order_month' => $mes,
+            'order_year' => $año,
+            'tipo_persona' => $request->input('tipo_persona'),
+            'tipo_comprobante' => $request->input('tipo_comprobante'),
+            'invoice_number' => $request->input('invoice_number'),
+            'order_date' => $formattedDate,
+            'grand_total' => $request->input('grand_total'),
+            'status' => 'pagado',
+            'confirmed_date' => Carbon::now(),
+            'created_at' => Carbon::now(),
+        ];
+
+            $orderId = Order::insertGetId($data);
+
+            OrderItem::create([
+                'order_id' => $orderId,
+                'product_id' => $request->input('product_id'),
+                'product_variant_id' => $request->input('product_id'),
+                'unit_price' => $request->input('grand_total'),
+                'quantity'=> $request->input('quantity'),
+                'total_price' => $request->input('grand_total'),
+            ]);
+
+            if ($request->hasFile('paymentScreenshot')) {
+                $ssFile = $request->file('paymentScreenshot');
+                $ssFileName = uniqid() . '-' . $ssFile->getClientOriginalName();
+                $ssFile->move(public_path('uploads/payment/'), $ssFileName);
+                $voucherData = [
+                    'order_id' => $orderId,
+                    'voucher_image' => $ssFileName,
+                    'created_at' => Carbon::now(),
+                ];
+                $voucherId = VoucherDetail::insertGetId($voucherData);
+            }
+
+            return $orderId;
+    }
 }
