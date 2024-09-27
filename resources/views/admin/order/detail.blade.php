@@ -357,7 +357,7 @@
                             <td>
                                 <div class="">
 
-                                        <a href="{{ asset('uploads/payment/'.$voucherorder->voucher_image) }}" data-lightbox="image-1" data-title="Payment Photo">
+                                        <a href="{{ asset('uploads/payment/'.$voucherorder->voucher_image) }}" data-lightbox="image-1" data-title="Voucher Deposito">
                                             <img src="{{ asset('uploads/payment/'.$voucherorder->voucher_image) }}" alt="" srcset="" style="width: 200px;">
                                         </a>
 
