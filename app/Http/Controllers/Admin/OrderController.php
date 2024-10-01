@@ -9,6 +9,9 @@ use App\Models\OrderItem;
 use App\Models\ProductVariant;
 use App\Models\StockHistory;
 use Carbon\Carbon;
+use App\Models\StateDivision;
+use App\Models\Product;
+use App\Models\VoucherDetail;
 
 class OrderController extends Controller
 {
@@ -22,11 +25,11 @@ class OrderController extends Controller
 
         // Crear un array para almacenar los datos procesados
         $ordersWithBrand = $orders->map(function($order) {
-            // Decodificar el JSON en el campo note
-            $paymentData = json_decode($order->note, true);
+            // Decodificar el JSON en el campo note, si existe, sino dejarlo como un array vacío
+            $paymentData = !empty($order->note) ? json_decode($order->note, true) : [];
 
-            // Extraer el valor de BRAND
-            $order->brand = $paymentData['BRAND'] ?? '';
+            // Si existe el campo 'BRAND', úsalo, sino usa 'payment_method'
+            $order->brand = $paymentData['BRAND'] ?? $order->payment_method;
 
             return $order;
         });
@@ -64,14 +67,14 @@ class OrderController extends Controller
         'customer.personaJuridica.representanteLegal.customer',
         'customer.personaJuridica.distrito'])
         ->first();
-
+        $voucherorder = VoucherDetail::where('order_id', $id)->first();
         $orderItems = OrderItem::where('order_id',$id)->with(['product','color','size'])->get();
         if($notiId){
             if($notiId){
                 auth()->user()->notifications->where('id',$notiId)->markAsRead();
             }
         }
-        return view('admin.order.detail')->with(['order'=>$order,'orderItems'=>$orderItems]);
+        return view('admin.order.detail')->with(['order'=>$order,'orderItems'=>$orderItems,'voucherorder'=>$voucherorder]);
     }
 
     //change order status
@@ -124,5 +127,11 @@ class OrderController extends Controller
             'status'=>$status,
             $statusDate => Carbon::now(),
         ]);
+    }
+
+    public function newOrder(){
+        $stateDivisions = StateDivision::get();
+        $products = Product::where('publish_status','1')->get();
+        return view('admin.order.neworder')->with(['stateDivisions'=>$stateDivisions,'productos'=>$products]);
     }
 }

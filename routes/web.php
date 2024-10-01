@@ -208,6 +208,7 @@ Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> [AdminCh
         $fileName = 'VentasBases_' . $timestamp . '.xlsx';
         return Excel::download(new OrdersExport, $fileName);
     })->name('admin#exportOrder');
+    Route::get('order/neworder',[AdminOrderController::class,'newOrder'])->name('admin#neworderAdmin');
 
     //user list
     Route::get('userList',[UserController::class,'userList'])->name('admin#userList');
@@ -310,7 +311,7 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
 
     //order
     Route::post('checkout',[OrderController::class,'createOrder'])->name('user#createOrder');
-
+    Route::post('registeorder',[OrderController::class,'registeOrder'])->name('user#registerOrder');
     //user payment
     Route::post('confirmPayment',[OrderController::class,'confirmPayment'])->name('user#confirmPayment');
 

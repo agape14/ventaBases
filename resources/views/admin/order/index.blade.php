@@ -35,6 +35,7 @@
                                 <i class="fas fa-search"></i> Filtrar
                             </button>
                         </form>
+                        <a href="{{ route('admin#neworderAdmin') }}" class="btn btn-warning ml-2"><i class="fa fa-plus"></i></a>
                         <form action="{{ route('admin#exportOrder') }}" method="GET">
                             <button type="submit" class="btn btn-success ml-2">
                                 <i class="fas fa-file-excel"></i> Exportar
@@ -73,7 +74,7 @@
                                 <td>
                                     <a href="{{ route('admin#showOrder',$item->order_id) }}" class="text-white btn btn-sm btn-info "><i class="fas fa-eye me-2"></i> Detalles</a>
 
-                                    @if ($item->emitido==0)
+                                    @if ($item->emitido==0 && $item->payment_method!="transferencia")
                                         @if ($item->tipo_comprobante=='B')
                                             <form action="{{ route('admin#insertcomprobante', [$item->order_id, $item->tipo_comprobante]) }}" method="POST" style="display:inline;">
                                                 @csrf

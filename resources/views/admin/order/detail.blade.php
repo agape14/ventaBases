@@ -341,37 +341,24 @@
             </div>
         </div>
     </div>
-    @if ($order->payment_method != 'tarjeta')
+    @if ($voucherorder)
     <div class="col-12">
         <div class="my-3 shadow-none card">
             <div class="bg-transparent card-header">
                 <div class="d-flex justify-content-between">
-                    <div class="h5">Payment Transition</div>
-                    <a href="{{ route('admin#showPaymentTransition',$order->paymentTransition->id) }}" class="btn btn-primary ">View Payment Transition</a>
+                    <div class="h5">Voucher Deposito</div>
                 </div>
             </div>
             <div class="card-body">
                 <table class="table table-bordered">
                     <tbody class="">
                         <tr>
-                            <th>Transfer To:</th>
-                            <td class="font-weight-bold">{{ $order->paymentTransition->paymentInfo->name }}-{{ $order->paymentTransition->paymentInfo->account_number }}</td>
-                        </tr>
-                        <tr>
-                            <th>Payment Method</th>
-                            <td class="font-weight-bold text-uppercase">{{ $order->paymentTransition->order->payment_method }}</td>
-                        </tr>
-                        <tr>
-                            <th>Amount</th>
-                            <td>{{ $order->paymentTransition->order->grand_total }}</td>
-                        </tr>
-                        <tr>
-                            <th>Payment Photo</th>
+                            <th>Imagen</th>
                             <td>
                                 <div class="">
 
-                                        <a href="{{ asset('uploads/payment/'.$order->paymentTransition->payment_screenshot) }}" data-lightbox="image-1" data-title="Payment Photo">
-                                            <img src="{{ asset('uploads/payment/'.$order->paymentTransition->payment_screenshot) }}" alt="" srcset="" style="width: 200px;">
+                                        <a href="{{ asset('uploads/payment/'.$voucherorder->voucher_image) }}" data-lightbox="image-1" data-title="Voucher Deposito">
+                                            <img src="{{ asset('uploads/payment/'.$voucherorder->voucher_image) }}" alt="" srcset="" style="width: 200px;">
                                         </a>
 
                                 </div>
@@ -383,7 +370,6 @@
         </div>
     </div>
     @endif
-
 </div>
 @endsection
 @section('script')
