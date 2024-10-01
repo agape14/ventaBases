@@ -154,7 +154,7 @@ class FrontEndController extends Controller
         $product = Product:: where('product_id',$id)->with('productReview','productReview.user')->first();
         $multiImages = MultiImage::where('product_id',$id)->get();
         $colors = ProductVariant::select('product_variants.*','product_colors.name as colorName')
-                                ->join('product_colors','product_colors.color_id','product_variants.color_id')
+                                ->leftjoin('product_colors','product_colors.color_id','product_variants.color_id')
                                 ->groupBy('product_variants.color_id')
                                 ->where('product_variants.product_id',$id)
                                 ->get();

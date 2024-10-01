@@ -57,7 +57,16 @@
                                     <p>
                                         <strong>*Recuerda enviar el comprobante al correo <a href="mailto:subasta@emilima.com.pe">subasta@emilima.com.pe</a>*</strong>
                                     </p>
-                                    <p>Disponible : <span class="text-danger">En stock</span></p>
+
+                                    @if ($colors->count() > 0)
+                                        @foreach ($colors as $color)
+                                            @if ($color->available_stock > 0)
+                                                <p>Disponibilidad : <span class="text-success">En stock</span></p>
+                                            @else
+                                                <p>Disponibilidad : <span class="text-danger">Sin stock</span></p>
+                                            @endif
+                                        @endforeach
+                                    @endif
                                     <p class="text-black-50">{{ $product->short_description }}</p>
                                     <hr>
                                     @if (!empty($product->discount_price))
