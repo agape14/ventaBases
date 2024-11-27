@@ -463,7 +463,7 @@
         $('.stateDivisionsOption').on('change',function(){
             let stateDivisionId = $(this).val();
             // alert(stateDivisionId);
-            getProvincias(stateDivisionId,0);
+            getProvincias(stateDivisionId,1);
         })
         $('.cityOption').on('change',function(){
             let cityId = $(this).val();
