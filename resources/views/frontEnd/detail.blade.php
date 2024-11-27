@@ -48,7 +48,7 @@
                                         Recuerda que luego de la compra de las bases debes realizar el depósito de garantía equivalente al 10% del valor del precio base del lote que elegiste.
                                     </p>
                                     <p>
-                                        Puedes hacer el depósito de dos maneras:
+                                        Puedes hacer el depósito de garantía en dos modalidades:
                                     </p>
                                     <ul>
                                         <li>1. Cheque de gerencia no negociable, o</li>
