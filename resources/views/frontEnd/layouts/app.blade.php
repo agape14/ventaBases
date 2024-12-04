@@ -25,6 +25,15 @@
     <link rel="stylesheet" href="{{ asset('frontEnd/resources/css/style.css')}}">
     <title>{{ $companyInfo->company_name}}</title>
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RXX2LDLSCV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-RXX2LDLSCV');
+    </script>
+
     <style>
         .autoCompleteSearch .searchOverlay{
             display: none;
