@@ -17,12 +17,22 @@ class OrderController extends Controller
 {
     //index
     public function index(){
+        /*
         $orders = Order::where('status', 'pagado')
         ->with('user')
         ->with('customer')
         ->orderby('order_id', 'desc')
         ->get();
-
+        */
+        $orders = Order::where('status', 'pagado')
+        ->whereHas('orderItem.product', function ($query) {
+            $query->where('publish_status', 1);
+        })
+        ->with(['user', 'customer', 'orderItem.product' => function ($query) {
+            $query->where('publish_status', 1); // Asegura cargar solo productos publicados
+        }])
+        ->orderby('id', 'desc')
+        ->get();
         // Crear un array para almacenar los datos procesados
         $ordersWithBrand = $orders->map(function($order) {
             // Decodificar el JSON en el campo note, si existe, sino dejarlo como un array vacío
@@ -55,7 +65,7 @@ class OrderController extends Controller
 
     //pending order
     public function pendingOrder(){
-        $data = Order::where('status','pending')->get();
+        $data = Order::where('status','pendiente')->get();
         return view('admin.order.pendingOrder')->with(['data'=>$data]);
     }
 
