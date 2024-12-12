@@ -24,14 +24,14 @@ class OrderController extends Controller
         ->orderby('order_id', 'desc')
         ->get();
         */
-        $orders = Order::where('status', 'pagado')
+        $orders = Order::where('status','=', 'pagado')
         ->whereHas('orderItem.product', function ($query) {
             $query->where('publish_status', 1);
         })
         ->with(['user', 'customer', 'orderItem.product' => function ($query) {
             $query->where('publish_status', 1); // Asegura cargar solo productos publicados
         }])
-        ->orderby('id', 'desc')
+        ->orderby('order_id', 'desc')
         ->get();
         // Crear un array para almacenar los datos procesados
         $ordersWithBrand = $orders->map(function($order) {
