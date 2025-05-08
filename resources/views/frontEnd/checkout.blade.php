@@ -471,8 +471,9 @@
         })
 
         function getProvincias(stateDivisionId,selected){
+            //url: "{{ route('user#getCity') }}",
             $.ajax({
-                url: "{{ route('user#getCity') }}",
+                url: "{{ secure_url(route('user#getCity', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {
@@ -498,8 +499,9 @@
         }
 
         function getDistritos(cityId,selected){
+            //url: "{{ route('user#getTownship') }}",
             $.ajax({
-                url: "{{ route('user#getTownship') }}",
+                url: "{{ secure_url(route('user#getTownship', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {
@@ -623,9 +625,10 @@
 // -----------for coupon-------------
     function applyCoupon(){
         let couponCode = $('.couponCode').val();
+        //url: "{{ route('user#applyCoupon') }}",
         if(couponCode){
             $.ajax({
-                url: "{{ route('user#applyCoupon') }}",
+                url: "{{ secure_url(route('user#applyCoupon', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {

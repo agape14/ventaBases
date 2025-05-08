@@ -203,7 +203,7 @@ Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> [AdminCh
     Route::get('order/pick/{id}',[AdminOrderController::class,'pickOrder'])->name('admin#pickOrder');
     Route::get('order/ship/{id}',[AdminOrderController::class,'shipOrder'])->name('admin#shipOrder');
     Route::get('order/deliver/{id}',[AdminOrderController::class,'deliverOrder'])->name('admin#deliverOrder');
-    Route::get('order/export', function () {
+    Route::get('/order/export', function () {
         $timestamp = Carbon::now()->format('YmdHis');
         $fileName = 'VentasBases_' . $timestamp . '.xlsx';
         return Excel::download(new OrdersExport, $fileName);

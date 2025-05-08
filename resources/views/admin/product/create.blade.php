@@ -220,8 +220,9 @@
         let subsubCatHtml = "";
         $('#category').on('change',function () {
             let catId = $(this).val();
+            //url: "{{ route('admin#productSubCategory') }}",
             $.ajax({
-                url: "{{ route('admin#productSubCategory') }}",
+                url: "{{ secure_url(route('admin#productSubCategory', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {
@@ -244,8 +245,9 @@
         })
         $('#subCategory').on('change',function () {
             let subCatId = $(this).val();
+            //url: "{{ route('admin#productSubSubCategory') }}",
             $.ajax({
-                url: "{{ route('admin#productSubSubCategory') }}",
+                url: "{{ secure_url(route('admin#productSubSubCategory', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {

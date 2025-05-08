@@ -566,7 +566,7 @@
                 }
 
                 $.ajax({
-                    url: "{{ route('frontend#addToCart') }}",
+                     url: "{{ secure_url(route('frontend#addToCart', [], false)) }}",
                     method: "post",
                     dataType: "json",
                     data: {
