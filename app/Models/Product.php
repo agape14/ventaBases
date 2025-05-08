@@ -28,6 +28,8 @@ class Product extends Model
         'special_offer',
         'featured',
         'publish_status',
+        'subject_mail',
+        'order_pdf_filename',
     ];
 
     public function brand(){

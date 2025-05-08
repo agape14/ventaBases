@@ -58,7 +58,7 @@ class Order extends Model
         return $this->belongsTo(Township::class,'township_id','township_id');
     }
 
-    public function orderItem(){
+    public function orderItems(){
         return $this->hasMany(OrderItem::class,'order_id','order_id');
     }
 

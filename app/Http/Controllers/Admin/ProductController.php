@@ -75,10 +75,18 @@ class ProductController extends Controller
         //get preview image
         $file = $request->file('previewImage');
         $fileName = uniqid().'_'.$file->getClientOriginalName();
+        $nombrepdf="";
+        if ($request->hasFile('order_pdf_file')) {
+            $filenew  = $request->file('order_pdf_file');
+            $filenamenew = time() . '_' . $filenew->getClientOriginalName();
+            $file->storeAs('public', $filenamenew); // Guarda en storage/app/public
+            $nombrepdf=$filenamenew;
+        }
         //get data
         $data = $this->requestProductData($request);
         $data['preview_image'] = $fileName;
         $data['created_at'] = Carbon::now();
+        $data['order_pdf_filename']=$nombrepdf;
         //store data
         $file->move(public_path().'/uploads/products/',$fileName);
         $productId = Product::insertGetId($data);
@@ -163,6 +171,8 @@ class ProductController extends Controller
             'originalPrice' => 'required',
             'sellingPrice' => 'required',
             'publishStatus' => 'required',
+            'subject_mail' => 'nullable|string|max:255',
+            'order_pdf_file' => 'nullable|file|mimes:pdf|max:10240', // máximo 10 MB
         ]);
         if($validation->fails()){
             return back()->withErrors($validation)->withInput();
@@ -186,7 +196,12 @@ class ProductController extends Controller
             $updateData['preview_image'] = $newFileName;
 
         }
-
+        if ($request->hasFile('order_pdf_file')) {
+            $file = $request->file('order_pdf_file');
+            $filenameedit = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public', $filenameedit); // Guarda en storage/app/public
+            $updateData['order_pdf_filename']=$filenameedit;
+        }
         Product::where('product_id',$id)->update($updateData);
 
         //check multi image
@@ -285,6 +300,7 @@ class ProductController extends Controller
             'publish_status' => $request->publishStatus,
             'special_offer' => $request->specialOffer,
             'featured' => $request->featured,
+            'subject_mail' => $request->subject_mail,
         ];
         if(isset($request->previewImage)){
             $data['preview_image'] = $request->previewImage;
@@ -322,6 +338,8 @@ class ProductController extends Controller
             'sellingPrice' => 'required',
             'publishStatus' => 'required',
             'avaiStock' => 'required',
+            'subject_mail' => 'nullable|string|max:255',
+            'order_pdf_file' => 'nullable|file|mimes:pdf|max:10240', // máximo 10 MB
         ]);
     }
 

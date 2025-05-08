@@ -91,7 +91,7 @@
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Correo Electrónico</label>
-                                                                <input name="persona_natural[email]" type="email" class="form-control" value="{{ old('persona_natural.email') }}" placeholder="Ingrese su Correo Electrónico" maxlength="250" >
+                                                                <input name="persona_natural[email]" type="email" class="form-control" value="{{ old('persona_natural.email', $user->email ?? '') }}" placeholder="Ingrese su Correo Electrónico" maxlength="250" >
                                                                 @error('persona_natural.email')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -118,7 +118,7 @@
                                                         <div class="card-body">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Nombres Completos</label>
-                                                                <input name="persona_natural[name]" type="text" class="form-control" value="{{ old('persona_natural.name') }}" placeholder="Ingrese sus Nombres Completos" maxlength="250">
+                                                                <input name="persona_natural[name]" type="text" class="form-control" value="{{ old('persona_natural.name', $user->name ?? '') }}" placeholder="Ingrese sus Nombres Completos" maxlength="250">
                                                                 @error('persona_natural.name')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -240,7 +240,7 @@
                                                         <div class="col-9">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Nombres Completos</label>
-                                                                <input name="representante_legal[name]" type="text" class="form-control" value="{{ old('representante_legal.name') }}" placeholder="Ingrese sus Nombres Completos" maxlength="250">
+                                                                <input name="representante_legal[name]" type="text" class="form-control" value="{{ old('representante_legal.name', $user->name ?? '')  }}" placeholder="Ingrese sus Nombres Completos" maxlength="250">
                                                                 @error('representante_legal.name')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -249,7 +249,7 @@
                                                         <div class="col-6">
                                                             <div class="mb-3">
                                                                 <label for="" class="form-label">Correo Electrónico</label>
-                                                                <input name="representante_legal[email]" type="email" class="form-control" value="{{ old('representante_legal.email') }}" placeholder="Ingrese su Correo Electrónico" maxlength="250" >
+                                                                <input name="representante_legal[email]" type="email" class="form-control" value="{{ old('representante_legal.email', $user->email ?? '')   }}" placeholder="Ingrese su Correo Electrónico" maxlength="250" >
                                                                 @error('representante_legal.email')
                                                                     <small class="text-danger">{{ $message }}</small>
                                                                 @enderror
@@ -473,7 +473,8 @@
         function getProvincias(stateDivisionId,selected){
             //url: "{{ route('user#getCity') }}",
             $.ajax({
-                url: "{{ secure_url(route('user#getCity', [], false)) }}",
+                //url: "{{ secure_url(route('user#getCity', [], false)) }}",
+                url: "{{ url(route('user#getCity', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {
@@ -501,7 +502,8 @@
         function getDistritos(cityId,selected){
             //url: "{{ route('user#getTownship') }}",
             $.ajax({
-                url: "{{ secure_url(route('user#getTownship', [], false)) }}",
+                //url: "{{ secure_url(route('user#getTownship', [], false)) }}",
+                url: "{{ url(route('user#getTownship', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {

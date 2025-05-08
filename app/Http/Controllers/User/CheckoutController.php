@@ -14,6 +14,7 @@ use App\Models\StateDivision;
 use App\Models\CompanySetting;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
@@ -24,11 +25,16 @@ class CheckoutController extends Controller
     }
 
     //checkout page
-    public function checkoutPage(){
+    public function checkoutPage()
+    {
         $stateDivisions = StateDivision::get();
-        return view('frontEnd.checkout')->with(['stateDivisions'=>$stateDivisions]);
-    }
+        $user = Auth::user(); // Usuario autenticado
 
+        return view('frontEnd.checkout', [
+            'stateDivisions' => $stateDivisions,
+            'user' => $user,
+        ]);
+    }
     //get city ajax
     public function getCity(Request $request){
         //$cities = City::where('state_division_id',$request->id)->get();

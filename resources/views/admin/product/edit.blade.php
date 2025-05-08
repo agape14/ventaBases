@@ -76,6 +76,22 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
+
+                                    <div class="mb-3">
+                                        <label for="subject_mail" class="form-label">Asunto del Correo</label>
+                                        <input type="text" name="subject_mail" class="form-control"
+                                               value="{{ old('subject_mail', $product->subject_mail ?? '') }}" maxlength="255">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="order_pdf_filename" class="form-label">Archivo PDF del Correo</label>
+                                        <input type="file" name="order_pdf_file" class="form-control" accept="application/pdf">
+                                        @if(!empty($product->order_pdf_filename))
+                                            <small>PDF actual: {{ $product->order_pdf_filename }}</small>
+                                        @endif
+                                    </div>
+
+
                                 </div>
                             </div>
                         </div>

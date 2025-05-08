@@ -28,10 +28,16 @@ class OrderConfirmation extends Mailable
 
     public function build()
     {
-        $pdfPath = storage_path('app/public/' . env('ORDER_PDF_FILENAME', 'SUBASTA PUBLICA  NRO 001-2024-EMILIMA-FOMUR-1ERA-CONVOC.pdf'));
+        $orderItem = $this->order->orderItems->first();
+        $product = optional($orderItem)->product;
+        //$product = $this->order->orderItems->first()->product;
+
+        $subject = $product->subject_mail ?? '[Confirmación de Pedido] Sin asunto';
+        $pdfFilename = $product->order_pdf_filename ?? 'default.pdf';
+        $pdfPath = storage_path('app/public/' . $pdfFilename);
 
         return $this->view('emails.order_confirmation')
-                    ->subject(env('SUBJECT_MAIL', '[Confirmación de Pedido] SUBASTA PUBLICA  NRO 001-2024-EMILIMA-FOMUR-1ERA-CONVOCATORIA'))
+                    ->subject($subject)
                     ->with([
                         'order' => $this->order,
                         'mensajeSuccessFormateado' => $this->mensajeSuccessFormateado,
