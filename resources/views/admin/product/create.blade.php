@@ -240,7 +240,8 @@
             //url: "{{ route('admin#productSubCategory') }}",
             $.ajax({
                 //url: "{{ secure_url(route('admin#productSubCategory', [], false)) }}",
-                url: "{{ url(route('admin#productSubCategory', [], false)) }}",
+                //url: "{{ url(route('admin#productSubCategory', [], false)) }}",
+                url: "{{ App::environment('local') ? url(route('admin#productSubCategory', [], false)) : secure_url(route('admin#productSubCategory', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {
@@ -263,10 +264,11 @@
         })
         $('#subCategory').on('change',function () {
             let subCatId = $(this).val();
-            //url: "{{ route('admin#productSubSubCategory') }}",
+
             $.ajax({
                 //url: "{{ secure_url(route('admin#productSubSubCategory', [], false)) }}",
-                url: "{{ url(route('admin#productSubSubCategory', [], false)) }}",
+                //url: "{{ url(route('admin#productSubSubCategory', [], false)) }}",
+                url: "{{ App::environment('local') ? url(route('admin#productSubSubCategory', [], false)) : secure_url(route('admin#productSubSubCategory', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {

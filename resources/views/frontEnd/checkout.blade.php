@@ -474,7 +474,8 @@
             //url: "{{ route('user#getCity') }}",
             $.ajax({
                 //url: "{{ secure_url(route('user#getCity', [], false)) }}",
-                url: "{{ url(route('user#getCity', [], false)) }}",
+                //url: "{{ url(route('user#getCity', [], false)) }}",
+                url: "{{ App::environment('local') ? url(route('user#getCity', [], false)) : secure_url(route('user#getCity', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {
@@ -503,7 +504,8 @@
             //url: "{{ route('user#getTownship') }}",
             $.ajax({
                 //url: "{{ secure_url(route('user#getTownship', [], false)) }}",
-                url: "{{ url(route('user#getTownship', [], false)) }}",
+                //url: "{{ url(route('user#getTownship', [], false)) }}",
+                url: "{{ App::environment('local') ? url(route('user#getTownship', [], false)) : secure_url(route('user#getTownship', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {
@@ -630,7 +632,8 @@
         //url: "{{ route('user#applyCoupon') }}",
         if(couponCode){
             $.ajax({
-                url: "{{ secure_url(route('user#applyCoupon', [], false)) }}",
+                //url: "{{ secure_url(route('user#applyCoupon', [], false)) }}",
+                url: "{{ App::environment('local') ? url(route('user#applyCoupon', [], false)) : secure_url(route('user#applyCoupon', [], false)) }}",
                 method: "post",
                 dataType: "json",
                 data: {

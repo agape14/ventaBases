@@ -567,7 +567,8 @@
 
                 $.ajax({
                     //url: "{{ secure_url(route('frontend#addToCart', [], false)) }}",
-                    url: "{{ url(route('frontend#addToCart', [], false)) }}",
+                    //url: "{{ url(route('frontend#addToCart', [], false)) }}",
+                    url: "{{ App::environment('local') ? url(route('frontend#addToCart', [], false)) : secure_url(route('frontend#addToCart', [], false)) }}",
                     method: "post",
                     dataType: "json",
                     data: {
