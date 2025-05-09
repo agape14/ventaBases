@@ -26,7 +26,7 @@
                                         <img src="{{ asset('uploads/products/'.$product->preview_image) }}" class="img-fluid" alt="" srcset="">
                                     </div>
                                     @if (!count($multiImages) == 0)
-                                    <div class="m-auto row small-img-slider position-relative owl-carousel owl-theme">
+                                    <div class="m-auto row small-img-slider position-relative owl-carousel owl-theme d-none d-sm-block">
                                         @foreach ($multiImages as $item)
                                             <div class="item">
                                                 <div class="mx-1 overflow-hideen small-img">
