@@ -301,6 +301,7 @@ class ProductController extends Controller
             'special_offer' => $request->specialOffer,
             'featured' => $request->featured,
             'subject_mail' => $request->subject_mail,
+            'html_details' => $request->html_details,
         ];
         if(isset($request->previewImage)){
             $data['preview_image'] = $request->previewImage;

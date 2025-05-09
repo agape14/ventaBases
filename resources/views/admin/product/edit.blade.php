@@ -208,6 +208,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="html_details" class="form-label">Detalle HTML del producto</label>
+                                <textarea name="html_details" id="html_details" class="form-control" rows="10">{!! old('html_details', $product->html_details ?? '') !!}</textarea>
+                            </div>
+                        </div>
                     </div>
                     <hr>
                     <button class="btn btn-primary btn-lg">Update Product</button>
@@ -218,6 +224,10 @@
 </div>
 @endsection
 @section('script')
+    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('html_details');
+    </script>
     <script>
         function deleteImg(id){
             if(confirm('Are you sure to delete?')){

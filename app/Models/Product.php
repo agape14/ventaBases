@@ -30,6 +30,7 @@ class Product extends Model
         'publish_status',
         'subject_mail',
         'order_pdf_filename',
+        'html_details',
     ];
 
     public function brand(){
