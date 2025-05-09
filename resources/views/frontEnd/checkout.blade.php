@@ -29,7 +29,7 @@
                         <form action="{{ route('user#createOrder') }}" method="POST">
                            @csrf
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-sm-12 col-md-8 col-lg-8">
                                     <ul class="nav nav-tabs mb-3" id="myTab0" role="tablist">
                                         <li class="nav-item" role="presentation">
                                             <a class="nav-link active" id="home-tab0" data-toggle="tab"  href="#persona_nat" role="tab" aria-controls="persona_nat" aria-selected="true">Persona Natural</a>
@@ -41,7 +41,7 @@
                                     <div class="tab-content" id="myTabContent0">
                                         <input type="hidden" name="tipo_persona" id="tipo_persona">
                                         <div class="col-12">
-                                            <div class="alert alert-info  mb-0" role="alert">
+                                            <div class="alert alert-info align-items-center  justify-content-between mb-0" role="alert">
                                                 <label class="form-label">Tipo Comprobante: </label>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="tipo_comprobante" id="tipo_comprobanteb" value="B" {{ old('tipo_comprobante', 'B') == 'B' ? 'checked' : '' }}>
@@ -291,7 +291,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-4">
+                                <div class="col-sm-12 col-md-4 col-lg-4">
                                     <div class="border-0 card">
                                         <div class="card-body">
                                             {{--@if (Session::has('coupon'))

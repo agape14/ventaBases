@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="bg-white row">
-                        <div class="col-5 col-md-4 col-lg-4">
+                        <div class="col-sm-12 col-md-4 col-lg-4">
                             <div class="border-0 rounded card">
                                 <div class="px-4 card-body">
                                     <div class="mb-4 overflow-hidden big-img">
@@ -39,7 +39,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-7 col-md-8 col-lg-8">
+                        <div class="col-sm-12 col-md-8 col-lg-8">
                             <div class="border-0 rounded card">
                                 <div class="card-body">
                                     <h5>{{ $product->name }}</h5>

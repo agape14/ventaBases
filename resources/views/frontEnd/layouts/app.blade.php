@@ -305,10 +305,10 @@
     <footer style="background-color: #004D86" id="footer-section">
         <div class="container py-5">
             <div class="row">
-                <div class="col-4">
+                <div class="col-sm-12 col-md-4 col-lg-4">
                     <div class="footer-box">
                         <h3 class="mb-4 text-white">{{ $companyInfo->company_name }}</h3>
-                        <p class="mb-3 text-white text-start me-2">EMILIMA S.A. es una empresa de propiedad de la Municipalidad Metropolitana de Lima, con personalidad jurídica de derecho privado</p>
+                        <p class="mb-3 text-white text-start  me-2" style="text-align: justify;">EMILIMA S.A. es una empresa de propiedad de la Municipalidad Metropolitana de Lima, con personalidad jurídica de derecho privado</p>
                         <div class="d-flex">
                             @if ($companyInfo->facebook)
                             <a href="{{ $companyInfo->facebook }}" class="text-decoration-none me-3 d-flex align-items-center justify-content-center bg-dark rounded-circle " style="width: 40px ; height: 40px; ">
@@ -328,7 +328,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4">
+                <div class="col-sm-12 col-md-4 col-lg-4">
                     <div class="footer-box text-white">
                         <h5 class="mb-4">SERVICIO AL CLIENTE</h5>
                         <div class="">
@@ -339,7 +339,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4">
+                <div class="col-sm-12 col-md-4 col-lg-4">
                     <div class="footer-box text-white">
                         <h5 class="mb-4">CONTÁCTENOS</h5>
                         <div class="mb-3 d-flex align-items-center">
@@ -365,10 +365,10 @@
             <div class="row">
                 <div class="container">
                     <div class="row">
-                        <div class="col-8 ">
+                        <div class="col-sm-12 col-md-8 col-lg-8">
                             <p class="py-3 mb-0 text-center" style="color: #02aab0">© Copyright {{now()->format('Y')}}. Todos los derechos reservados.</p>
                         </div>
-                        <div class="col-4 ">
+                        <div class="col-sm-12 col-md-4 col-lg-4">
                             <p class="py-3 mb-0 text-center" style="color: #004D86;">Desarrollado por {{ $companyInfo->company_name }}</p>
                         </div>
                     </div>
