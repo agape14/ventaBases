@@ -44,19 +44,39 @@
                                 <div class="card-body">
                                     <h5>{{ $product->name }}</h5>
                                     <hr>
-                                    <p>
-                                        Recuerda que luego de la compra de las bases debes realizar el depósito de garantía equivalente al 10% del valor del precio base del lote que elegiste.
-                                    </p>
-                                    <p>
-                                        Puedes hacer el depósito de garantía en dos modalidades:
-                                    </p>
-                                    <ul>
-                                        <li>1. Cheque de gerencia no negociable, o</li>
-                                        <li>2. Depósito bancario a la cuenta corriente N. 191-4217528-0-91 (Código de Cuenta Interbancaria N. 00219100421752809158), a nombre de EMILIMA FOMUR.</li>
-                                    </ul>
-                                    <p>
-                                        <strong>*Recuerda enviar el comprobante al correo <a href="mailto:subasta@emilima.com.pe">subasta@emilima.com.pe</a>*</strong>
-                                    </p>
+
+                                    @if ($product->product_id !=8)
+                                        <p>
+                                            Recuerda que luego de la compra de las bases debes realizar el depósito de garantía equivalente al 10% del valor del precio base del lote que elegiste.
+                                        </p>
+                                        <p>
+                                            Puedes hacer el depósito de garantía en dos modalidades:
+                                        </p>
+                                        <ul>
+                                            <li>1. Cheque de gerencia no negociable, o</li>
+                                            <li>2. Depósito bancario a la cuenta corriente N. 191-4217528-0-91 (Código de Cuenta Interbancaria N. 00219100421752809158), a nombre de EMILIMA FOMUR.</li>
+                                        </ul>
+                                        <p>
+                                            <strong>*Recuerda enviar el comprobante al correo <a href="mailto:subasta@emilima.com.pe">subasta@emilima.com.pe</a>*</strong>
+                                        </p>
+                                    @endif
+
+                                    @if ($product->product_id ==8)
+                                        <p>
+                                            Recuerda que luego de la compra de las bases debes realizar el depósito de garantía del Espacio o Inmueble que hayas elegido.
+                                        </p>
+                                        <p>
+                                            Puedes hacer el depósito de garantía mediante la modalidad de Cheque de Gerencia  No Negociable de estas dos formas:
+                                        </p>
+                                        <ul>
+                                            <li>1. En el caso de Espacios del Parque de la Exposición (monto: 2 veces el valor de la renta) a nombre de Municipalidad Metropolitana de Lima RUC 20131380951</li>
+                                            <li>2. En el caso de Inmuebles del Centro Histórico (monto: 3 veces el valor de la renta) a nombre de Empresa Municipal Inmobiliaria de Lima S.A. RUC 20126236078.</li>
+                                        </ul>
+                                        <p>
+                                            <strong>*Recuerda  Comunicarte al celular 987 659 053*</strong>
+                                        </p>
+                                    @endif
+
 
                                     @if ($colors->count() > 0)
                                         @foreach ($colors as $color)
@@ -77,30 +97,7 @@
                                         <p class="">Descuento : <span class=""> {{$percentage}} %</span></p>
                                         <hr>
                                     @endif
-                                    {{--@if (!$colors->count() == 0)
-                                        <div class="form-group">
-                                            <select name="" id="" class="colorOption form-control" style="width: 200px" required>
-                                                <option value="">---select color---</option>
-                                                @foreach ($colors as $item)
-                                                    <option value="{{ $item->color_id }}">{{ $item->colorName }}</option>
-                                                @endforeach
-                                            </select>
-                                            <small class="text-danger colorErrorMessage d-none">Color is required!</small>
-                                        </div>
-                                        <hr>
-                                    @endif
-                                    @if (!$sizes->count() == 0)
-                                    <div class="form-group">
-                                        <select name="" id="" class="sizeOption form-control" style="width: 200px">
-                                            <option value="">---select size---</option>
-                                            @foreach ($sizes as $item)
-                                                <option value="{{ $item->size_id }}">{{ $item->sizeName }}</option>
-                                            @endforeach
-                                        </select>
-                                        <small class="text-danger sizeErrorMessage d-none">Size is required!</small>
-                                    </div>
-                                        <hr>
-                                    @endif--}}
+
                                     <div class="d-flex align-items-center">
                                         <p class="mb-0 me-3">Cantidad : </p>
                                         <div class="p-1 rounded d-flex" style="width: 150px ;">
