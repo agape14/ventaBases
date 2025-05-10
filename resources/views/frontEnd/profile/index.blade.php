@@ -15,10 +15,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                     @include('frontEnd.profile/profileSidebar')
                 </div>
-                <div class="col-9">
+                <div class="col-sm-12 col-md-9 col-lg-9">
                     <div class="mb-4 border-0 rounded card">
                         <div class="bg-white card-header">
                             <h5 class="my-2">Editar Perfil</h5>

@@ -75,7 +75,7 @@
 
                             </div>
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-sm-12 col-md-6 col-lg-6">
                                     {{--@if (Session::has('coupon'))
                                         <div class="p-3 mb-3 border-0 rounded applyCouponBox card bg-light">
                                             <div class="mb-3 d-flex justify-content-between">
@@ -105,7 +105,7 @@
                                         </div>
                                     @endif--}}
                                 </div>
-                                <div class="col-6">
+                                <div class="col-sm-12 col-md-6 col-lg-6">
                                     @php
                                         $subTotal = Session::has('subTotal') ? Session::get('subTotal') : '0';
                                         $couponDiscount = Session::has('coupon') ? Session::get('coupon')['couponDiscount'] : '0';
@@ -131,14 +131,33 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            {{--  <div class="row">
                                 <div class="col-12">
                                     <div class="my-2 mt-5 float-end">
                                         <a href="{{ route('frontend#index') }}" class=" btn btn-dark"><i class="fa fa-chevron-left"></i> Continuar Comprando</a>
                                         <a href="{{ route('user#checkout') }}" class="text-white ms-3 btn btn-primary">Procesar el pago <i class="fa fa-credit-card"></i></a>
                                     </div>
                                 </div>
+                            </div>--}}
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="my-2 mt-5 d-flex flex-column flex-md-row justify-content-md-end gap-2">
+                                        <a href="{{ route('frontend#index') }}" class="btn btn-dark w-100 w-md-auto">
+                                            <i class="fa fa-chevron-left"></i> Continuar Comprando
+                                        </a>
+                                        {{-- <a href="{{ route('user#checkout') }}" class="btn btn-primary text-white w-100 w-md-auto">
+                                            Procesar el pago <i class="fa fa-credit-card"></i>
+                                        </a>--}}
+                                        <a
+                                            href="{{ $GrandTotal > 0 ? route('user#checkout') : '#' }}"
+                                            class="btn btn-primary text-white w-100 w-md-auto {{ $GrandTotal <= 0 ? 'disabled' : '' }}"
+                                            {{ $GrandTotal <= 0 ? 'onclick=event.preventDefault();' : '' }}>
+                                            Procesar el pago <i class="fa fa-credit-card"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

@@ -106,13 +106,13 @@
                         <div class="card-body">
 
                             <div class="row">
-                                <div class="col-4">
+                                <div class="col-sm-12 col-md-4 col-lg-4">
                                   <div class="list-group" id="list-tab" role="tablist">
                                     <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">Detalles del producto</a>
                                     <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">Revisión del producto</a>
                                   </div>
                                 </div>
-                                <div class="col-8">
+                                <div class="col-sm-12 col-md-8 col-lg-8">
                                   <div class="tab-content" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
                                         <h5>Detalles del Producto</h5>

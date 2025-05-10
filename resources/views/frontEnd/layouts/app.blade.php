@@ -169,7 +169,7 @@
                                         @php
                                             $categories = App\Models\Category::with('subCategory','subCategory.subsubCategory')->get()->toArray();
                                         @endphp
-                                        <li class="nav-item cat-nav-item">
+                                        {{-- <li class="nav-item cat-nav-item">
                                             <!-- all category btn  -->
                                             <div class="shadow dropdown me-3 cat-dropdown">
                                                 <button class="py-3 text-white btn btn-info dropdown-toggle" style="border-radius: 0px;" type="button" id="category-btn" data-bs-toggle="dropdown" aria-expanded="false">
@@ -212,9 +212,9 @@
                                                      <!-- -------------main cat item-----------------  -->
                                                 </ul>
                                             </div>
-                                        </li>
+                                        </li>--}}
                                          <!-- nav menu -->
-                                        <li class="nav-item">
+                                        <li class="nav-item mt-4">
                                           <a class="text-white nav-link" href="{{ route('frontend#index') }}">INICIO</a>
                                         </li>
                                       </ul>
@@ -257,12 +257,12 @@
                                                         <hr class="my-1">
                                                         <form action="{{ route('logout') }}" method="post">
                                                             @csrf
-                                                            <button class="text-white btn btn-primary w-100 text-start">Cerrar Sesion</button>
+                                                            <button class="text-white btn btn-primary w-100 text-start"><i class="fa fa-sign-out" aria-hidden="true"></i>Cerrar Sesion</button>
                                                         </form>
                                                     </div>
                                                 </div>
                                             @else
-                                                <div class="border-0 myAccountOverlay card bg-primary position-absolute">
+                                                <div class="border-0 myAccountOverlay card position-absolute" style="background: #02aab0;">
                                                     <div class="p-1 card-body d-flex flex-column">
                                                         <a href="{{ route('login') }}" class="text-white btn btn-primary text-start">Iniciar Sesion</a>
                                                         <a href="{{ route('register') }}" class="text-white btn btn-primary text-start">Registrarse</a>
@@ -270,18 +270,18 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        <div class="mt-2 mb-3 border-0 card bg-primary w-100 d-block d-md-none" style="border-radius: 15px">
+                                        <div class="mt-2 mb-3 border-0 card w-100 d-block d-md-none" style="border-radius: 15px;background: #02aab0;">
                                             <div class="card-body">
                                                 @if (auth()->check())
                                                     <h5 class="text-white">{{ auth()->user()->name }}</h5>
                                                     <hr class="bg-white">
                                                     <a href="{{ route('user#wishlist') }}" class="px-0 text-white btn" title="My Wishlist"><i class="fas fa-heart"></i> Lista de deseos</a>
-                                                    <a href="" class="px-0 text-white btn w-100 text-start"><i class="fas fa-shopping-bag"></i> My Orders</a>
+                                                    <a href="{{ route('user#myOrder') }}" class="px-0 text-white btn w-100 text-start"><i class="fas fa-shopping-bag"></i> Mis pedidos</a>
                                                     <a href="{{ route('user#profile') }}" class="px-0 text-white btn w-100 text-start"><i class="fas fa-user-alt"></i> Mi cuenta</a>
                                                     <hr class="bg-white">
                                                     <form action="{{ route('logout') }}" method="post">
                                                         @csrf
-                                                        <button class="text-white btn btn-danger w-100 text-start">Cerrar Sesion</button>
+                                                        <button class="text-white btn btn-danger w-100 text-start">Cerrar Sesion  <i class="fa fa-sign-out" aria-hidden="true"></i></button>
                                                     </form>
                                                 @else
                                                     <a href="{{ route('login') }}" class="text-white btn text-start">Iniciar Sesion</a>

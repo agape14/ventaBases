@@ -15,11 +15,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                     @include('frontEnd.profile/profileSidebar')
 
                 </div>
-                <div class="col-9">
+                <div class="col-sm-12 col-md-9 col-lg-9">
                     <div class="bg-white border-0 rounded card">
                         <div class="bg-transparent card-header">
                             <div class="my-1 d-flex justify-content-between align-items-center">

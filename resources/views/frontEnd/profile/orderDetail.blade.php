@@ -16,11 +16,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                     @include('frontEnd.profile/profileSidebar')
 
                 </div>
-                <div class="col-9">
+                <div class="col-sm-12 col-md-9 col-lg-9">
                     <div class="row">
                         <div class="col-12">
                             <div class="my-3 border-0 card">
