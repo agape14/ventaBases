@@ -23,10 +23,10 @@ class OrdersExport implements FromCollection, WithHeadings, WithStyles, WithColu
         */
         $orders = Order::select('orders.name', 'orders.phone', 'orders.email', 'orders.address','orders.order_date')
         ->where('status','=', 'pagado')
-        ->whereHas('orderItem.product', function ($query) {
+        ->whereHas('orderItems.product', function ($query) {
             $query->where('publish_status', 1);
         })
-        ->with(['user', 'customer', 'orderItem.product' => function ($query) {
+        ->with(['user', 'customer', 'orderItems.product' => function ($query) {
             $query->where('publish_status', 1); // Asegura cargar solo productos publicados
         }])
         ->orderby('order_id', 'desc')

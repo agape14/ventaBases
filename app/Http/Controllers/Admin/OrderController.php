@@ -25,10 +25,10 @@ class OrderController extends Controller
         ->get();
         */
         $orders = Order::where('status','=', 'pagado')
-        ->whereHas('orderItem.product', function ($query) {
+        ->whereHas('orderItems.product', function ($query) {
             $query->where('publish_status', 1);
         })
-        ->with(['user', 'customer', 'orderItem.product' => function ($query) {
+        ->with(['user', 'customer', 'orderItems.product' => function ($query) {
             $query->where('publish_status', 1); // Asegura cargar solo productos publicados
         }])
         ->orderby('order_id', 'desc')
