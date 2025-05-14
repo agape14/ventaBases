@@ -281,12 +281,25 @@ Route::group(['namespace' => 'FrontEnd'],function(){
 
     //search product
     Route::get('product/search',[FrontEndController::class,'searchProduct'])->name('frontend#searchProduct');
+
+    //Realizar la compra sin iniciar sesion
+    Route::post('product/addToCart/',[CartController::class,'addToCart'])->name('frontend#addToCart');
+    Route::get('myCarts',[CartController::class,'viewCarts'])->name('frontend#viewCarts');
+    //checkout
+    Route::get('checkout',[CheckoutController::class,'checkoutPage'])->name('user#checkout');
+    Route::post('getCity',[CheckoutController::class,'getCity'])->name('user#getCity');
+    Route::post('getTownship',[CheckoutController::class,'getTownship'])->name('user#getTownship');
+    //order
+    Route::post('checkout',[OrderController::class,'createOrder'])->name('user#createOrder');
+    //NiubizController
+    Route::get('userpayment/{id}', [CheckoutController::class, 'pagarconfirmar'])->name('user#misPagos');
+
 });
 
 Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],function(){
     //cart
-    Route::post('product/addToCart/',[CartController::class,'addToCart'])->name('frontend#addToCart');
-    Route::get('myCarts',[CartController::class,'viewCarts'])->name('frontend#viewCarts');
+
+
     Route::post('myCarts/update',[CartController::class,'updateCart'])->name('frontend#updateCart');
     Route::get('myCarts/delete/{id}',[CartController::class,'deleteCart'])->name('frontend#deleteCart');
 
@@ -296,21 +309,14 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
     Route::post('wishlist/add/{id}',[WishListController::class,'addWishlist'])->name('user#addWishlist');
     Route::get('wishlist/delete/{id}',[WishListController::class,'deleteWishlist'])->name('user#deleteWishlist');
 
-    //checkout
-    Route::get('checkout',[CheckoutController::class,'checkoutPage'])->name('user#checkout');
-    Route::post('getCity',[CheckoutController::class,'getCity'])->name('user#getCity');
-    Route::post('getTownship',[CheckoutController::class,'getTownship'])->name('user#getTownship');
 
-    //NiubizController
-    Route::post('/niubiz/session', [NiubizController::class, 'createSession'])->name('niubiz.session');
-    Route::get('userpayment/{id}', [CheckoutController::class, 'pagarconfirmar'])->name('user#misPagos');
+
 
     //coupon
     Route::post('applyCoupon',[CartController::class,'applyCoupon'])->name('user#applyCoupon');
     Route::get('deleteCoupon',[CartController::class,'deleteCoupon'])->name('user#deleteCoupon');
 
     //order
-    Route::post('checkout',[OrderController::class,'createOrder'])->name('user#createOrder');
     Route::post('registeorder',[OrderController::class,'registeOrder'])->name('user#registerOrder');
     //user payment
     Route::post('confirmPayment',[OrderController::class,'confirmPayment'])->name('user#confirmPayment');
@@ -318,7 +324,7 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
     //my order track
     Route::get('track/myOrder',[OrderController::class,'trackOrder'])->name('user#trackOrder');
 
-    Route::post('purchase/complete/{id}', [OrderController::class, 'completePurchase'])->name('purchase.complete');
+
 
     //profile
     Route::get('profile',[ProfileController::class,'index'])->name('user#profile');
@@ -329,14 +335,14 @@ Route::group(['prefix' => 'user','namespace' => 'User','middleware' => 'auth'],f
     Route::get('profile/review',[ProfileController::class,'myReview'])->name('user#myReview');
 
     Route::get('orders',[ProfileController::class,'myOrder'])->name('user#myOrder');
-    Route::get('orders',[ProfileController::class,'myOrder'])->name('user#myOrder');
     Route::get('orders/detail/{id}',[ProfileController::class,'orderDetail'])->name('user#orderDetail');
     Route::get('downloadInvoice/{id}',[ProfileController::class,'downloadInvoice'])->name('user#download#downloadInvoice');
 
     //review
     Route::post('product/review/{id}',[ReviewController::class,'storeReview'])->name('user#storeReview');
 
-
+    Route::post('/niubiz/session', [NiubizController::class, 'createSession'])->name('niubiz.session');
+    Route::post('purchase/complete/{id}', [OrderController::class, 'completePurchase'])->name('purchase.complete');
 });
 
 Route::get('/terminos', [TerminosController::class, 'show'])->name('terminos.show');

@@ -360,7 +360,7 @@
                                                             <small class="text-danger">{{ $message }}</small>
                                                         @enderror
                                                     </div>
-                                                    <button type="submit"  class="mt-3 text-white shadow btn btn-primary float-end btn-lg">Realizar el pago</button>
+                                                    <button type="submit"  class="mt-3 text-white shadow btn btn-primary float-end btn-lg w-100">Realizar el pago <i class="fa fa-credit-card" aria-hidden="true"></i></button>
                                                 </div>
                                             </div>
 

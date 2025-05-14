@@ -25,6 +25,8 @@ use App\Services\NiubizService;
 use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
 use App\Models\VoucherDetail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -195,77 +197,101 @@ class OrderController extends Controller
 
     //insert order data to ( order table and orderitems table )
     private function insertOrderData($request){
-        //insert data to order table 'MYSHOP'.'-'. //mt_rand(10000000,99999999),
         $countOrder = CountOrder::first();
+        $userId = null;
+        //dd($countOrder);
+        if (auth()->check()) {
+            $userId = auth()->id();
+        }else {
 
-
-
-        if ($request->input('tipo_persona') === 'N') {
-            // Datos de persona natural
-            $name = $request->input('persona_natural.name');
-            $email = $request->input('persona_natural.email');
-            $phone = $request->input('persona_natural.phone');
-            $address = $request->input('persona_natural.address');
-            $distrito = $request->input('persona_natural.distrito');
-        } else {
-            // Datos de persona jurídica
-            $name = $request->input('persona_juridica.razon_social');
-            $email = $request->input('persona_juridica.email');
-            $phone = $request->input('persona_juridica.phone');
-            $address = $request->input('persona_juridica.address');
-            $distrito = $request->input('persona_juridica.distrito');
-        }
-
-        $customerData = [
-            'customer_type' => $request->input('tipo_persona') === 'N' ? 'natural' : 'juridica',
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
-            'address' => $address,
-            'created_at' => Carbon::now(),
-        ];
-
-        $customerId = Customer::insertGetId($customerData);
-        if ($request->input('tipo_persona') === 'N') {
-            // Insertar en 'personas_naturales'
-            $ruc_persona_natural=null;
-            if($request->input('tipo_comprobante') === 'F'){
-                $ruc_persona_natural=$request->input('persona_natural.ruc');
+            $documento = null;
+            if ($request->input('tipo_persona') === 'N') {
+                // Datos de persona natural
+                $name = $request->input('persona_natural.name');
+                $email = $request->input('persona_natural.email');
+                $phone = $request->input('persona_natural.phone');
+                $address = $request->input('persona_natural.address');
+                $distrito = $request->input('persona_natural.distrito');
+                $documento = $request->input('persona_natural.dni');
+            } else {
+                // Datos de persona jurídica
+                $name = $request->input('persona_juridica.razon_social');
+                $email = $request->input('persona_juridica.email');
+                $phone = $request->input('persona_juridica.phone');
+                $address = $request->input('persona_juridica.address');
+                $distrito = $request->input('persona_juridica.distrito');
+                $documento = $request->input('persona_juridica.ruc');
             }
-            $personaNaturalId = PersonaNatural::insertGetId([
-                'customer_id' => $customerId,
-                'dni' => $request->input('persona_natural.dni'),
-                'ruc' => $ruc_persona_natural,
-                'created_at' => Carbon::now(),
-            ]);
-        } else {
-            // Insertar en 'personas_juridicas'
-            $customerRepresentante = [
-                'customer_type' => 'natural',
-                'name' => $request->input('representante_legal.name'),
-                'email' => $request->input('representante_legal.email'),
-                'phone' => $request->input('representante_legal.phone'),
-                'address' => $request->input('representante_legal.address'),
+            $customerData = [
+                'customer_type' => $request->input('tipo_persona') === 'N' ? 'natural' : 'juridica',
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'address' => $address,
                 'created_at' => Carbon::now(),
             ];
+            // Verificar si ya existe un usuario con ese correo
+            $user = User::where('email', $email)->first();
 
-            $representanteId = Customer::insertGetId($customerRepresentante);
-            $representanteNaturalId = PersonaNatural::insertGetId([
-                'customer_id' => $representanteId,
-                'dni' => $request->input('representante_legal.dni'),
-                'created_at' => Carbon::now(),
-            ]);
-            $personaJuridicaId = PersonaJuridica::insertGetId([
-                'customer_id' => $customerId,
-                'ruc' => $request->input('persona_juridica.ruc'),
-                'razon_social' => $request->input('persona_juridica.razon_social'),
-                'representante_legal_id' => $representanteNaturalId,
-                'representante_legal_distrito' => $request->input('representante_legal.distrito'),
-                'created_at' => Carbon::now(),
-            ]);
+            if (!$user) {
+                // Si no existe, se crea
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => Hash::make($documento),
+                    'role' => 'user',
+                ]);
+            }
+            if (!Auth::check()) {
+                if ($user) {
+                    Auth::login($user);
+                }
+            }
+            $userId = $user->id;
+
+            $customerId = Customer::insertGetId($customerData);
+            if ($request->input('tipo_persona') === 'N') {
+                // Insertar en 'personas_naturales'
+                $ruc_persona_natural=null;
+                if($request->input('tipo_comprobante') === 'F'){
+                    $ruc_persona_natural=$request->input('persona_natural.ruc');
+                }
+                $personaNaturalId = PersonaNatural::insertGetId([
+                    'customer_id' => $customerId,
+                    'dni' => $request->input('persona_natural.dni'),
+                    'ruc' => $ruc_persona_natural,
+                    'created_at' => Carbon::now(),
+                ]);
+            } else {
+                // Insertar en 'personas_juridicas'
+                $customerRepresentante = [
+                    'customer_type' => 'natural',
+                    'name' => $request->input('representante_legal.name'),
+                    'email' => $request->input('representante_legal.email'),
+                    'phone' => $request->input('representante_legal.phone'),
+                    'address' => $request->input('representante_legal.address'),
+                    'created_at' => Carbon::now(),
+                ];
+
+                $representanteId = Customer::insertGetId($customerRepresentante);
+                $representanteNaturalId = PersonaNatural::insertGetId([
+                    'customer_id' => $representanteId,
+                    'dni' => $request->input('representante_legal.dni'),
+                    'created_at' => Carbon::now(),
+                ]);
+                $personaJuridicaId = PersonaJuridica::insertGetId([
+                    'customer_id' => $customerId,
+                    'ruc' => $request->input('persona_juridica.ruc'),
+                    'razon_social' => $request->input('persona_juridica.razon_social'),
+                    'representante_legal_id' => $representanteNaturalId,
+                    'representante_legal_distrito' => $request->input('representante_legal.distrito'),
+                    'created_at' => Carbon::now(),
+                ]);
+            }
         }
         $data = [
-            'user_id' => auth()->user()->id,
+            //'user_id' => auth()->user()->id,
+            'user_id' => $userId,
             'customer_id' => $customerId,
             'name' => $name,
             'email' => $email,
@@ -317,6 +343,9 @@ class OrderController extends Controller
             $countOrder->save();
           }
           return $orderId;
+
+
+
     }
 
 
@@ -336,6 +365,13 @@ class OrderController extends Controller
         // Obtener el token de transacción y otros datos de la solicitud
         $transactionToken = $request->input('transactionToken');
         // Aquí puedes procesar la transacción con Niubiz y manejar los errores
+        $ordervalida = Order::where('order_id', $id)->firstOrFail();
+        if (!Auth::check()) {
+            $user = User::find($ordervalida->user_id);
+            if ($user) {
+                Auth::login($user);
+            }
+        }
         if ($transactionToken) {
             // Simulación de la respuesta de la API de Niubiz (debes reemplazar esto con la integración real)
             $responseniubiztrans = $this->processNiubizTransaction($transactionToken, $id);
@@ -382,7 +418,12 @@ class OrderController extends Controller
                         $email->cc($cc);
                     }
                     $email->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
-                     //dd($mensajeSuccessFormateado ); Agape
+                     if (!Auth::check()) {
+                        $user = User::find($order->user_id);
+                        if ($user) {
+                            Auth::login($user);
+                        }
+                    }
                      return redirect()->route('user#myOrder')->with(['niubizbtnpagorealizado'=>$mensajeSuccessFormateado]);
                 } else {
                     return redirect()->back()->with('error', $responseMeg);

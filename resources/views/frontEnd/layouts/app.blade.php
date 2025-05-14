@@ -527,6 +527,7 @@
             @endif
         //add to cart
         function addToCart(id,amount){
+            authStatus = 'true';
             if(authStatus == 'true'){
                 let productId = id;
                 let colorId = '';
