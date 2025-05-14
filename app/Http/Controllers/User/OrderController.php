@@ -23,6 +23,7 @@ use App\Notifications\UserOrderNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Services\NiubizService;
 use App\Mail\OrderConfirmation;
+use App\Mail\UserCreatedNotification;
 use Illuminate\Support\Facades\Mail;
 use App\Models\VoucherDetail;
 use Illuminate\Support\Facades\Hash;
@@ -241,6 +242,14 @@ class OrderController extends Controller
                     'password' => Hash::make($documento),
                     'role' => 'user',
                 ]);
+
+                // Enviar correo de bienvenida
+                $emailTo = Mail::to($email);
+                $ccc = env('MAIL_SEND_CC', 'ti03@emilima.com.pe');
+                if ($ccc) {
+                    $emailTo->cc($ccc);
+                }
+                $emailTo->send(new UserCreatedNotification($name, $email, $documento));
             }
             if (!Auth::check()) {
                 if ($user) {
