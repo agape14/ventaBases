@@ -394,31 +394,20 @@ Route::get('/export_excel', function () {
 })->name('admin#exportexcel');
 
 
-Route::get('/test-mail/{email?}', function ($email = 'ti03@emilima.com.pe') {
-    // Crear datos de prueba para la orden
-    $testOrder = new Order([
-        'order_id' => 'TEST123',
-        'invoice_number' => 'INV-TEST-001',
-        'order_date' => now()->format('Y-m-d H:i:s'),
-        'grand_total' => 99.99,
-        'email' => $email,
-        // Agrega otros campos necesarios para tu OrderConfirmation
-    ]);
-
-    // Mensaje de prueba formateado
-    $testMessage = "<b>Número de pedido:</b> TEST123<br>" .
-                   "<b>Fecha del pedido:</b> " . now()->format('Y-m-d H:i:s') . "<br>" .
-                   "<b>Importe pagado:</b> 99.99<br>";
-
+Route::get('/testmail/{email?}', function ($email = 'ti03@emilima.com.pe') {
     try {
-        // Enviar el correo de prueba
-        Mail::to($email)
-            ->send(new OrderConfirmation($testOrder, $testMessage));
+        Mail::raw('Este es un correo de prueba desde Laravel', function ($message) use ($email) {
+            $message->to($email)
+                    ->subject('Prueba de correo Laravel');
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'Correo de prueba enviado correctamente a ' . $email,
-            'test_data' => $testOrder->toArray()
+            'details' => [
+                'subject' => 'Prueba de correo Laravel',
+                'content' => 'Este es un correo de prueba desde Laravel'
+            ]
         ]);
     } catch (\Exception $e) {
         return response()->json([
