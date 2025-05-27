@@ -392,3 +392,38 @@ Route::get('/export_excel', function () {
     $fileName = 'VentasBases_' . $timestamp . '.xlsx';
     return Excel::download(new OrdersExport, $fileName);
 })->name('admin#exportexcel');
+
+
+Route::get('/test-mail/{email?}', function ($email = 'ti03@emilima.com.pe') {
+    // Crear datos de prueba para la orden
+    $testOrder = new Order([
+        'order_id' => 'TEST123',
+        'invoice_number' => 'INV-TEST-001',
+        'order_date' => now()->format('Y-m-d H:i:s'),
+        'grand_total' => 99.99,
+        'email' => $email,
+        // Agrega otros campos necesarios para tu OrderConfirmation
+    ]);
+
+    // Mensaje de prueba formateado
+    $testMessage = "<b>Número de pedido:</b> TEST123<br>" .
+                   "<b>Fecha del pedido:</b> " . now()->format('Y-m-d H:i:s') . "<br>" .
+                   "<b>Importe pagado:</b> 99.99<br>";
+
+    try {
+        // Enviar el correo de prueba
+        Mail::to($email)
+            ->send(new OrderConfirmation($testOrder, $testMessage));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Correo de prueba enviado correctamente a ' . $email,
+            'test_data' => $testOrder->toArray()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al enviar el correo: ' . $e->getMessage()
+        ], 500);
+    }
+});
