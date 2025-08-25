@@ -158,9 +158,9 @@
                     <td class="col-metodo text-truncate" title="{{ \App\Helpers\MetodosPagoHelper::getNombreMetodoPago($pedido->IdMetododepago) }}">
                         {{ Str::limit(\App\Helpers\MetodosPagoHelper::getNombreMetodoPago($pedido->IdMetododepago), 15) }}
                     </td>
-                    <td class="col-estado estado-{{ $pedido->estadopago_ped ?? 'pendiente' }}">
-                        {{ Str::limit(ucfirst($pedido->estadopago_ped ?? 'N/A'), 8) }}
-                    </td>
+                                       <td class="col-estado estado-{{ $pedido->estadopago_ped ?? 'pendiente' }}">
+                       {{ Str::limit(\App\Helpers\EstadosPagoHelper::getNombreEstadoPago($pedido->estadopago_ped), 8) }}
+                   </td>
                     <td class="col-total">S/ {{ number_format($pedido->total_ped ?? 0, 2) }}</td>
                     <td class="col-direccion text-truncate" title="{{ $pedido->direccionPedido->direccion_ped ?? 'N/A' }}">
                         {{ Str::limit($pedido->direccionPedido->direccion_ped ?? 'N/A', 30) }}

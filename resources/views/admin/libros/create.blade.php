@@ -46,25 +46,25 @@
                                 <h5>Información del Cliente</h5>
                                 <div class="form-group">
                                     <label for="nombre_cliente">Nombre *</label>
-                                    <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" required>
+                                    <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" value="clientes" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="apellidos_cliente">Apellidos *</label>
-                                    <input type="text" class="form-control" id="apellidos_cliente" name="apellidos_cliente" required>
+                                    <input type="text" class="form-control" id="apellidos_cliente" name="apellidos_cliente" value="otros" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="email_cliente">Email *</label>
-                                    <input type="email" class="form-control" id="email_cliente" name="email_cliente" required>
+                                    <input type="email" class="form-control" id="email_cliente" name="email_cliente" value="soporte@emilima.com.pe" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="nro_documento">Número de Documento *</label>
-                                    <input type="text" class="form-control" id="nro_documento" name="nro_documento" required>
+                                    <input type="text" class="form-control" id="nro_documento" name="nro_documento" value="00000009" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="IdTipoDocumento">Tipo de Documento *</label>
                                     <select class="form-control" id="IdTipoDocumento" name="IdTipoDocumento" required>
                                         <option value="">Seleccionar...</option>
-                                        <option value="1">DNI</option>
+                                        <option value="1" selected>DNI</option>
                                         <option value="2">CE</option>
                                         <option value="3">RUC</option>
                                         <option value="4">Pasaporte</option>
@@ -79,7 +79,7 @@
                                     <select class="form-control" id="IdMetododepago" name="IdMetododepago" required>
                                         <option value="">Seleccionar...</option>
                                         @foreach(\App\Helpers\MetodosPagoHelper::getMetodosPagoForSelect() as $metodo)
-                                            <option value="{{ $metodo['value'] }}">{{ $metodo['text'] }}</option>
+                                            <option value="{{ $metodo['value'] }}" {{ $metodo['value'] == 1 ? 'selected' : '' }}>{{ $metodo['text'] }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -87,16 +87,16 @@
                                     <label for="estadopago_ped">Estado de Pago *</label>
                                     <select class="form-control" id="estadopago_ped" name="estadopago_ped" required>
                                         <option value="">Seleccionar...</option>
-                                        <option value="pendiente">Pendiente</option>
-                                        <option value="pagado">Pagado</option>
-                                        <option value="cancelado">Cancelado</option>
+                                        @foreach(\App\Helpers\EstadosPagoHelper::getEstadosPagoForSelect() as $estado)
+                                            <option value="{{ $estado['value'] }}" {{ $estado['value'] == 'pago aceptado' ? 'selected' : '' }}>{{ $estado['text'] }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="comprobante_tipo">Tipo de Comprobante *</label>
                                     <select class="form-control" id="comprobante_tipo" name="comprobante_tipo" required>
                                         <option value="">Seleccionar...</option>
-                                        <option value="boleta">Boleta</option>
+                                        <option value="boleta" selected>Boleta</option>
                                         <option value="factura">Factura</option>
                                         <option value="ticket">Ticket</option>
                                     </select>
@@ -117,13 +117,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="direccion_ped">Dirección *</label>
-                                            <input type="text" class="form-control" id="direccion_ped" name="direccion[direccion_ped]" required>
+                                            <input type="text" class="form-control" id="direccion_ped" name="direccion[direccion_ped]" value="sin direccion" required>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="telf_ped">Teléfono *</label>
-                                            <input type="text" class="form-control" id="telf_ped" name="direccion[telf_ped]" required>
+                                            <input type="text" class="form-control" id="telf_ped" name="direccion[telf_ped]" value="999999999" required>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -300,6 +300,13 @@ $(document).ready(function() {
                 }
             }
         });
+        
+        // Establecer valor por defecto para LIMA (150101)
+        setTimeout(function() {
+            // Crear la opción por defecto
+            let option = new Option('150101 - LIMA', '150101', true, true);
+            $('#fk_IdUbigeoDireccion').append(option).trigger('change');
+        }, 100);
     }
     
     function cargarProductos() {

@@ -9,6 +9,7 @@ use App\Models\Ubigeo;
 use App\Models\ProductoLibro;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\EstadosPagoHelper;
 
 class LibrosService
 {
@@ -134,6 +135,11 @@ class LibrosService
 
             // Actualizar el pedido
             $pedido = Pedido::findOrFail($idPedido);
+            
+            // Verificar si el estado actual permite edición
+            if (!EstadosPagoHelper::permiteEdicion($pedido->estadopago_ped)) {
+                throw new \Exception('No se puede editar un pedido con estado: ' . EstadosPagoHelper::getNombreEstadoPago($pedido->estadopago_ped));
+            }
             $pedido->update([
                 'IdRepartidor' => $datos['IdRepartidor'] ?? 0,
                 'IdMetododepago' => $datos['IdMetododepago'],
@@ -206,6 +212,12 @@ class LibrosService
     {
         try {
             $pedido = Pedido::findOrFail($idPedido);
+            
+            // Verificar si el estado permite cancelación
+            if (!EstadosPagoHelper::permiteCancelacion($pedido->estadopago_ped)) {
+                throw new \Exception('No se puede cancelar un pedido con estado: ' . EstadosPagoHelper::getNombreEstadoPago($pedido->estadopago_ped));
+            }
+            
             $pedido->update([
                 'estadopago_ped' => 'cancelado',
                 'hora_cancelacion' => now(),
@@ -297,13 +309,13 @@ class LibrosService
             $totalPedidos = $query->count();
             $totalVentas = $query->sum('total_ped');
             $pedidosPendientes = $query->where('estadopago_ped', 'pendiente')->count();
-            $pedidosPagados = $query->where('estadopago_ped', 'pagado')->count();
+            $pedidosPagoAceptado = $query->where('estadopago_ped', 'pago aceptado')->count();
 
             return [
                 'total_pedidos' => $totalPedidos,
                 'total_ventas' => $totalVentas,
                 'pedidos_pendientes' => $pedidosPendientes,
-                'pedidos_pagados' => $pedidosPagados
+                'pedidos_pago_aceptado' => $pedidosPagoAceptado
             ];
         } catch (\Exception $e) {
             Log::error('Error al obtener estadísticas: ' . $e->getMessage());

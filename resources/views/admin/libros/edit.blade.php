@@ -47,8 +47,8 @@
                         </div>
                         <div class="col-md-3">
                             <strong>Estado:</strong> 
-                            <span class="badge badge-{{ $pedido->estadopago_ped == 'pagado' ? 'success' : ($pedido->estadopago_ped == 'pendiente' ? 'warning' : 'danger') }}">
-                                {{ ucfirst($pedido->estadopago_ped ?? 'N/A') }}
+                            <span class="badge {{ \App\Helpers\EstadosPagoHelper::getClaseBadge($pedido->estadopago_ped ?? '') }}">
+                                {{ \App\Helpers\EstadosPagoHelper::getNombreEstadoPago($pedido->estadopago_ped ?? '') }}
                             </span>
                         </div>
                         <div class="col-md-3">
@@ -111,9 +111,11 @@
                                     <label for="estadopago_ped">Estado de Pago *</label>
                                     <select class="form-control" id="estadopago_ped" name="estadopago_ped" required>
                                         <option value="">Seleccionar...</option>
-                                        <option value="pendiente" {{ ($pedido->estadopago_ped ?? '') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
-                                        <option value="pagado" {{ ($pedido->estadopago_ped ?? '') == 'pagado' ? 'selected' : '' }}>Pagado</option>
-                                        <option value="cancelado" {{ ($pedido->estadopago_ped ?? '') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                                        @foreach(\App\Helpers\EstadosPagoHelper::getEstadosPagoForSelect() as $estado)
+                                            <option value="{{ $estado['value'] }}" {{ ($pedido->estadopago_ped ?? '') == $estado['value'] ? 'selected' : '' }}>
+                                                {{ $estado['text'] }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">

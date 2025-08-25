@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Pedido;
 use App\Helpers\MetodosPagoHelper;
+use App\Helpers\EstadosPagoHelper;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -109,7 +110,7 @@ class LibrosExport implements FromCollection, WithHeadings, WithMapping, ShouldA
             $pedido->email_cliente,
             $pedido->nro_documento,
             $metodoPago,
-            ucfirst($pedido->estadopago_ped ?? 'N/A'),
+            EstadosPagoHelper::getNombreEstadoPago($pedido->estadopago_ped),
             'S/ ' . number_format($pedido->total_ped ?? 0, 2),
             $direccion,
             $telefono,

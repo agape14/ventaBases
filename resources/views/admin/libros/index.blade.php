@@ -30,9 +30,9 @@
                             <label>Estado de Pago:</label>
                             <select class="form-control" id="filtro-estado">
                                 <option value="">Todos</option>
-                                <option value="pendiente">Pendiente</option>
-                                <option value="pagado">Pagado</option>
-                                <option value="cancelado">Cancelado</option>
+                                @foreach(\App\Helpers\EstadosPagoHelper::getEstadosPagoForSelect() as $estado)
+                                    <option value="{{ $estado['value'] }}">{{ $estado['text'] }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -200,13 +200,8 @@ $(document).ready(function() {
         }
         
         ventas.forEach(function(venta) {
-            let estadoClass = '';
-            switch(venta.estadopago_ped) {
-                case 'pagado': estadoClass = 'badge-success'; break;
-                case 'pendiente': estadoClass = 'badge-warning'; break;
-                case 'cancelado': estadoClass = 'badge-danger'; break;
-                default: estadoClass = 'badge-secondary';
-            }
+            // Usar la función JavaScript para obtener la clase del badge
+            let estadoClass = getClaseBadge(venta.estadopago_ped);
             
             let row = `
                 <tr>
@@ -214,19 +209,19 @@ $(document).ready(function() {
                     <td>${venta.nombre_cliente} ${venta.apellidos_cliente}</td>
                     <td>${venta.email_cliente}</td>
                                          <td>S/ ${parseFloat(venta.total_ped).toFixed(2)}</td>
-                     <td><span class="badge ${estadoClass}">${venta.estadopago_ped}</span></td>
+                     <td><span class="badge ${estadoClass}">${venta.estado_pago_nombre || venta.estadopago_ped}</span></td>
                      <td>${venta.metodo_pago_nombre || venta.IdMetododepago || 'No definido'}</td>
                      <td>${new Date(venta.fecha_pedido).toLocaleDateString()}</td>
                     <td>
                         <button class="btn btn-sm btn-info ver-detalles" data-id="${venta.IdPedido}">
                             <i class="fas fa-eye"></i>
                         </button>
-                        ${venta.estadopago_ped !== 'cancelado' && ['1', '5', '6'].includes(venta.IdMetododepago) ? 
+                        ${permiteEdicion(venta.estadopago_ped) ? 
                             `<button class="btn btn-sm btn-warning editar-venta" data-id="${venta.IdPedido}">
                                 <i class="fas fa-edit"></i>
                             </button>` : ''
                         }
-                        ${venta.estadopago_ped !== 'cancelado' ? 
+                        ${permiteCancelacion(venta.estadopago_ped) ? 
                             `<button class="btn btn-sm btn-danger cancelar-venta" data-id="${venta.IdPedido}">
                                 <i class="fas fa-times"></i>
                             </button>` : ''
@@ -288,17 +283,9 @@ $(document).ready(function() {
             if (response.success) {
                 let venta = response.data;
                 
-                // Mapear método de pago a texto
-                let metodoPagoTexto = '';
-                switch(venta.IdMetododepago) {
-                    case '1': metodoPagoTexto = 'Efectivo'; break;
-                    case '2': metodoPagoTexto = 'Tarjeta de Crédito'; break;
-                    case '3': metodoPagoTexto = 'Tarjeta de Débito'; break;
-                    case '4': metodoPagoTexto = 'Transferencia Bancaria'; break;
-                    case '5': metodoPagoTexto = 'Yape'; break;
-                    case '6': metodoPagoTexto = 'Plin'; break;
-                    default: metodoPagoTexto = 'N/A';
-                }
+                                 // Usar el helper para mapear método de pago y estado
+                 let metodoPagoTexto = venta.metodo_pago_nombre || 'N/A';
+                 let estadoPagoTexto = venta.estado_pago_nombre || venta.estadopago_ped || 'N/A';
                 
                 let detalles = `
                     <div class="row">
@@ -311,7 +298,7 @@ $(document).ready(function() {
                         <div class="col-md-6">
                             <h6>Información del Pedido</h6>
                             <p><strong>Total:</strong> S/ ${parseFloat(venta.total_ped).toFixed(2)}</p>
-                            <p><strong>Estado:</strong> ${venta.estadopago_ped}</p>
+                                                         <p><strong>Estado:</strong> ${estadoPagoTexto}</p>
                             <p><strong>Método de Pago:</strong> ${metodoPagoTexto}</p>
                             <p><strong>Fecha:</strong> ${new Date(venta.fecha_pedido).toLocaleString()}</p>
                         </div>
@@ -614,6 +601,42 @@ $(document).ready(function() {
         let page = $(this).data('page');
         cargarVentas(page);
     });
+    
+    // Funciones para manejar la lógica de estados
+    function permiteEdicion(estado) {
+        const estadosEditables = ['pendiente', 'pago rechazado', 'en proceso'];
+        return estadosEditables.includes(estado);
+    }
+    
+    function permiteCancelacion(estado) {
+        const estadosCancelables = ['pendiente', 'pago rechazado', 'en proceso'];
+        return estadosCancelables.includes(estado);
+    }
+    
+    function getClaseBadge(estado) {
+        switch (estado) {
+            case 'pendiente':
+                return 'badge-warning';
+            case 'pago aceptado':
+                return 'badge-success';
+            case 'pago rechazado':
+                return 'badge-danger';
+            case 'cancelado':
+                return 'badge-danger';
+            case 'entregado':
+                return 'badge-success';
+            case 'en proceso':
+                return 'badge-info';
+            case 'enviado':
+                return 'badge-primary';
+            case 'devuelto':
+                return 'badge-warning';
+            case 'reembolsado':
+                return 'badge-secondary';
+            default:
+                return 'badge-secondary';
+        }
+    }
     
     // Cargar datos iniciales
     cargarVentas();

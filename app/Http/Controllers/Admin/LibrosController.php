@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\LibrosService;
 use App\Helpers\MetodosPagoHelper;
+use App\Helpers\EstadosPagoHelper;
 use App\Exports\LibrosExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -260,13 +261,16 @@ class LibrosController extends Controller
                 ];
             }
 
-            // Mapear métodos de pago y agregar logs de debug
+            // Mapear métodos de pago y estados de pago
             $pedidosMapeados = $pedidos->map(function($pedido) {
                 // Log para debug
-                Log::info('Pedido ID: ' . $pedido->IdPedido . ', Método Pago: ' . $pedido->IdMetododepago);
+                Log::info('Pedido ID: ' . $pedido->IdPedido . ', Método Pago: ' . $pedido->IdMetododepago . ', Estado: ' . $pedido->estadopago_ped);
                 
                 // Mapear método de pago
                 $pedido->metodo_pago_nombre = MetodosPagoHelper::getNombreMetodoPago($pedido->IdMetododepago);
+                
+                // Mapear estado de pago
+                $pedido->estado_pago_nombre = EstadosPagoHelper::getNombreEstadoPago($pedido->estadopago_ped);
                 
                 return $pedido;
             });
