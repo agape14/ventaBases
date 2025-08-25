@@ -165,7 +165,13 @@ $(document).ready(function() {
         console.log('📡 Parámetros de la petición:', params);
         console.log('🌐 URL de la petición:', '{{ route("admin#libros.pedidos") }}');
         
-        $.get('{{ route("admin#libros.pedidos") }}', params, function(response) {
+        // Forzar HTTPS para evitar Mixed Content
+        let url = '{{ route("admin#libros.pedidos") }}';
+        if (window.location.protocol === 'https:' && url.startsWith('http:')) {
+            url = url.replace('http:', 'https:');
+        }
+        
+        $.get(url, params, function(response) {
             console.log('✅ Respuesta recibida:', response);
             if (response.success) {
                 console.log('📋 Datos recibidos:', response.data.length, 'registros');
@@ -272,7 +278,13 @@ $(document).ready(function() {
     $(document).on('click', '.ver-detalles', function() {
         let id = $(this).data('id');
         
-        $.get(`{{ route("admin#libros.pedidos") }}/${id}`, function(response) {
+        // Forzar HTTPS para evitar Mixed Content
+        let url = `{{ route("admin#libros.pedidos") }}/${id}`;
+        if (window.location.protocol === 'https:' && url.startsWith('http:')) {
+            url = url.replace('http:', 'https:');
+        }
+        
+        $.get(url, function(response) {
             if (response.success) {
                 let venta = response.data;
                 
@@ -377,8 +389,14 @@ $(document).ready(function() {
             // Mostrar loading
             $('#confirm-action').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Cancelando...');
             
+            // Forzar HTTPS para evitar Mixed Content
+            let cancelUrl = `{{ route("admin#libros.cancelar", ['id' => ':id']) }}`.replace(':id', id);
+            if (window.location.protocol === 'https:' && cancelUrl.startsWith('http:')) {
+                cancelUrl = cancelUrl.replace('http:', 'https:');
+            }
+            
             $.ajax({
-                url: `{{ route("admin#libros.cancelar", ['id' => ':id']) }}`.replace(':id', id),
+                url: cancelUrl,
                 method: 'PUT',
                 data: {_token: '{{ csrf_token() }}'},
                 success: function(response) {
@@ -471,9 +489,14 @@ $(document).ready(function() {
         });
         
         // Crear formulario temporal para enviar los filtros
+        let excelUrl = '{{ route("admin#libros.exportar-excel") }}';
+        if (window.location.protocol === 'https:' && excelUrl.startsWith('http:')) {
+            excelUrl = excelUrl.replace('http:', 'https:');
+        }
+        
         let form = $('<form>', {
             'method': 'POST',
-            'action': '{{ route("admin#libros.exportar-excel") }}'
+            'action': excelUrl
         });
         
         form.append($('<input>', {
@@ -534,9 +557,14 @@ $(document).ready(function() {
         });
         
         // Crear formulario temporal para enviar los filtros
+        let pdfUrl = '{{ route("admin#libros.exportar-pdf") }}';
+        if (window.location.protocol === 'https:' && pdfUrl.startsWith('http:')) {
+            pdfUrl = pdfUrl.replace('http:', 'https:');
+        }
+        
         let form = $('<form>', {
             'method': 'POST',
-            'action': '{{ route("admin#libros.exportar-pdf") }}'
+            'action': pdfUrl
         });
         
         form.append($('<input>', {

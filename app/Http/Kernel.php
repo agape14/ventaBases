@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'adminCheckMiddleware' => \Illuminate\Auth\Middleware\adminCheckMiddleware::class,
         'libros.access' => \App\Http\Middleware\LibrosAccessMiddleware::class,
+        'force.https' => \App\Http\Middleware\ForceHttps::class,
     ];
 }
