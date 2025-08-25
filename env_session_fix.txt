@@ -1,0 +1,40 @@
+# ========================================
+# CONFIGURACIÓN DE SESIONES PARA SOLUCIONAR EL ERROR
+# ========================================
+# 
+# Agrega estas líneas a tu archivo .env para solucionar el error:
+# "Table 'sistema_libros.sessions' doesn't exist"
+#
+# OPCIÓN 1: Usar sesiones en archivos (RECOMENDADO para desarrollo)
+SESSION_DRIVER=file
+SESSION_CONNECTION=mysql
+
+# OPCIÓN 2: Usar sesiones en base de datos (si prefieres)
+# SESSION_DRIVER=database
+# SESSION_CONNECTION=mysql
+
+# ========================================
+# EXPLICACIÓN DEL PROBLEMA
+# ========================================
+# 
+# El error ocurre porque:
+# 1. Laravel está configurado para usar sesiones en base de datos
+# 2. No se especificó qué conexión usar para las sesiones
+# 3. Laravel intenta usar la nueva conexión 'mysql_libros' 
+#    que no tiene la tabla 'sessions'
+# 4. Al especificar SESSION_CONNECTION=mysql, Laravel usará
+#    la conexión principal que sí tiene la tabla 'sessions'
+#
+# ========================================
+# PASOS PARA APLICAR LA SOLUCIÓN
+# ========================================
+#
+# 1. Agrega las líneas de arriba a tu archivo .env
+# 2. Ejecuta: php artisan config:clear
+# 3. Ejecuta: php artisan cache:clear
+# 4. Si usas SESSION_DRIVER=database, ejecuta:
+#    php artisan session:table
+#    php artisan migrate
+# 5. Ahora puedes ejecutar: php artisan serve
+#
+# ========================================

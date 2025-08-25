@@ -1,0 +1,31 @@
+# Configuración para la segunda conexión de MySQL (Sistema de Libros)
+# Agregar estas variables a tu archivo .env
+
+# Conexión principal (sistema actual)
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=tu_base_datos_actual
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_password
+
+# Conexión secundaria (sistema de libros)
+DB_HOST_LIBROS=127.0.0.1
+DB_PORT_LIBROS=3306
+DB_DATABASE_LIBROS=sistema_libros
+DB_USERNAME_LIBROS=tu_usuario_libros
+DB_PASSWORD_LIBROS=tu_password_libros
+DB_CHARSET_LIBROS=utf8mb4
+DB_COLLATION_LIBROS=utf8mb4_unicode_ci
+
+# URL de conexión para libros (opcional)
+DATABASE_URL_LIBROS=mysql://tu_usuario_libros:tu_password_libros@127.0.0.1:3306/sistema_libros
+
+# Ejemplo de configuración completa:
+# DB_HOST_LIBROS=localhost
+# DB_PORT_LIBROS=3306
+# DB_DATABASE_LIBROS=sistema_venta_libros
+# DB_USERNAME_LIBROS=root
+# DB_PASSWORD_LIBROS=
+# DB_CHARSET_LIBROS=utf8mb4
+# DB_COLLATION_LIBROS=utf8mb4_unicode_ci

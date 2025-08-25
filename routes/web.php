@@ -71,6 +71,9 @@ Route::middleware([
                 case 'admin':
                 case 'tesoreria':
                     return redirect()->route('admin#dashboard');
+                case 'ventas':
+                case 'libros':
+                    return redirect()->route('admin#libros.index');
                 case 'user':
                     return redirect()->route('frontend#index');
                 default:
@@ -213,6 +216,8 @@ Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> [AdminCh
     //user list
     Route::get('userList',[UserController::class,'userList'])->name('admin#userList');
     Route::get('adminList',[UserController::class,'adminList'])->name('admin#adminList');
+    Route::get('user/create',[UserController::class,'createUser'])->name('admin#createUser');
+    Route::post('user/store',[UserController::class,'storeUser'])->name('admin#storeUser');
     Route::get('user/edit/{id}',[UserController::class,'editUser'])->name('admin#editUser');
     Route::post('user/edit/{id}',[UserController::class,'updateUser'])->name('admin#updateUser');
     Route::get('user/delete/{id}',[UserController::class,'deleteUser'])->name('admin#deleteUser');
@@ -259,6 +264,29 @@ Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> [AdminCh
     Route::post('cashOnDelivery/getTownship',[CashOnDeliveryController::class,'getTownship'])->name('admin#getTownship');
 
     Route::post('/registrar-comprobante/{id}/{bof}', [ComprobanteController::class, 'preparaRegistraComprobante'])->name('admin#insertcomprobante');
+});
+
+// Rutas específicas para el Sistema de Libros con middleware de acceso
+Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> ['auth', 'libros.access']],function(){
+    // Libros - Sistema de venta de libros
+    Route::get('libros', [App\Http\Controllers\Admin\LibrosController::class, 'index'])->name('admin#libros.index');
+    Route::get('libros/test', function() {
+        return view('admin.libros.test');
+    })->name('admin#libros.test');
+    Route::get('libros/create', [App\Http\Controllers\Admin\LibrosController::class, 'create'])->name('admin#libros.create');
+    Route::post('libros', [App\Http\Controllers\Admin\LibrosController::class, 'store'])->name('admin#libros.store');
+    Route::get('libros/{id}/edit', [App\Http\Controllers\Admin\LibrosController::class, 'edit'])->name('admin#libros.edit');
+    Route::put('libros/{id}', [App\Http\Controllers\Admin\LibrosController::class, 'update'])->name('admin#libros.update');
+    Route::put('libros/{id}/cancelar', [App\Http\Controllers\Admin\LibrosController::class, 'cancelar'])->name('admin#libros.cancelar');
+    
+    // API endpoints para libros
+    Route::get('libros/api/pedidos', [App\Http\Controllers\Admin\LibrosController::class, 'getPedidos'])->name('admin#libros.pedidos');
+    Route::get('libros/api/pedidos/{id}', [App\Http\Controllers\Admin\LibrosController::class, 'getPedido'])->name('admin#libros.pedido.show');
+    Route::get('libros/api/productos', [App\Http\Controllers\Admin\LibrosController::class, 'getProductos'])->name('admin#libros.productos');
+    Route::get('libros/api/ubigeos', [App\Http\Controllers\Admin\LibrosController::class, 'getUbigeos'])->name('admin#libros.ubigeos');
+    Route::get('libros/api/estadisticas', [App\Http\Controllers\Admin\LibrosController::class, 'estadisticas'])->name('admin#libros.estadisticas');
+    Route::post('libros/exportar-excel', [App\Http\Controllers\Admin\LibrosController::class, 'exportarExcel'])->name('admin#libros.exportar-excel');
+    Route::post('libros/exportar-pdf', [App\Http\Controllers\Admin\LibrosController::class, 'exportarPdf'])->name('admin#libros.exportar-pdf');
 });
 
 Route::group(['namespace' => 'FrontEnd'],function(){
@@ -415,4 +443,15 @@ Route::get('/testmail/{email?}', function ($email = 'ti03@emilima.com.pe') {
             'message' => 'Error al enviar el correo: ' . $e->getMessage()
         ], 500);
     }
+});
+
+// Rutas para el sistema de libros
+Route::group(['prefix' => 'libros', 'middleware' => ['auth', 'libros.access']], function () {
+    Route::get('/pedidos', [App\Http\Controllers\LibrosController::class, 'getPedidos'])->name('libros.pedidos');
+    Route::get('/pedidos/{id}', [App\Http\Controllers\LibrosController::class, 'getPedido'])->name('libros.pedido.show');
+    Route::post('/pedidos', [App\Http\Controllers\LibrosController::class, 'crearPedido'])->name('libros.pedido.create');
+    Route::put('/pedidos/{id}/estado-pago', [App\Http\Controllers\LibrosController::class, 'actualizarEstadoPago'])->name('libros.pedido.estado-pago');
+    Route::put('/pedidos/{id}/cancelar', [App\Http\Controllers\LibrosController::class, 'cancelarPedido'])->name('libros.pedido.cancelar');
+    Route::get('/productos', [App\Http\Controllers\LibrosController::class, 'getProductos'])->name('libros.productos');
+    Route::get('/ubigeos', [App\Http\Controllers\LibrosController::class, 'getUbigeos'])->name('libros.ubigeos');
 });

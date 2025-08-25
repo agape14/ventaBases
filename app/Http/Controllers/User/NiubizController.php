@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Services\NiubizService;
 
 class NiubizController extends Controller

@@ -1,0 +1,101 @@
+# CONFIGURACIÓN PARA EL SISTEMA DE LIBROS
+# ======================================
+
+# Copia estas variables a tu archivo .env
+
+# CONEXIÓN PRINCIPAL (Sistema actual)
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=venta_bases
+DB_USERNAME=root
+DB_PASSWORD=
+
+# CONEXIÓN SECUNDARIA (Sistema de libros)
+DB_HOST_LIBROS=127.0.0.1
+DB_PORT_LIBROS=3306
+DB_DATABASE_LIBROS=sistema_libros
+DB_USERNAME_LIBROS=root
+DB_PASSWORD_LIBROS=
+DB_CHARSET_LIBROS=utf8mb4
+DB_COLLATION_LIBROS=utf8mb4_unicode_ci
+
+# INSTRUCCIONES DE CONFIGURACIÓN
+# ==============================
+
+# 1. CREAR LA BASE DE DATOS:
+#    - Abre phpMyAdmin o tu cliente MySQL
+#    - Crea una nueva base de datos llamada "sistema_libros"
+#    - Importa las tablas que proporcionaste en el mensaje inicial
+
+# 2. CONFIGURAR VARIABLES DE ENTORNO:
+#    - Copia las variables de arriba a tu archivo .env
+#    - Ajusta los valores según tu configuración de MySQL
+
+# 3. PROBAR LA CONEXIÓN:
+#    - Ejecuta: php artisan libros:test-connection
+#    - Si hay errores, verifica las credenciales y la base de datos
+
+# 4. ACCEDER AL SISTEMA:
+#    - Ve a: http://tu-dominio/admin/libros
+#    - O crea una nueva venta: http://tu-dominio/admin/libros/create
+
+# COMANDOS ÚTILES
+# ===============
+
+# Limpiar caché de configuración
+php artisan config:clear
+
+# Limpiar caché de rutas
+php artisan route:clear
+
+# Probar conexión con libros
+php artisan libros:test-connection
+
+# Ver todas las rutas de libros
+php artisan route:list | findstr libros
+
+# ESTRUCTURA DE TABLAS REQUERIDAS
+# ===============================
+
+# Las siguientes tablas deben existir en la base de datos "sistema_libros":
+# - pedidos
+# - compras_usuario
+# - direccion_pedido
+# - ubigeo
+# - productos
+
+# FUNCIONALIDADES IMPLEMENTADAS
+# =============================
+
+# ✅ Formulario de registro de ventas
+# ✅ Listado de ventas con filtros
+# ✅ Carga dinámica de productos y ubigeos
+# ✅ Cálculo automático de totales
+# ✅ Validación de formularios
+# ✅ Menú de navegación
+# ✅ API endpoints para AJAX
+# ✅ Paginación de resultados
+# ✅ Modal de detalles de venta
+# ✅ Cancelación de ventas
+# ✅ Estadísticas básicas
+
+# RUTAS DISPONIBLES
+# =================
+
+# Vistas:
+# - GET /admin/libros (Listado de ventas)
+# - GET /admin/libros/create (Formulario de nueva venta)
+# - GET /admin/libros/{id}/edit (Editar venta)
+
+# API:
+# - GET /admin/libros/api/pedidos (Obtener pedidos con filtros)
+# - GET /admin/libros/api/pedidos/{id} (Obtener pedido específico)
+# - GET /admin/libros/api/productos (Obtener productos)
+# - GET /admin/libros/api/ubigeos (Obtener ubigeos)
+# - GET /admin/libros/api/estadisticas (Obtener estadísticas)
+
+# Acciones:
+# - POST /admin/libros (Crear nueva venta)
+# - PUT /admin/libros/{id} (Actualizar venta)
+# - PUT /admin/libros/{id}/cancelar (Cancelar venta)

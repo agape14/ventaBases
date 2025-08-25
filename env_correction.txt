@@ -1,0 +1,88 @@
+# ========================================
+# CORRECCIÓN DEL ARCHIVO .env
+# ========================================
+# 
+# PROBLEMA IDENTIFICADO:
+# En tu archivo .env tienes dos líneas que definen DB_CONNECTION:
+# 
+# Línea 12: DB_CONNECTION=mysql
+# Línea 28: DB_CONNECTION=mysql_libros
+# 
+# Esto causa que Laravel use mysql_libros como conexión por defecto,
+# por eso busca la tabla 'products' en 'sistema_libros'.
+# 
+# ========================================
+# SOLUCIÓN:
+# ========================================
+# 
+# 1. Abre tu archivo .env
+# 2. ELIMINA o COMENTA la línea 28: DB_CONNECTION=mysql_libros
+# 3. MANTÉN la línea 12: DB_CONNECTION=mysql
+# 
+# Tu archivo .env debería quedar así:
+# 
+# ========================================
+# CONFIGURACIÓN PRINCIPAL
+# ========================================
+DB_CONNECTION=mysql
+DB_CHARSET=utf8
+DB_COLLATION=utf8_unicode_ci
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ventabases
+DB_USERNAME=root
+DB_PASSWORD=123456789
+
+# ========================================
+# CONEXIÓN AL SIGI
+# ========================================
+DB_CONNECTION2=sqlsrv
+DB_HOST2=10.20.22.26
+DB_PORT2=1433
+DB_DATABASE2=emilima7_EMILIMAv2
+DB_USERNAME2=sa
+DB_PASSWORD2=york9010*
+
+# ========================================
+# CONEXIÓN SECUNDARIA (SISTEMA DE LIBROS)
+# ========================================
+# DB_CONNECTION=mysql_libros  <-- COMENTAR ESTA LÍNEA
+DB_HOST_LIBROS=127.0.0.1
+DB_PORT_LIBROS=3306
+DB_DATABASE_LIBROS=sistema_libros
+DB_USERNAME_LIBROS=root
+DB_PASSWORD_LIBROS=123456789
+DB_CHARSET_LIBROS=utf8
+DB_COLLATION_LIBROS=utf8_unicode_ci
+
+# ========================================
+# CONFIGURACIÓN DE SESIONES
+# ========================================
+SESSION_DRIVER=database
+SESSION_CONNECTION=mysql
+SESSION_LIFETIME=120
+
+# ========================================
+# PASOS PARA APLICAR LA CORRECCIÓN:
+# ========================================
+# 
+# 1. Abre el archivo .env
+# 2. Busca la línea: DB_CONNECTION=mysql_libros
+# 3. Cámbiala por: # DB_CONNECTION=mysql_libros
+# 4. Guarda el archivo
+# 5. Ejecuta: php artisan config:clear
+# 6. Ejecuta: php artisan cache:clear
+# 7. Ahora puedes ejecutar: php artisan serve
+# 
+# ========================================
+# EXPLICACIÓN:
+# ========================================
+# 
+# - DB_CONNECTION=mysql: Define la conexión por defecto
+# - Los modelos del sistema de libros (ProductoLibro, Pedido, etc.)
+#   ya tienen configurado: protected $connection = 'mysql_libros'
+# - Por eso NO necesitas cambiar DB_CONNECTION a mysql_libros
+# - Al comentar esa línea, Laravel usará 'mysql' como conexión por defecto
+# - Y los modelos específicos seguirán usando 'mysql_libros'
+# 
+# ========================================

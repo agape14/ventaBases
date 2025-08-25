@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     //index
     public function userList(){
-        $data = User::where('role','user')->get();
+        $data = User::all();
         return view('admin.user.userList')->with(['data'=>$data]);
     }
 
@@ -45,5 +45,29 @@ class UserController extends Controller
     public function deleteUser($id){
         User::where('id',$id)->delete();
         return back()->with(['success'=>'User deleted successfully']);
+    }
+
+    //create user page
+    public function createUser(){
+        return view('admin.user.create');
+    }
+
+    //store user
+    public function storeUser(Request $request){
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:user,admin,tesoreria,ventas,libros',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role' => $request->role,
+        ]);
+
+        return redirect()->route('admin#userList')->with(['success'=>'Usuario creado exitosamente']);
     }
 }

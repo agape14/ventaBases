@@ -38,8 +38,11 @@
                     <div class="form-group">
                         <label for="">Role</label>
                         <select name="role" id="" class="form-control">
-                            <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
-                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>Usuario</option>
+                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Administrador</option>
+                            <option value="tesoreria" {{ $user->role == 'tesoreria' ? 'selected' : '' }}>Tesoreria</option>
+                            <option value="ventas" {{ $user->role == 'ventas' ? 'selected' : '' }}>Ventas</option>
+                            <option value="libros" {{ $user->role == 'libros' ? 'selected' : '' }}>Libros</option>
                         </select>
                         @error('role')
                             <small class="text-danger">{{ $message }}</small>

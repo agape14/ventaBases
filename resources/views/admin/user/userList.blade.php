@@ -1,24 +1,40 @@
 @extends('admin.layouts.app')
 @section('content')
-<div class="pt-4 row">
-    <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white d-flex align-items-center">
-                <li class="breadcrumb-item"><a href="{{ URL::previous() }}" class="btn btn-dark btn-sm"><i class="fa fa-chevron-left"></i>  Back</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin#dashboard') }}">Dashboard</a></li>
-              <li class="breadcrumb-item active" aria-current="page">User Lists</li>
-            </ol>
-          </nav>
-    </div>
-</div>
 <div class="row">
     <div class="col-12">
-        <div class="rounded card" style="box-shadow: none !important">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 mb-0">Lista de Usuarios</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-white d-flex align-items-center mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('admin#dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
             <div class="card-header">
-                <div class="my-1 d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">All User Lists</h4>
-               </div>
-            </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Gestión de Usuarios</h3>
+                    <div class="d-flex align-items-center">
+                        <select id="filtro-rol" class="form-control mr-2" style="width: auto;">
+                            <option value="">Todos los roles</option>
+                            <option value="user">Usuario</option>
+                            <option value="admin">Administrador</option>
+                            <option value="tesoreria">Tesoreria</option>
+                            <option value="ventas">Ventas</option>
+                            <option value="libros">Libros</option>
+                        </select>
+                        <a href="{{ route('admin#createUser') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Crear Usuario
+                        </a>
+                    </div>
+                </div>
+
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover" id="dataTable">
@@ -46,7 +62,24 @@
                                     </th>
                                     <th>{{ $item->name }}</th>
                                     <th>{{ $item->email }}</th>
-                                    <th>{{ $item->role }}</th>
+                                    <th>
+                                     @switch($item->role)
+                                         @case('admin')
+                                             <span class="badge badge-danger">Administrador</span>
+                                             @break
+                                         @case('tesoreria')
+                                             <span class="badge badge-warning">Tesoreria</span>
+                                             @break
+                                         @case('ventas')
+                                             <span class="badge badge-info">Ventas</span>
+                                             @break
+                                         @case('libros')
+                                             <span class="badge badge-success">Libros</span>
+                                             @break
+                                         @default
+                                             <span class="badge badge-secondary">Usuario</span>
+                                     @endswitch
+                                 </th>
                                     <th>{{ $item->created_at }}</th>
                                     <td>
                                         <a href="{{ route('admin#editUser',$item->id) }}" class="btn btn-success btn-sm"><i class="fas fa-edit"></i></a>
@@ -57,10 +90,51 @@
 
                         </tbody>
                         </table>
-                </div>
-            </div>
-        </div>
+                                 </div>
+             </div>
+         </div>
+     </div>
+ </div>
 
-    </div>
-</div>
+@section('script')
+<script>
+$(document).ready(function() {
+    // Esperar un momento para asegurar que DataTable esté inicializado
+    setTimeout(function() {
+        // Obtener la instancia de DataTable
+        var table = $('#dataTable').DataTable();
+        
+        // Filtro por rol
+        $('#filtro-rol').on('change', function() {
+            var rol = $(this).val();
+            
+            if (rol === '') {
+                // Mostrar todos los usuarios
+                table.column(4).search('').draw();
+            } else {
+                // Filtrar por rol específico
+                var rolText = '';
+                switch(rol) {
+                    case 'admin':
+                        rolText = 'Administrador';
+                        break;
+                    case 'tesoreria':
+                        rolText = 'Tesoreria';
+                        break;
+                    case 'ventas':
+                        rolText = 'Ventas';
+                        break;
+                    case 'libros':
+                        rolText = 'Libros';
+                        break;
+                    case 'user':
+                        rolText = 'Usuario';
+                        break;
+                }
+                table.column(4).search(rolText).draw();
+            }
+        });
+    }, 100);
+});
+</script>
 @endsection

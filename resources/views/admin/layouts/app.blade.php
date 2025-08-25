@@ -291,6 +291,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
         </li>
         @endif
+        
+        @if (in_array(auth()->user()->role, ['admin', 'tesoreria', 'ventas', 'libros']))
+        <!-- Sistema de Libros -->
+        <li class="text-white nav-header text-uppercase">Sistema de Libros</li>
+        <li class="nav-item">
+            <a href="{{ route('admin#libros.index') }}" class="nav-link {{ Request::url() == route('admin#libros.index') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-book"></i>
+              <p>
+                Ventas de Libros
+              </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('admin#libros.create') }}" class="nav-link {{ Request::url() == route('admin#libros.create') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-plus"></i>
+              <p>
+                Nueva Venta
+              </p>
+            </a>
+        </li>
+        @endif
         @endif
         @if (auth()->user()->role == 'admin')
         <li class="text-white nav-header text-uppercase">Report Orders</li>
@@ -384,16 +405,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </a>
           </li>
+          @endif
+          
+          <!-- Botón de Cerrar Sesión para todos los roles -->
           <li class="nav-item">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button onclick="return confirm('Are you sure do you want to logout?')" class="btn nav-link d-flex align-items-center justify-content-start">
+                <button onclick="return confirm('¿Está seguro de que desea cerrar sesión?')" class="btn nav-link d-flex align-items-center justify-content-start">
                     <i class="fas fa-sign-out-alt nav-icon"></i>
                     <p class="">Cerrar Sesión</p>
                 </button>
             </form>
           </li>
-          @endif
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

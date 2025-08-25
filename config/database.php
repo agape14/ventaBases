@@ -63,6 +63,26 @@ return [
             ]) : [],
         ],
 
+        'mysql_libros' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL_LIBROS'),
+            'host' => env('DB_HOST_LIBROS', '127.0.0.1'),
+            'port' => env('DB_PORT_LIBROS', '3306'),
+            'database' => env('DB_DATABASE_LIBROS', 'sistema_libros'),
+            'username' => env('DB_USERNAME_LIBROS', 'forge'),
+            'password' => env('DB_PASSWORD_LIBROS', ''),
+            'unix_socket' => env('DB_SOCKET_LIBROS', ''),
+            'charset' => env('DB_CHARSET_LIBROS', 'utf8mb4'),
+            'collation' => env('DB_COLLATION_LIBROS', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA_LIBROS'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
