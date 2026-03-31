@@ -10,7 +10,6 @@ use App\Models\OrderItem;
 use App\Models\Customer;
 use App\Models\PersonaNatural;
 use App\Models\Township;
-use App\Helpers\SqlServerHelper;
 
 class ComprobanteController extends Controller
 {
@@ -48,15 +47,10 @@ class ComprobanteController extends Controller
     {
         DB::beginTransaction();
         try {
-            // MODIFICADO: Usar SqlServerHelper en lugar de DB::connection('sqlsrv')
-            $codComprob = SqlServerHelper::getMaxValue('t_comprobante', 'codComprob') + 1;
-            
+            $codComprob = DB::connection('sqlsrv')->table('t_comprobante')->max('codComprob') + 1;
             $codConcepto = 57;
             $canal = 'E';
-            
-            // MODIFICADO: Obtener nombre de concepto
-            $nombreconcepto = SqlServerHelper::getValue('t_concepto_ingreso', 'nombre', "codConcepto = $codConcepto");
-            
+            $nombreconcepto = DB::connection('sqlsrv')->table('t_concepto_ingreso')->where('codConcepto', $codConcepto)->value('nombre');
             $fechaRegistro = Carbon::now();
             $registradoPor = 'adelacruz';
             $cabeceraComprobante = explode('|', $paramCabecera);
@@ -106,39 +100,24 @@ class ComprobanteController extends Controller
                     $codrepresentantelegal=$personajuridica->representante_legal_id;
                     $distrepresentantelegal=$personajuridica->representante_legal_distrito;
                 }
-                
-                // MODIFICADO: Verificar si persona existe usando SqlServerHelper
-                $personaExiste = SqlServerHelper::exists('t_persona', "codPersona = '$nrodocumento'");
-                
+                $personaExiste = DB::connection('sqlsrv')->table('t_persona')->where('codPersona', $nrodocumento)->exists();
                 $tbltown=DB::table('townships')->where('township_id', $iddistrito)->first();
-                
-                // MODIFICADO: Obtener ubigeo
-                $conn = SqlServerHelper::connect();
-                $sql = "SELECT codUbi, dist, prov, dpto FROM t_ubigeo WHERE codUbi = ?";
-                $stmt = sqlsrv_query($conn, $sql, [$tbltown->codubi]);
-                $tblubigeo = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-                $ubigeo = $tblubigeo['codUbi'];
-                sqlsrv_free_stmt($stmt);
-                
+                $tblubigeo = DB::connection('sqlsrv')->table('t_ubigeo')->where('codUbi', $tbltown->codubi)->first();
+                $ubigeo = $tblubigeo->codUbi;
                 if (!$personaExiste) {
                     if($codrepresentantelegal){
                         $pers_rep_legal = DB::table('personas_naturales')->where('persona_natural_id',$codrepresentantelegal)->first();
                         $clie_rep_legal = DB::table('customers')->where('customer_id',$pers_rep_legal->customer_id)->first();
                         $ubig_rep_legal = DB::table('townships')->where('township_id',$distrepresentantelegal)->first();
                         if($ubig_rep_legal){
-                            $sql = "SELECT codUbi, dist, prov, dpto FROM t_ubigeo WHERE codUbi = ?";
-                            $stmt = sqlsrv_query($conn, $sql, [$ubig_rep_legal->codubi]);
-                            $tblubigeo_rep = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-                            $ubigeo_dist = $tblubigeo_rep['codUbi'];
-                            $rep_legal_dist=$tblubigeo_rep['dist'];
-                            $rep_legal_prov=$tblubigeo_rep['prov'];
-                            $rep_legal_dpto=$tblubigeo_rep['dpto'];
-                            sqlsrv_free_stmt($stmt);
+                            $tblubigeo = DB::connection('sqlsrv')->table('t_ubigeo')->where('codUbi', $ubig_rep_legal->codubi)->first();
+                            $ubigeo_dist = $tblubigeo->codUbi;
+                            $rep_legal_dist=$tblubigeo->dist;
+                            $rep_legal_prov=$tblubigeo->prov;
+                            $rep_legal_dpto=$tblubigeo->dpto;
                         }
                         $dni_rep_legal=$pers_rep_legal->dni;
-                        
-                        // MODIFICADO: Insert representante legal
-                        SqlServerHelper::insert('t_persona', [
+                        DB::connection('sqlsrv')->table('t_persona')->insert([
                             'codPersona' => $dni_rep_legal,
                             'tipoPersona' => 'N',
                             'nombreCompleto' => $clie_rep_legal->name,
@@ -157,9 +136,7 @@ class ComprobanteController extends Controller
                             'tipoDocumento' => '01'
                         ]);
                     }
-                    
-                    // MODIFICADO: Insert persona
-                    SqlServerHelper::insert('t_persona', [
+                    DB::connection('sqlsrv')->table('t_persona')->insert([
                         'codPersona' => $nrodocumento,
                         'tipoPersona' => $tipopersona,
                         'nombreCompleto' => $razSoc ?? ($nombres),
@@ -179,9 +156,9 @@ class ComprobanteController extends Controller
                         'registradoPor' => $registradoPor,
                         'fechaRegistro' => $fechaRegistro,
                         'modificadoPor' => null,'fechaModificado' => null,
-                        'dist' => $tblubigeo['dist'],
-                        'prov' => $tblubigeo['prov'],
-                        'dpto' => $tblubigeo['dpto'],
+                        'dist' => $tblubigeo->dist,
+                        'prov' => $tblubigeo->prov,
+                        'dpto' => $tblubigeo->dpto,
                         'tipoDocumento' => $codtipodocucliente
                     ]);
                 }
@@ -199,31 +176,24 @@ class ComprobanteController extends Controller
                     $documento = 'Boleta';
                     $tipoCompr = '03';
                 }
-                
-                // MODIFICADO: Obtener número de comprobante
-                $sql = "SELECT MAX(numero) as maxNum FROM t_comprobante WHERE tipo = ? AND serie = ?";
-                $stmt = sqlsrv_query($conn, $sql, [$boleta_o_factura, $serie]);
-                $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-                $numero = ($row['maxNum'] ?? 0) + 1;
-                sqlsrv_free_stmt($stmt);
+                $numero = DB::connection('sqlsrv')->table('t_comprobante')
+                    ->where('tipo', $boleta_o_factura)
+                    ->where('serie', $serie)
+                    ->max('numero') + 1;
 
-                if (is_null($numero) || $numero == 0) {
+                if (is_null($numero)) {
                     $numero = 1;
                 }
                 $nroConCeros= str_pad($numero, 8, '0', STR_PAD_LEFT);
                 $facturaElectronica = $tipoCompr . '-' . $serie . '-' . $nroConCeros . '.pdf' ;
-                
-                // MODIFICADO: Obtener codIngreso
-                $codIngreso = SqlServerHelper::getMaxValue('t_ingreso_tesoreria', 'codIngreso') + 1;
+                $codIngreso = DB::connection('sqlsrv')->table('t_ingreso_tesoreria')->max('codIngreso') + 1;
 
                 $igv_rate = 0.18;
                 $subtotal = (float)$grantotal / (1 + $igv_rate);
                 $igv_value = (float)$grantotal - $subtotal;
                 $subtotal = number_format($subtotal, 2, '.', '');
                 $igv_value = number_format($igv_value, 2, '.', '');
-                
-                // MODIFICADO: Insert t_ingreso_tesoreria
-                SqlServerHelper::insert('t_ingreso_tesoreria', [
+                DB::connection('sqlsrv')->table('t_ingreso_tesoreria')->insert([
                     'item' => 1,
                     'codComprob' => $codComprob,
                     'codConcepto' => $codConcepto,
@@ -247,9 +217,7 @@ class ComprobanteController extends Controller
                     'fechaRegistro' => $fechaRegistro,
                     'codIngreso' => $codIngreso
                 ]);
-                
-                // MODIFICADO: Insert t_comprobante
-                SqlServerHelper::insert('t_comprobante', [
+                DB::connection('sqlsrv')->table('t_comprobante')->insert([
                     'serie' => $serie,
                     'numero' => $numero,
                     'tipo' => $tipComprobante,

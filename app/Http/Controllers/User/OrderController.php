@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\User; 
 
 use Carbon\Carbon;
 use App\Models\User;
@@ -28,17 +28,53 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\VoucherDetail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
     protected $niubizService;
+    
+    /**
+     * Extensiones de imagen permitidas
+     */
+    private $allowedImageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    
+    /**
+     * MIME types de imagen permitidos
+     */
+    private $allowedImageMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+    /**
+     * Valida y procesa una imagen de forma segura
+     */
+    private function validateAndProcessImage($file): array
+    {
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, $this->allowedImageExtensions)) {
+            return ['valid' => false, 'filename' => null, 'error' => 'Extensión no permitida.'];
+        }
+        
+        $mimeType = $file->getMimeType();
+        if (!in_array($mimeType, $this->allowedImageMimes)) {
+            return ['valid' => false, 'filename' => null, 'error' => 'Tipo de archivo no permitido.'];
+        }
+        
+        $imageInfo = @getimagesize($file->getPathname());
+        if ($imageInfo === false) {
+            return ['valid' => false, 'filename' => null, 'error' => 'No es una imagen válida.'];
+        }
+        
+        $secureFilename = Str::random(40) . '.' . $extension;
+        return ['valid' => true, 'filename' => $secureFilename, 'error' => null];
+    }
+
     public function __construct(NiubizService $niubizService)
     {
         $this->niubizService = $niubizService;
     }
+
     //track order by invoice
     public function trackOrder(Request $request){
-
         $validation = Validator::make($request->all(),[
             'invoiceNumber'=> 'required',
         ]);
@@ -55,7 +91,7 @@ class OrderController extends Controller
     }
 
     //create
-    public function createOrder(Request $request){ //dd($request);
+    public function createOrder(Request $request){
         //empty cart checking
         if(Session::has('cart')){
             if(count(Session::get('cart')) == 0){
@@ -64,9 +100,7 @@ class OrderController extends Controller
         }else{
             return back()->with(['error'=>'¡Tu carrito está vacío!']);
         }
-        //validation
-         // Validación común para ambos tipos de persona
-         // Reglas comunes
+
         $rules = [
             'tipo_persona' => 'required|in:N,J',
             'tipo_comprobante' => 'required|string',
@@ -75,7 +109,6 @@ class OrderController extends Controller
             'paymentMethod' => 'required|string',
         ];
 
-        // Validación condicional para persona natural
         if ($request->input('tipo_persona') === 'N') {
             $rules['persona_natural.dni'] = 'required|string|max:8';
             $rules['persona_natural.email'] = 'required|email';
@@ -88,7 +121,6 @@ class OrderController extends Controller
             }
         }
 
-        // Validación condicional para persona jurídica
         if ($request->input('tipo_persona') === 'J') {
             $rules['persona_juridica.ruc'] = 'required|string|digits:11';
             $rules['persona_juridica.email'] = 'required|email';
@@ -105,50 +137,34 @@ class OrderController extends Controller
             $rules['representante_legal.distrito'] = 'required|integer';
         }
 
-        // Realizar la validación
         $validation = Validator::make($request->all(), $rules);
-        //dd($validation->fails());
-        //dd($request);
-        // Manejar los errores de validación
+
         if ($validation->fails()) {
             return back()->withErrors($validation)->withInput();
         }
 
-        //cash on delivery
         if($request->paymentMethod == 'tarjeta'){
-            /*
-            $checkCos = CashOnDelivery::where('status','1')->where('township_id',$request->townshipId)->exists();
-            if(!$checkCos){
-                return back()->with(['error'=>'El pago contra reembolso no está disponible actualmente para su ubicación. ¡Elija otra!']);
-            }*/
-
-            //insert data to order table and order items table
             $orderId = $this->insertOrderData($request);
-
-            //all session destroy
             $this->destroySessionData();
-
-            //new order notify to admin
             $this->notifyToAdmin($orderId,'realizó un nuevo pedido');
-
             return redirect()->route('user#misPagos', ['id' => $orderId])->with(['orderSuccess'=>'Orden exitosamente']);
-            //return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Orden exitosamente']);
-
         }
-        //cash
+
         $checkPaymentMethod = PaymentInfo::where('status','1')->where('type',$request->paymentMethod)->exists();
         if(!$checkPaymentMethod){
             return back()->with(['error'=>'Este método de pago no está disponible actualmente. ¡Elija otro!']);
         }
 
         $data = $request->all();
-
         return view('frontEnd.payment')->with(['data'=>$data]);
     }
 
-
     //confirm payment
     public function confirmPayment(Request $request){
+        // ============================================
+        // PARCHE DE SEGURIDAD - Enero 2026
+        // ============================================
+        
         $validation = Validator::make($request->all(),[
             'name' => 'required',
             'email' => 'required',
@@ -158,14 +174,21 @@ class OrderController extends Controller
             'townshipId' => 'required',
             'address' => 'required',
             'paymentMethod' => 'required',
-            'paymentScreenshot' => 'required',
+            'paymentScreenshot' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
             'paymentInfoId' => 'required',
         ]);
         if($validation->fails()){
             return back()->withErrors($validation)->withInput();
         }
 
-         //insert data to order table and order items table
+        // Validación adicional de seguridad para el screenshot
+        $ssFile = $request->file('paymentScreenshot');
+        $imageResult = $this->validateAndProcessImage($ssFile);
+        if (!$imageResult['valid']) {
+            return back()->withErrors(['paymentScreenshot' => $imageResult['error']])->withInput();
+        }
+
+        //insert data to order table and order items table
         $orderId = $this->insertOrderData($request);
 
         //insert data to payment_transitions
@@ -174,8 +197,9 @@ class OrderController extends Controller
             'payment_info_id' => $request->paymentInfoId,
             'created_at' => Carbon::now(),
         ];
-        $ssFile = $request->file('paymentScreenshot');
-        $ssFileName = uniqid().'-'.$ssFile->getClientOriginalName();
+
+        // Usar nombre seguro generado
+        $ssFileName = $imageResult['filename'];
         $ssFile->move(public_path().'/uploads/payment/',$ssFileName);
         $paymentData['payment_screenshot'] = $ssFileName;
         PaymentTransition::create($paymentData);
@@ -200,14 +224,12 @@ class OrderController extends Controller
     private function insertOrderData($request){
         $countOrder = CountOrder::first();
         $userId = null;
-        //dd($countOrder);
+
         if (auth()->check()) {
             $userId = auth()->id();
         }else {
-
             $documento = null;
             if ($request->input('tipo_persona') === 'N') {
-                // Datos de persona natural
                 $name = $request->input('persona_natural.name');
                 $email = $request->input('persona_natural.email');
                 $phone = $request->input('persona_natural.phone');
@@ -215,7 +237,6 @@ class OrderController extends Controller
                 $distrito = $request->input('persona_natural.distrito');
                 $documento = $request->input('persona_natural.dni');
             } else {
-                // Datos de persona jurídica
                 $name = $request->input('persona_juridica.razon_social');
                 $email = $request->input('persona_juridica.email');
                 $phone = $request->input('persona_juridica.phone');
@@ -231,11 +252,10 @@ class OrderController extends Controller
                 'address' => $address,
                 'created_at' => Carbon::now(),
             ];
-            // Verificar si ya existe un usuario con ese correo
+
             $user = User::where('email', $email)->first();
 
             if (!$user) {
-                // Si no existe, se crea
                 $user = User::create([
                     'name' => $name,
                     'email' => $email,
@@ -243,7 +263,6 @@ class OrderController extends Controller
                     'role' => 'user',
                 ]);
 
-                // Enviar correo de bienvenida
                 $emailTo = Mail::to($email);
                 $ccc = env('MAIL_SEND_CC', 'ti03@emilima.com.pe');
                 if ($ccc) {
@@ -260,7 +279,6 @@ class OrderController extends Controller
 
             $customerId = Customer::insertGetId($customerData);
             if ($request->input('tipo_persona') === 'N') {
-                // Insertar en 'personas_naturales'
                 $ruc_persona_natural=null;
                 if($request->input('tipo_comprobante') === 'F'){
                     $ruc_persona_natural=$request->input('persona_natural.ruc');
@@ -272,7 +290,6 @@ class OrderController extends Controller
                     'created_at' => Carbon::now(),
                 ]);
             } else {
-                // Insertar en 'personas_juridicas'
                 $customerRepresentante = [
                     'customer_type' => 'natural',
                     'name' => $request->input('representante_legal.name'),
@@ -298,8 +315,8 @@ class OrderController extends Controller
                 ]);
             }
         }
+
         $data = [
-            //'user_id' => auth()->user()->id,
             'user_id' => $userId,
             'customer_id' => $customerId,
             'name' => $name,
@@ -322,58 +339,48 @@ class OrderController extends Controller
             'created_at' => Carbon::now(),
         ];
 
-          if(Session::has('coupon')){
-              $coupon = Session::get('coupon');
-              $data['coupon_id'] = $coupon['couponId'];
-              $data['coupon_discount'] = $coupon['discountAmount'];
-              $data['grand_total'] = $coupon['grandTotal'];
-          }else{
-              $data['grand_total'] = Session::get('subTotal');
-          }
+        if(Session::has('coupon')){
+            $coupon = Session::get('coupon');
+            $data['coupon_id'] = $coupon['couponId'];
+            $data['coupon_discount'] = $coupon['discountAmount'];
+            $data['grand_total'] = $coupon['grandTotal'];
+        }else{
+            $data['grand_total'] = Session::get('subTotal');
+        }
 
-          $orderId = Order::insertGetId($data);
+        $orderId = Order::insertGetId($data);
 
-          //insert data to order items
-          $carts = Session::get('cart');
-          foreach($carts as $key => $cart){
-              OrderItem::create([
-                  'order_id' => $orderId,
-                  'product_id' => $cart['product_id'],
-                  'product_variant_id' => $key,
-                  'color_id' => $cart['colorId'] ,
-                  'size_id' => $cart['sizeId'] ,
-                  'unit_price' => $cart['price'],
-                  'quantity'=> $cart['quantity'],
-                  'total_price' => $cart['price'] * $cart['quantity'],
-              ]);
-          }
-          if($orderId){
+        $carts = Session::get('cart');
+        foreach($carts as $key => $cart){
+            OrderItem::create([
+                'order_id' => $orderId,
+                'product_id' => $cart['product_id'],
+                'product_variant_id' => $key,
+                'color_id' => $cart['colorId'] ,
+                'size_id' => $cart['sizeId'] ,
+                'unit_price' => $cart['price'],
+                'quantity'=> $cart['quantity'],
+                'total_price' => $cart['price'] * $cart['quantity'],
+            ]);
+        }
+        if($orderId){
             $countOrder->order_number += 1;
             $countOrder->save();
-          }
-          return $orderId;
-
-
-
+        }
+        return $orderId;
     }
-
 
     //order notify to admin
     private function notifyToAdmin($orderId,$message){
-        //notification
         $data = Order::where('order_id',$orderId)->with('user')->first();
         $data->message = $message;
-
-        //notify to all admin
         $admin = User::where('role','admin')->get();
         Notification::send($admin, new UserOrderNotification($data));
     }
 
     public function completePurchase($id, Request $request)
     {
-        // Obtener el token de transacción y otros datos de la solicitud
         $transactionToken = $request->input('transactionToken');
-        // Aquí puedes procesar la transacción con Niubiz y manejar los errores
         $ordervalida = Order::where('order_id', $id)->firstOrFail();
         if (!Auth::check()) {
             $user = User::find($ordervalida->user_id);
@@ -382,22 +389,18 @@ class OrderController extends Controller
             }
         }
         if ($transactionToken) {
-            // Simulación de la respuesta de la API de Niubiz (debes reemplazar esto con la integración real)
             $responseniubiztrans = $this->processNiubizTransaction($transactionToken, $id);
-            //dd($responseniubiztrans);
+
             if (isset($responseniubiztrans['dataMap'])) {
                 $responseCode = $responseniubiztrans['dataMap']['ACTION_CODE'];
                 $responseMeg=$responseniubiztrans['dataMap']['ACTION_DESCRIPTION'];
-                // Manejo de diferentes códigos de respuesta
+
                 if ($responseCode == '000') {
-                    // Código 000 significa transacción exitosa
                     $this->changeOrderStatus($id, 'pagado', 'confirmed_date');
                     $currencyMap = [
                         '0604' => 'Soles',
                         '0480' => 'Dólares',
-                        // Agrega otros códigos de moneda según sea necesario
                     ];
-                    // Disminuir stock de productos
                     $this->decreaseStock($id);
                     $nropedido=$responseniubiztrans['dataMap']['TRACE_NUMBER'];
                     $fechahorapedido=$responseniubiztrans['dataMap']['TRANSACTION_DATE'];
@@ -408,32 +411,33 @@ class OrderController extends Controller
                     $tipomonedaTexto = $currencyMap[$tipomoneda] ?? 'desconocido';
                     $tarjeta = $responseniubiztrans['dataMap']['CARD'];
                     $tipotarjeta = $responseniubiztrans['dataMap']['BRAND'];
-                    // Redirigir a la página de éxito
+
                     $mensajeSuccessFormateado = "<b>Número de pedido:</b> $nropedido<br>" .
                      "<b>Fecha y hora del pedido:</b> $formattedDate<br>" .
                      "<b>Importe pagado:</b> $montopagado<br>" .
                      "<b>Tipo de moneda:</b> $tipomonedaTexto<br>".
                      "<b>Tarjeta:</b> $tarjeta<br>" .
-                     "<b>Tipo Tarjeta:</b> $tipotarjeta"  ;
-                     $order = Order::where('order_id', $id)->first();
-                     Order::where('order_id', $id)->update([
+                     "<b>Tipo Tarjeta:</b> $tipotarjeta";
+
+                    $order = Order::where('order_id', $id)->first();
+                    Order::where('order_id', $id)->update([
                         'note' => $responseniubiztrans['dataMap']
                     ]);
-                    // Enviar correo al cliente con PDF adjunto
-                    //Mail::to($order->email)->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
+
                     $email = Mail::to($order->email);
                     $cc=env('MAIL_SEND_CC', 'ti03@emilima.com.pe');
                     if ($cc) {
                         $email->cc($cc);
                     }
                     $email->send(new OrderConfirmation($order, $mensajeSuccessFormateado));
-                     if (!Auth::check()) {
+
+                    if (!Auth::check()) {
                         $user = User::find($order->user_id);
                         if ($user) {
                             Auth::login($user);
                         }
                     }
-                     return redirect()->route('user#myOrder')->with(['niubizbtnpagorealizado'=>$mensajeSuccessFormateado]);
+                    return redirect()->route('user#myOrder')->with(['niubizbtnpagorealizado'=>$mensajeSuccessFormateado]);
                 } else {
                     return redirect()->back()->with('error', $responseMeg);
                 }
@@ -463,12 +467,10 @@ class OrderController extends Controller
                 return redirect()->back()->with('error', $mensajeErrorFormateado );
             }
             else {
-                // Puedes lanzar una excepción, retornar un error específico o manejarlo de otra manera
                 $responseMeg = 'Error: formato de respuesta no reconocido';
                 return redirect()->back()->with('error', $responseMeg);
             }
         } else {
-            // En caso de que no se reciba el token
             return redirect()->back()->with('error', '<b>No</b>  se pudo procesar la transacción. Inténtelo de nuevo. <br>'.$request->input('errorMessage'));
         }
     }
@@ -490,7 +492,6 @@ class OrderController extends Controller
             ];
             ProductVariant::where('product_variant_id', $orderItem->product_variant_id)->update($stock);
 
-            // Historial de stock
             StockHistory::create([
                 'product_id' => $productVariant->product_id,
                 'product_variant_id' => $productVariant->product_variant_id,
@@ -510,8 +511,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function registeOrder(Request $request){ //dd($request->all());
-
+    public function registeOrder(Request $request){
         $rules = [
             'tipo_persona' => 'required|in:N,J',
             'tipo_comprobante' => 'required|string',
@@ -523,6 +523,8 @@ class OrderController extends Controller
             'grand_total'=> 'required|numeric',
             'product_id'=> 'required|integer',
             'quantity'=> 'required|integer',
+            // PARCHE: Agregar validación para screenshot
+            'paymentScreenshot' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ];
 
         if ($request->input('tipo_persona') === 'N') {
@@ -554,20 +556,15 @@ class OrderController extends Controller
         }
 
         $validation = Validator::make($request->all(), $rules);
-        //dd($validation->errors()->all());
+
         if ($validation->fails()) {
             return back()->withErrors($validation)->withInput();
         }
 
         if($request->paymentMethod == 'transferencia'){
             $orderId = $this->insertOrderManualData($request);
-
-            //new order notify to admin
             $this->notifyToAdmin($orderId,'realizó un nuevo pedido');
-
             return redirect()->route('admin#order')->with(['orderSuccess'=>'Se registró exitosamente']);
-            //return redirect()->route('user#myOrder')->with(['orderSuccess'=>'Orden exitosamente']);
-
         }
     }
 
@@ -579,7 +576,6 @@ class OrderController extends Controller
             $address = $request->input('persona_natural.address');
             $distrito = $request->input('persona_natural.distrito');
         } else {
-            // Datos de persona jurídica
             $name = $request->input('persona_juridica.razon_social');
             $email = $request->input('persona_juridica.email');
             $phone = $request->input('persona_juridica.phone');
@@ -598,7 +594,6 @@ class OrderController extends Controller
 
         $customerId = Customer::insertGetId($customerData);
         if ($request->input('tipo_persona') === 'N') {
-            // Insertar en 'personas_naturales'
             $ruc_persona_natural=null;
             if($request->input('tipo_comprobante') === 'F'){
                 $ruc_persona_natural=$request->input('persona_natural.ruc');
@@ -610,7 +605,6 @@ class OrderController extends Controller
                 'created_at' => Carbon::now(),
             ]);
         } else {
-            // Insertar en 'personas_juridicas'
             $customerRepresentante = [
                 'customer_type' => 'natural',
                 'name' => $request->input('representante_legal.name'),
@@ -635,10 +629,12 @@ class OrderController extends Controller
                 'created_at' => Carbon::now(),
             ]);
         }
+
         $orderDate = Carbon::createFromFormat('Y-m-d', $request->input('order_date'));
         $mes = $orderDate->format('m');
         $año = $orderDate->format('Y');
         $formattedDate = $orderDate->format('d/m/Y');
+
         $data = [
             'user_id' => auth()->user()->id,
             'customer_id' => $customerId,
@@ -664,20 +660,27 @@ class OrderController extends Controller
             'created_at' => Carbon::now(),
         ];
 
-            $orderId = Order::insertGetId($data);
+        $orderId = Order::insertGetId($data);
 
-            OrderItem::create([
-                'order_id' => $orderId,
-                'product_id' => $request->input('product_id'),
-                'product_variant_id' => $request->input('product_id'),
-                'unit_price' => $request->input('grand_total'),
-                'quantity'=> $request->input('quantity'),
-                'total_price' => $request->input('grand_total'),
-            ]);
+        OrderItem::create([
+            'order_id' => $orderId,
+            'product_id' => $request->input('product_id'),
+            'product_variant_id' => $request->input('product_id'),
+            'unit_price' => $request->input('grand_total'),
+            'quantity'=> $request->input('quantity'),
+            'total_price' => $request->input('grand_total'),
+        ]);
 
-            if ($request->hasFile('paymentScreenshot')) {
-                $ssFile = $request->file('paymentScreenshot');
-                $ssFileName = uniqid() . '-' . $ssFile->getClientOriginalName();
+        // ============================================
+        // PARCHE DE SEGURIDAD - Enero 2026
+        // ============================================
+        if ($request->hasFile('paymentScreenshot')) {
+            $ssFile = $request->file('paymentScreenshot');
+            
+            // Validar imagen de forma segura
+            $imageResult = $this->validateAndProcessImage($ssFile);
+            if ($imageResult['valid']) {
+                $ssFileName = $imageResult['filename'];
                 $ssFile->move(public_path('uploads/payment/'), $ssFileName);
                 $voucherData = [
                     'order_id' => $orderId,
@@ -685,8 +688,11 @@ class OrderController extends Controller
                     'created_at' => Carbon::now(),
                 ];
                 $voucherId = VoucherDetail::insertGetId($voucherData);
+            } else {
+                \Log::warning('Voucher rechazado por seguridad: ' . $imageResult['error']);
             }
+        }
 
-            return $orderId;
+        return $orderId;
     }
 }

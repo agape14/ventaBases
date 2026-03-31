@@ -18,9 +18,68 @@ use App\Http\Controllers\Controller;
 use App\Models\StockHistory;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    /**
+     * Extensiones de imagen permitidas
+     */
+    private $allowedImageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    
+    /**
+     * MIME types de imagen permitidos
+     */
+    private $allowedImageMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+    /**
+     * Valida y procesa una imagen de forma segura
+     * 
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return array ['valid' => bool, 'filename' => string|null, 'error' => string|null]
+     */
+    private function validateAndProcessImage($file): array
+    {
+        // 1. Validar extensión
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, $this->allowedImageExtensions)) {
+            return [
+                'valid' => false,
+                'filename' => null,
+                'error' => 'Extensión de archivo no permitida: ' . $extension
+            ];
+        }
+        
+        // 2. Validar MIME type real
+        $mimeType = $file->getMimeType();
+        if (!in_array($mimeType, $this->allowedImageMimes)) {
+            return [
+                'valid' => false,
+                'filename' => null,
+                'error' => 'Tipo de archivo no permitido.'
+            ];
+        }
+        
+        // 3. Verificar que es una imagen real
+        $imageInfo = @getimagesize($file->getPathname());
+        if ($imageInfo === false) {
+            return [
+                'valid' => false,
+                'filename' => null,
+                'error' => 'El archivo no es una imagen válida.'
+            ];
+        }
+        
+        // 4. Generar nombre seguro (NUNCA usar getClientOriginalName)
+        $secureFilename = Str::random(40) . '.' . $extension;
+        
+        return [
+            'valid' => true,
+            'filename' => $secureFilename,
+            'error' => null
+        ];
+    }
+
     //redirect to index page
     public function index(){
         $data = Product::select('products.*',DB::raw('count(product_variants.product_id) as totalVariants'))
@@ -66,6 +125,10 @@ class ProductController extends Controller
 
     //store product data
     public function storeProduct(Request $request){
+        // ============================================
+        // PARCHE DE SEGURIDAD - Enero 2026
+        // ============================================
+        
         //validation
         $validation = $this->productValidation($request);
         if($validation->fails()){
@@ -74,29 +137,50 @@ class ProductController extends Controller
 
         //get preview image
         $file = $request->file('previewImage');
-        $fileName = uniqid().'_'.$file->getClientOriginalName();
+        
+        // Validar imagen de preview de forma segura
+        $imageResult = $this->validateAndProcessImage($file);
+        if (!$imageResult['valid']) {
+            return back()->withErrors(['previewImage' => $imageResult['error']])->withInput();
+        }
+        $fileName = $imageResult['filename'];
+        
         $nombrepdf="";
         if ($request->hasFile('order_pdf_file')) {
-            $filenew  = $request->file('order_pdf_file');
-            $filenamenew = time() . '_' . $filenew->getClientOriginalName();
-            $file->storeAs('public', $filenamenew); // Guarda en storage/app/public
-            $nombrepdf=$filenamenew;
+            $filenew = $request->file('order_pdf_file');
+            // Validar que es PDF
+            if ($filenew->getMimeType() !== 'application/pdf') {
+                return back()->withErrors(['order_pdf_file' => 'El archivo debe ser un PDF válido.'])->withInput();
+            }
+            // Generar nombre seguro para PDF
+            $filenamenew = Str::random(40) . '.pdf';
+            $filenew->storeAs('public', $filenamenew);
+            $nombrepdf = $filenamenew;
         }
+
         //get data
         $data = $this->requestProductData($request);
         $data['preview_image'] = $fileName;
         $data['created_at'] = Carbon::now();
-        $data['order_pdf_filename']=$nombrepdf;
+        $data['order_pdf_filename'] = $nombrepdf;
+
         //store data
         $file->move(public_path().'/uploads/products/',$fileName);
         $productId = Product::insertGetId($data);
-        // dd($productId);
 
         //check multi image
         if($request->hasFile('multiImage')){
             $multiImageFiles = $request->file('multiImage');
             foreach($multiImageFiles as $img){
-                $multiImageName = uniqid().'_'.$img->getClientOriginalName();
+                // Validar cada imagen de forma segura
+                $multiImageResult = $this->validateAndProcessImage($img);
+                if (!$multiImageResult['valid']) {
+                    // Log el error pero continúa con las demás imágenes
+                    \Log::warning('Imagen múltiple rechazada: ' . $multiImageResult['error']);
+                    continue;
+                }
+                $multiImageName = $multiImageResult['filename'];
+                
                 //store image
                 $img->move(public_path().'/uploads/products/',$multiImageName);
                 MultiImage::create([
@@ -104,7 +188,6 @@ class ProductController extends Controller
                     'image' => $multiImageName,
                 ]);
             }
-
         }
 
         //for variant
@@ -122,7 +205,6 @@ class ProductController extends Controller
         ]);
 
         return redirect()->route('admin#product')->with(['success'=>'Product created successfully']);
-
     }
 
     //redirect to edit page
@@ -159,8 +241,12 @@ class ProductController extends Controller
 
     //update data
     public function updateProduct(Request $request,$id){
+        // ============================================
+        // PARCHE DE SEGURIDAD - Enero 2026
+        // ============================================
+        
         //validation
-        $validation =  Validator::make($request->all(),[
+        $validation = Validator::make($request->all(),[
             'brandId' => 'required',
             'categoryId' => 'required',
             'subCategoryId' => 'required',
@@ -172,36 +258,51 @@ class ProductController extends Controller
             'sellingPrice' => 'required',
             'publishStatus' => 'required',
             'subject_mail' => 'nullable|string|max:255',
-            'order_pdf_file' => 'nullable|file|mimes:pdf|max:10240', // máximo 10 MB
+            'order_pdf_file' => 'nullable|file|mimes:pdf|max:10240',
+            'previewImage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'multiImage.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
         if($validation->fails()){
             return back()->withErrors($validation)->withInput();
         }
+
         //get data
         $updateData = $this->requestProductData($request);
 
         //check preview image
         if($request->hasFile('previewImage')){
+            $newFile = $request->file('previewImage');
+            
+            // Validar imagen de forma segura
+            $imageResult = $this->validateAndProcessImage($newFile);
+            if (!$imageResult['valid']) {
+                return back()->withErrors(['previewImage' => $imageResult['error']])->withInput();
+            }
+            $newFileName = $imageResult['filename'];
+
             //delete old image
             $product = Product::where('product_id',$id)->first();
             $oldFileName = $product->preview_image;
             if(File::exists(public_path().'/uploads/products/'.$oldFileName)){
                 File::delete(public_path().'/uploads/products/'.$oldFileName);
             }
-            //update new image
-            $newFile = $request->file('previewImage');
-            $newFileName = uniqid().'_'.$newFile->getClientOriginalName();
+
             $newFile->move(public_path().'/uploads/products/',$newFileName);
-
             $updateData['preview_image'] = $newFileName;
-
         }
+
         if ($request->hasFile('order_pdf_file')) {
             $file = $request->file('order_pdf_file');
-            $filenameedit = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public', $filenameedit); // Guarda en storage/app/public
-            $updateData['order_pdf_filename']=$filenameedit;
+            // Validar que es PDF
+            if ($file->getMimeType() !== 'application/pdf') {
+                return back()->withErrors(['order_pdf_file' => 'El archivo debe ser un PDF válido.'])->withInput();
+            }
+            // Generar nombre seguro
+            $filenameedit = Str::random(40) . '.pdf';
+            $file->storeAs('public', $filenameedit);
+            $updateData['order_pdf_filename'] = $filenameedit;
         }
+
         Product::where('product_id',$id)->update($updateData);
 
         //check multi image
@@ -209,7 +310,14 @@ class ProductController extends Controller
             //store multi image
             $multiImageFiles = $request->file('multiImage');
             foreach($multiImageFiles as $img){
-                $multiImageName = uniqid().'_'.$img->getClientOriginalName();
+                // Validar cada imagen de forma segura
+                $multiImageResult = $this->validateAndProcessImage($img);
+                if (!$multiImageResult['valid']) {
+                    \Log::warning('Imagen múltiple rechazada en update: ' . $multiImageResult['error']);
+                    continue;
+                }
+                $multiImageName = $multiImageResult['filename'];
+
                 $img->move(public_path().'/uploads/products/',$multiImageName);
 
                 MultiImage::create([
@@ -217,7 +325,6 @@ class ProductController extends Controller
                     'image' => $multiImageName
                 ]);
             }
-
         }
 
         return redirect()->route('admin#product')->with(['success'=>'Product updated successfully']);
@@ -270,7 +377,6 @@ class ProductController extends Controller
     //product stock page
     public function productStock(){
         $data = Product::select('product_id','name','preview_image','publish_status')->with('productVariant','productVariant.color','productVariant.size')->get();
-        // dd($data->toArray());
         return view('admin.productStock.index')->with(['data'=>$data->toArray(),'products'=>$data]);
     }
 
@@ -334,14 +440,14 @@ class ProductController extends Controller
             'name' => 'required',
             'smallDescription' => 'required',
             'longDescription' => 'required',
-            'previewImage' => 'required',
+            'previewImage' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'multiImage.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
             'originalPrice' => 'required',
             'sellingPrice' => 'required',
             'publishStatus' => 'required',
             'avaiStock' => 'required',
             'subject_mail' => 'nullable|string|max:255',
-            'order_pdf_file' => 'nullable|file|mimes:pdf|max:10240', // máximo 10 MB
+            'order_pdf_file' => 'nullable|file|mimes:pdf|max:10240',
         ]);
     }
-
 }
