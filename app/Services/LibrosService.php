@@ -9,10 +9,13 @@ use App\Models\Ubigeo;
 use App\Models\ProductoLibro;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use App\Helpers\EstadosPagoHelper;
 
 class LibrosService
 {
+    private ?bool $tieneColumnaFechaVenta = null;
+
     /**
      * Obtener todos los pedidos con sus relaciones
      */
@@ -53,13 +56,15 @@ class LibrosService
         try {
             DB::connection('mysql_libros')->beginTransaction();
 
+            $estadoPago = $datos['estadopago_ped'];
+
             // Crear el pedido
-            $pedido = Pedido::create([
+            $datosPedido = [
                 'IdRepartidor' => $datos['IdRepartidor'] ?? 0,
                 'fecha_pedido' => now(),
                 'IdMetododepago' => $datos['IdMetododepago'],
                 'total_ped' => $datos['total_ped'],
-                'estadopago_ped' => $datos['estadopago_ped'],
+                'estadopago_ped' => $estadoPago,
                 'IdCarrito' => $datos['IdCarrito'] ?? 0,
                 'nombre_cliente' => $datos['nombre_cliente'],
                 'apellidos_cliente' => $datos['apellidos_cliente'],
@@ -67,8 +72,15 @@ class LibrosService
                 'IdTipoDocumento' => $datos['IdTipoDocumento'],
                 'nro_documento' => $datos['nro_documento'],
                 'comprobante_tipo' => $datos['comprobante_tipo'],
-                'migracion_ped' => $datos['migracion_ped'] ?? false
-            ]);
+                'migracion_ped' => $datos['migracion_ped'] ?? false,
+                'log_res_pago' => $datos['log_res_pago'] ?? null,
+            ];
+
+            if ($estadoPago === 'pago aceptado' && $this->existeColumnaFechaVenta()) {
+                $datosPedido['fecha_venta'] = now();
+            }
+
+            $pedido = Pedido::create($datosPedido);
 
             // Crear las compras del usuario
             if (isset($datos['compras']) && is_array($datos['compras'])) {
@@ -113,10 +125,20 @@ class LibrosService
     {
         try {
             $pedido = Pedido::findOrFail($idPedido);
-            $pedido->update([
+            $datosActualizar = [
                 'estadopago_ped' => $estadoPago,
                 'log_res_pago' => $logResPago
-            ]);
+            ];
+
+            if (
+                $estadoPago === 'pago aceptado' &&
+                $this->existeColumnaFechaVenta() &&
+                empty($pedido->fecha_venta)
+            ) {
+                $datosActualizar['fecha_venta'] = now();
+            }
+
+            $pedido->update($datosActualizar);
 
             return $pedido;
         } catch (\Exception $e) {
@@ -140,7 +162,7 @@ class LibrosService
             if (!EstadosPagoHelper::permiteEdicion($pedido->estadopago_ped)) {
                 throw new \Exception('No se puede editar un pedido con estado: ' . EstadosPagoHelper::getNombreEstadoPago($pedido->estadopago_ped));
             }
-            $pedido->update([
+            $datosActualizar = [
                 'IdRepartidor' => $datos['IdRepartidor'] ?? 0,
                 'IdMetododepago' => $datos['IdMetododepago'],
                 'total_ped' => $datos['total_ped'],
@@ -152,8 +174,19 @@ class LibrosService
                 'IdTipoDocumento' => $datos['IdTipoDocumento'],
                 'nro_documento' => $datos['nro_documento'],
                 'comprobante_tipo' => $datos['comprobante_tipo'],
-                'migracion_ped' => $datos['migracion_ped'] ?? false
-            ]);
+                'migracion_ped' => $datos['migracion_ped'] ?? false,
+                'log_res_pago' => $datos['log_res_pago'] ?? null
+            ];
+
+            if (
+                ($datos['estadopago_ped'] ?? null) === 'pago aceptado' &&
+                $this->existeColumnaFechaVenta() &&
+                empty($pedido->fecha_venta)
+            ) {
+                $datosActualizar['fecha_venta'] = now();
+            }
+
+            $pedido->update($datosActualizar);
 
             // Eliminar compras existentes
             CompraUsuario::where('id_compras_ped', $idPedido)->delete();
@@ -227,6 +260,27 @@ class LibrosService
             return $pedido;
         } catch (\Exception $e) {
             Log::error('Error al cancelar pedido: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Cambiar el estado del pedido a pendiente para permitir edición.
+     */
+    public function marcarComoPendiente($idPedido)
+    {
+        try {
+            $pedido = Pedido::findOrFail($idPedido);
+
+            $pedido->update([
+                'estadopago_ped' => 'pendiente',
+                'hora_cancelacion' => null,
+                'fecha_cancelacion' => null,
+            ]);
+
+            return $pedido;
+        } catch (\Exception $e) {
+            Log::error('Error al marcar pedido como pendiente: ' . $e->getMessage());
             throw $e;
         }
     }
@@ -321,5 +375,20 @@ class LibrosService
             Log::error('Error al obtener estadísticas: ' . $e->getMessage());
             throw $e;
         }
+    }
+
+    private function existeColumnaFechaVenta(): bool
+    {
+        if ($this->tieneColumnaFechaVenta !== null) {
+            return $this->tieneColumnaFechaVenta;
+        }
+
+        try {
+            $this->tieneColumnaFechaVenta = Schema::connection('mysql_libros')->hasColumn('pedidos', 'fecha_venta');
+        } catch (\Throwable $e) {
+            $this->tieneColumnaFechaVenta = false;
+        }
+
+        return $this->tieneColumnaFechaVenta;
     }
 }

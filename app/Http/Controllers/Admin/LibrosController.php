@@ -44,6 +44,8 @@ class LibrosController extends Controller
     public function store(Request $request)
     {
         try {
+            $metodosConVoucher = ['4', '5'];
+
             // Validar datos
             $validator = Validator::make($request->all(), [
                 'nombre_cliente' => 'required|string|max:45',
@@ -52,6 +54,8 @@ class LibrosController extends Controller
                 'nro_documento' => 'required|string|max:11',
                 'IdTipoDocumento' => 'required|integer',
                 'IdMetododepago' => 'required|string|max:45',
+                'voucher_numero' => 'nullable|required_if:IdMetododepago,' . implode(',', $metodosConVoucher) . '|string|max:50',
+                'voucher_fecha_hora' => 'nullable|required_if:IdMetododepago,' . implode(',', $metodosConVoucher) . '|date',
                 'estadopago_ped' => 'required|string|max:45',
                 'comprobante_tipo' => 'required|string|max:45',
                 'total_ped' => 'required|numeric|min:0',
@@ -79,6 +83,7 @@ class LibrosController extends Controller
             // Preparar datos
             $datos = $request->all();
             $datos['migracion_ped'] = false;
+            $datos['log_res_pago'] = $this->construirLogPago($request);
 
             // Crear venta
             $pedido = $this->librosService->crearPedido($datos);
@@ -117,6 +122,8 @@ class LibrosController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $metodosConVoucher = ['4', '5'];
+
             // Validar datos
             $validator = Validator::make($request->all(), [
                 'nombre_cliente' => 'required|string|max:45',
@@ -125,6 +132,8 @@ class LibrosController extends Controller
                 'nro_documento' => 'required|string|max:11',
                 'IdTipoDocumento' => 'required|integer',
                 'IdMetododepago' => 'required|string|max:45',
+                'voucher_numero' => 'nullable|required_if:IdMetododepago,' . implode(',', $metodosConVoucher) . '|string|max:50',
+                'voucher_fecha_hora' => 'nullable|required_if:IdMetododepago,' . implode(',', $metodosConVoucher) . '|date',
                 'estadopago_ped' => 'required|string|max:45',
                 'comprobante_tipo' => 'required|string|max:45',
                 'total_ped' => 'required|numeric|min:0',
@@ -152,6 +161,7 @@ class LibrosController extends Controller
             // Preparar datos
             $datos = $request->all();
             $datos['migracion_ped'] = false;
+            $datos['log_res_pago'] = $this->construirLogPago($request);
 
             // Actualizar venta completa
             $pedido = $this->librosService->actualizarPedido($id, $datos);
@@ -188,6 +198,34 @@ class LibrosController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al cancelar la venta: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Marcar una venta como pendiente (solo admin).
+     */
+    public function marcarPendiente($id)
+    {
+        try {
+            if (auth()->user()->role !== 'admin') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Solo un administrador puede cambiar el estado a pendiente.'
+                ], 403);
+            }
+
+            $pedido = $this->librosService->marcarComoPendiente($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Venta actualizada a estado pendiente',
+                'data' => $pedido
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar a pendiente: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -425,5 +463,23 @@ class LibrosController extends Controller
                 'message' => 'Error al exportar a PDF: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    private function construirLogPago(Request $request): ?string
+    {
+        $metodosConVoucher = ['4', '5'];
+
+        if (!in_array((string) $request->IdMetododepago, $metodosConVoucher, true)) {
+            return null;
+        }
+
+        $fechaHoraOperacion = $request->voucher_fecha_hora
+            ? date('Y-m-d H:i:s', strtotime($request->voucher_fecha_hora))
+            : null;
+
+        return json_encode([
+            'voucher_numero' => $request->voucher_numero,
+            'fecha_hora_operacion' => $fechaHoraOperacion,
+        ], JSON_UNESCAPED_UNICODE);
     }
 }

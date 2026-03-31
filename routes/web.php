@@ -278,6 +278,7 @@ Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware'=> ['auth',
     Route::get('libros/{id}/edit', [App\Http\Controllers\Admin\LibrosController::class, 'edit'])->name('admin#libros.edit');
     Route::put('libros/{id}', [App\Http\Controllers\Admin\LibrosController::class, 'update'])->name('admin#libros.update');
     Route::put('libros/{id}/cancelar', [App\Http\Controllers\Admin\LibrosController::class, 'cancelar'])->name('admin#libros.cancelar');
+    Route::put('libros/{id}/pendiente', [App\Http\Controllers\Admin\LibrosController::class, 'marcarPendiente'])->name('admin#libros.pendiente');
     
     // API endpoints para libros
     Route::get('libros/api/pedidos', [App\Http\Controllers\Admin\LibrosController::class, 'getPedidos'])->name('admin#libros.pedidos');

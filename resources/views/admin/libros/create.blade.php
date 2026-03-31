@@ -83,6 +83,17 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div id="voucher-fields" class="border rounded p-3 mb-3" style="display: none;">
+                                    <h6 class="mb-3">Datos de operación bancaria</h6>
+                                    <div class="form-group">
+                                        <label for="voucher_numero">N° Voucher *</label>
+                                        <input type="text" class="form-control" id="voucher_numero" name="voucher_numero" placeholder="Ingrese el número de voucher">
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label for="voucher_fecha_hora">Fecha y hora de operación *</label>
+                                        <input type="datetime-local" class="form-control" id="voucher_fecha_hora" name="voucher_fecha_hora">
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <label for="estadopago_ped">Estado de Pago *</label>
                                     <select class="form-control" id="estadopago_ped" name="estadopago_ped" required>
@@ -216,6 +227,7 @@
 $(document).ready(function() {
     let productoIndex = 0;
     let productosData = []; // Almacenar datos de productos para acceso rápido
+    const metodosConVoucher = ['4', '5'];
     
     // Cargar ubigeos
     cargarUbigeos();
@@ -254,6 +266,12 @@ $(document).ready(function() {
         e.preventDefault();
         guardarVenta();
     });
+
+    $('#IdMetododepago').on('change', function() {
+        toggleVoucherFields();
+    });
+
+    toggleVoucherFields();
     
     function cargarUbigeos() {
         // Inicializar Select2 para ubigeo
@@ -413,6 +431,10 @@ $(document).ready(function() {
     }
     
     function guardarVenta() {
+        if (!validarDatosVoucher()) {
+            return;
+        }
+
         // Validar que haya al menos un producto
         if ($('.producto-select').filter(function() { return $(this).val(); }).length === 0) {
             alert('Debe seleccionar al menos un producto');
@@ -450,6 +472,38 @@ $(document).ready(function() {
                 alert(error);
             }
         });
+    }
+
+    function toggleVoucherFields() {
+        const metodoSeleccionado = $('#IdMetododepago').val();
+        const mostrarVoucher = metodosConVoucher.includes(metodoSeleccionado);
+
+        $('#voucher-fields').toggle(mostrarVoucher);
+        $('#voucher_numero, #voucher_fecha_hora').prop('required', mostrarVoucher);
+
+        if (!mostrarVoucher) {
+            $('#voucher_numero').val('');
+            $('#voucher_fecha_hora').val('');
+        }
+    }
+
+    function validarDatosVoucher() {
+        const metodoSeleccionado = $('#IdMetododepago').val();
+        if (!metodosConVoucher.includes(metodoSeleccionado)) {
+            return true;
+        }
+
+        if (!$('#voucher_numero').val().trim()) {
+            alert('Debe ingresar el número de voucher para este método de pago');
+            return false;
+        }
+
+        if (!$('#voucher_fecha_hora').val()) {
+            alert('Debe ingresar la fecha y hora de la operación bancaria');
+            return false;
+        }
+
+        return true;
     }
 });
 </script>

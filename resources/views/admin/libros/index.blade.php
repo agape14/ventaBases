@@ -140,6 +140,7 @@
 @section('script')
 <script>
 $(document).ready(function() {
+    const esAdmin = @json(auth()->check() && auth()->user()->role === 'admin');
     console.log('📄 Documento listo - jQuery disponible:', typeof $ !== 'undefined');
     console.log('🎯 Botón aplicar filtros encontrado:', $('#aplicar-filtros').length > 0);
     
@@ -226,6 +227,11 @@ $(document).ready(function() {
                                 <i class="fas fa-times"></i>
                             </button>` : ''
                         }
+                        ${esAdmin && venta.estadopago_ped === 'pago aceptado' ?
+                            `<button class="btn btn-sm btn-secondary marcar-pendiente" data-id="${venta.IdPedido}" title="Marcar como pendiente">
+                                <i class="fas fa-undo"></i>
+                            </button>` : ''
+                        }
                     </td>
                 </tr>
             `;
@@ -282,6 +288,16 @@ $(document).ready(function() {
         $.get(url, function(response) {
             if (response.success) {
                 let venta = response.data;
+                let pagoExtra = {};
+                if (venta.log_res_pago) {
+                    try {
+                        pagoExtra = typeof venta.log_res_pago === 'string'
+                            ? JSON.parse(venta.log_res_pago)
+                            : venta.log_res_pago;
+                    } catch (e) {
+                        pagoExtra = {};
+                    }
+                }
                 
                                  // Usar el helper para mapear método de pago y estado
                  let metodoPagoTexto = venta.metodo_pago_nombre || 'N/A';
@@ -304,6 +320,15 @@ $(document).ready(function() {
                         </div>
                     </div>
                 `;
+
+                if (pagoExtra.voucher_numero || pagoExtra.fecha_hora_operacion) {
+                    detalles += `
+                        <hr>
+                        <h6>Datos de Operación Bancaria</h6>
+                        <p><strong>N° Voucher:</strong> ${pagoExtra.voucher_numero || 'N/A'}</p>
+                        <p><strong>Fecha/Hora Operación:</strong> ${pagoExtra.fecha_hora_operacion ? new Date(pagoExtra.fecha_hora_operacion).toLocaleString() : 'N/A'}</p>
+                    `;
+                }
                 
                 if (venta.direccion_pedido) {
                     detalles += `
@@ -425,6 +450,63 @@ $(document).ready(function() {
             });
         });
         
+        $('#confirmModal').modal('show');
+    });
+
+    // Marcar venta como pendiente (solo admin)
+    $(document).on('click', '.marcar-pendiente', function() {
+        let id = $(this).data('id');
+
+        $('#confirm-message').text('¿Desea cambiar esta venta a estado pendiente para habilitar su edición?');
+        $('#confirm-action').off('click').on('click', function() {
+            $('#confirm-action').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Actualizando...');
+
+            let pendingUrl = `{{ route("admin#libros.pendiente", ['id' => ':id']) }}`.replace(':id', id);
+            if (window.location.protocol === 'https:' && pendingUrl.startsWith('http:')) {
+                pendingUrl = pendingUrl.replace('http:', 'https:');
+            }
+
+            $.ajax({
+                url: pendingUrl,
+                method: 'PUT',
+                data: {_token: '{{ csrf_token() }}'},
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Actualizado',
+                            text: 'La venta ahora está en estado pendiente',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        cargarVentas(currentPage);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                    $('#confirmModal').modal('hide');
+                },
+                error: function(xhr) {
+                    let errorMsg = 'Error al marcar la venta como pendiente';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: errorMsg
+                    });
+                    $('#confirmModal').modal('hide');
+                },
+                complete: function() {
+                    $('#confirm-action').prop('disabled', false).html('Confirmar');
+                }
+            });
+        });
+
         $('#confirmModal').modal('show');
     });
     

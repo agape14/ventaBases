@@ -291,12 +291,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
         </li>
         @endif
-        
+
         @if (in_array(auth()->user()->role, ['admin', 'tesoreria', 'ventas', 'libros']))
         <!-- Sistema de Libros -->
         <li class="text-white nav-header text-uppercase">Sistema de Libros</li>
         <li class="nav-item">
-            <a href="{{ route('admin#libros.index') }}" class="nav-link {{ Request::url() == route('admin#libros.index') ? 'active' : '' }}">
+            <a href="{{ Route::has('admin#libros.index') ? route('admin#libros.index') : '#' }}" class="nav-link {{ Route::has('admin#libros.index') && Request::url() == route('admin#libros.index') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-book"></i>
               <p>
                 Ventas de Libros
@@ -304,7 +304,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('admin#libros.create') }}" class="nav-link {{ Request::url() == route('admin#libros.create') ? 'active' : '' }}">
+            <a href="{{ Route::has('admin#libros.create') ? route('admin#libros.create') : '#' }}" class="nav-link {{ Route::has('admin#libros.create') && Request::url() == route('admin#libros.create') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-plus"></i>
               <p>
                 Nueva Venta
@@ -406,7 +406,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
           </li>
           @endif
-          
+
           <!-- Botón de Cerrar Sesión para todos los roles -->
           <li class="nav-item">
             <form action="{{ route('logout') }}" method="POST">
