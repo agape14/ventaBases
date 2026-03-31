@@ -14,9 +14,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
+    /**
+     * Extensiones de imagen permitidas
+     */
+    private $allowedImageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    
+    /**
+     * MIME types de imagen permitidos
+     */
+    private $allowedImageMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
     //index
     public function index(){
         $user = User::where('id',auth()->user()->id)->first();
@@ -25,9 +36,16 @@ class ProfileController extends Controller
 
     //edit profile
     public function updateProfile(Request $request){
+        // ============================================
+        // PARCHE DE SEGURIDAD - Enero 2026
+        // Validación estricta de archivos subidos
+        // ============================================
+        
         $validation = Validator::make($request->all(),[
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|email',
+            // Agregar validación de imagen
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
         if($validation->fails()){
             return back()->withErrors($validation)->withInput();
@@ -40,7 +58,31 @@ class ProfileController extends Controller
 
         if($request->hasFile('photo')){
             $newFile = $request->file('photo');
-            $newFileName = uniqid().'-'.$newFile->getClientOriginalName();
+            
+            // ============================================
+            // VALIDACIÓN ADICIONAL DE SEGURIDAD
+            // ============================================
+            
+            // 1. Validar extensión
+            $extension = strtolower($newFile->getClientOriginalExtension());
+            if (!in_array($extension, $this->allowedImageExtensions)) {
+                return back()->withErrors(['photo' => 'Extensión de archivo no permitida.'])->withInput();
+            }
+            
+            // 2. Validar MIME type real
+            $mimeType = $newFile->getMimeType();
+            if (!in_array($mimeType, $this->allowedImageMimes)) {
+                return back()->withErrors(['photo' => 'Tipo de archivo no permitido.'])->withInput();
+            }
+            
+            // 3. Verificar que es una imagen real
+            $imageInfo = @getimagesize($newFile->getPathname());
+            if ($imageInfo === false) {
+                return back()->withErrors(['photo' => 'El archivo no es una imagen válida.'])->withInput();
+            }
+            
+            // 4. Generar nombre seguro (NUNCA usar getClientOriginalName)
+            $newFileName = Str::random(40) . '.' . $extension;
 
             //get old file
             $oldFileName = User::where('id',auth()->user()->id)->value('profile_photo_path');
@@ -48,12 +90,10 @@ class ProfileController extends Controller
                 if(File::exists(public_path().'/uploads/user/'.$oldFileName)){
                     File::delete(public_path().'/uploads/user/'.$oldFileName);
                 }
-                $newFile->move(public_path().'/uploads/user/',$newFileName);
-                $updateData['profile_photo_path'] = $newFileName;
-            }else{
-                $newFile->move(public_path().'/uploads/user/',$newFileName);
-                $updateData['profile_photo_path'] = $newFileName;
             }
+            
+            $newFile->move(public_path().'/uploads/user/',$newFileName);
+            $updateData['profile_photo_path'] = $newFileName;
         }
 
         User::where('id',Auth::user()->id)->update($updateData);

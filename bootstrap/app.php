@@ -54,4 +54,6 @@ $app->singleton(
 |
 */
 
+require __DIR__.'/helpers.php';
+
 return $app;
